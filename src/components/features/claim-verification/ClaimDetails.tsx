@@ -122,7 +122,7 @@ export function ClaimDetails({ claimId, claim: initialClaim, isLoading: external
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={ev.src}
-                    alt="Evidence image"
+                    alt="Submitted evidence"
                     className="rounded max-h-40 w-auto"
                     loading="lazy"
                     referrerPolicy="no-referrer"
