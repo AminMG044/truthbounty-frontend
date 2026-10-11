@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    settings: { react: { version: "19.3" } },
     rules: jsxA11y.flatConfigs.recommended.rules,
   },
   // Override default ignores of eslint-config-next.
