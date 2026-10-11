@@ -5,6 +5,7 @@ import { WorldcoinVerificationPanel } from '@/components/features/worldcoin';
 import { SiweSessionPanel } from '@/components/auth';
 import { useAccount } from '@/hooks/useAccount';
 import { Info } from 'lucide-react';
+import MainLayout from '@/components/layout/MainLayout';
 
 export default function IdentityPage() {
   const account = useAccount();
