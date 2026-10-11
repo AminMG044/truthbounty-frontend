@@ -154,7 +154,7 @@ export function ClaimDetailWithCustomWalletUI({ claimId }: ClaimDetailWithAction
       {wallet.status === 'unsupported' && (
         <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
           <p className="text-sm text-yellow-500 mb-3">
-            You're connected to an unsupported network. Please switch to Optimism or OP Sepolia.
+            You&apos;re connected to an unsupported network. Please switch to Optimism or OP Sepolia.
           </p>
           <button
             onClick={handleNetworkSwitch}
