@@ -13,8 +13,6 @@
 import { sanitizeText, sanitizeEvidenceList } from '@/lib/security/evidence-sanitizer';
 import { PrivateEvidenceLink } from '@/components/security/PrivateEvidenceLink';
 import { PrivateTimestamp } from '@/components/security/PrivateTimestamp';
-import { sanitizeText, sanitizeEvidenceList } from '@/lib/security/evidence-sanitizer';
-import { SafeExternalLink } from '@/components/security/SafeExternalLink';
 import type { ClaimDetailProjection } from '@/app/types/claim-detail-projection';
 
 export interface ClaimContentProps {
@@ -75,7 +73,7 @@ export function ClaimContent({ claim }: ClaimContentProps) {
           <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
             Evidence
           </h2>
-          <ul className="space-y-2" role="list">
+          <ul className="space-y-2">
             {evidence.map((ev, idx) => (
               <li key={idx} className="text-xs">
                 {ev.kind === 'link' && (
@@ -86,19 +84,12 @@ export function ClaimContent({ claim }: ClaimContentProps) {
                     showIcon={true}
                     showCopyButton={true}
                   />
-                  <SafeExternalLink
-                    href={ev.href}
-                    className="text-blue-400 hover:text-blue-300 underline break-all transition-colors"
-                    aria-label={`Evidence link ${idx + 1}: ${ev.text} (opens in new tab)`}
-                  >
-                    {ev.text}
-                  </SafeExternalLink>
                 )}
                 {ev.kind === 'image' && (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={ev.src}
-                    alt={`Evidence image ${idx + 1}`}
+                    alt={`Submitted evidence ${idx + 1}`}
                     className="rounded max-h-60 w-auto border border-[#232329]"
                     loading="lazy"
                     referrerPolicy="no-referrer"
@@ -141,10 +132,6 @@ export function ClaimContent({ claim }: ClaimContentProps) {
               prefix="Created"
               showTooltip={false}
             />
-            <span>Created: </span>
-            <span className="text-gray-200">
-              {new Date(claim.createdAt).toLocaleDateString()}
-            </span>
           </div>
         </div>
       </div>
