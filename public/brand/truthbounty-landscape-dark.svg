@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 256" role="img" aria-labelledby="title desc">
+  <title id="title">TruthBounty landscape logo for dark backgrounds</title>
+  <desc id="desc">Evidence Shield followed by the TruthBounty wordmark.</desc>
+  <defs>
+    <linearGradient id="tb-dark-mark" x1="28" y1="34" x2="214" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#4F7CFF"/>
+    </linearGradient>
+    <linearGradient id="tb-dark-word" x1="510" y1="64" x2="900" y2="190" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#4F7CFF"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(12 0)">
+    <path fill="url(#tb-dark-mark)" d="M120 20 51 42c-7 2-11 9-11 16v54c0 54 27 96 80 120v-90l-38-38 38-38V20Z"/>
+    <path fill="url(#tb-dark-mark)" d="m136 20 69 22c7 2 11 9 11 16v54c0 54-27 96-80 120v-90l38-38-38-38V20Z"/>
+    <path fill="#22D3EE" d="m128 88 16 16-16 16-16-16 16-16Z"/>
+  </g>
+  <text x="270" y="162" fill="#F7F9FC" font-family="Geist, Inter, Arial, sans-serif" font-size="92" font-weight="800" letter-spacing="-4">Truth</text>
+  <text x="492" y="162" fill="url(#tb-dark-word)" font-family="Geist, Inter, Arial, sans-serif" font-size="92" font-weight="800" letter-spacing="-4">Bounty</text>
+</svg>

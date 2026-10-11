@@ -38,6 +38,15 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* Approved TruthBounty V2 brand roles (Protocol PRs #17–#18). */
+  --color-signal: var(--tb-signal-cyan);
+  --color-proof: var(--tb-proof-blue);
+  --color-reward: var(--tb-bounty-gold);
+  --color-canvas-brand: var(--tb-canvas);
+  --color-surface-brand: var(--tb-surface);
+  --color-surface-raised: var(--tb-surface-raised);
+  --color-text-brand: var(--tb-text);
+  --color-text-muted-brand: var(--tb-text-muted);
   /* V2 semantic tokens (V2-FE-121) — mapped to Tailwind utilities.
      Roles per docs/ux/DESIGN_SYSTEM.md: surfaces, text, action/focus,
      feedback, transaction lifecycle, and lines/disabled. */
@@ -99,7 +108,49 @@ a {
 }
 
 :root {
-  --radius: 0.625rem;
+  /* Approved V2 foundation values. Keep these names stable for product code. */
+  --tb-signal-cyan: #22d3ee;
+  --tb-proof-blue: #4f7cff;
+  --tb-ink-navy: #070a12;
+  --tb-deep-slate: #101522;
+  --tb-frost-white: #f7f9fc;
+  --tb-bounty-gold: #f5b942;
+  --tb-success: #41d39a;
+  --tb-attention: #f4b860;
+  --tb-danger: #ff6b7a;
+  --tb-info: #74a7ff;
+
+  --tb-space-1: 0.25rem;
+  --tb-space-2: 0.5rem;
+  --tb-space-3: 0.75rem;
+  --tb-space-4: 1rem;
+  --tb-space-6: 1.5rem;
+  --tb-space-8: 2rem;
+  --tb-space-12: 3rem;
+  --tb-space-16: 4rem;
+
+  --tb-radius-sm: 0.5rem;
+  --tb-radius-md: 0.75rem;
+  --tb-radius-lg: 1rem;
+  --tb-radius-xl: 1.25rem;
+  --tb-radius-pill: 999px;
+
+  --tb-control-sm: 2.25rem;
+  --tb-control-md: 2.75rem;
+  --tb-control-lg: 3.25rem;
+  --tb-touch-min: 2.75rem;
+  --tb-sidebar-width: 16rem;
+  --tb-topbar-height: 4rem;
+  --tb-content-max: 90rem;
+
+  --tb-elevation-01: 0 1px 2px rgb(7 10 18 / 0.16);
+  --tb-elevation-02: 0 12px 36px rgb(0 0 0 / 0.22);
+  --tb-motion-feedback: 120ms;
+  --tb-motion-component: 180ms;
+  --tb-motion-drawer: 240ms;
+  --tb-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --radius: var(--tb-radius-sm);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -169,7 +220,8 @@ a {
   --gutter: 1rem;
 }
 
-.dark {
+.dark,
+[data-theme='dark'] {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -224,6 +276,127 @@ a {
   --orphaned: oklch(0.78 0.17 22);
   --divider: oklch(1 0 0 / 12%);
   --disabled: oklch(0.556 0 0);
+}
+
+/* Canonical theme binding. Legacy semantic names remain as compatibility aliases,
+   but their active values are governed by the approved cyan/blue foundation. */
+:root,
+.light,
+[data-theme='light'] {
+  --tb-canvas: #f7f9fc;
+  --tb-surface: #ffffff;
+  --tb-surface-raised: #eef3f8;
+  --tb-text: #070a12;
+  --tb-text-muted: #58647a;
+  --tb-border: #dce2eb;
+
+  --background: var(--tb-canvas);
+  --foreground: var(--tb-text);
+  --card: var(--tb-surface);
+  --card-foreground: var(--tb-text);
+  --popover: var(--tb-surface);
+  --popover-foreground: var(--tb-text);
+  --primary: var(--tb-proof-blue);
+  --primary-foreground: #ffffff;
+  --secondary: var(--tb-surface-raised);
+  --secondary-foreground: var(--tb-text);
+  --muted: var(--tb-surface-raised);
+  --muted-foreground: var(--tb-text-muted);
+  --accent: color-mix(in srgb, var(--tb-signal-cyan) 14%, var(--tb-surface));
+  --accent-foreground: var(--tb-text);
+  --destructive: var(--tb-danger);
+  --border: var(--tb-border);
+  --input: var(--tb-border);
+  --ring: var(--tb-signal-cyan);
+  --sidebar: var(--tb-surface);
+  --sidebar-foreground: var(--tb-text);
+  --sidebar-primary: var(--tb-proof-blue);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--tb-surface-raised);
+  --sidebar-accent-foreground: var(--tb-text);
+  --sidebar-border: var(--tb-border);
+  --sidebar-ring: var(--tb-signal-cyan);
+
+  --canvas: var(--tb-canvas);
+  --surface: var(--tb-surface);
+  --elevated: var(--tb-surface-raised);
+  --ink: var(--tb-text);
+  --ink-secondary: #344056;
+  --ink-muted: var(--tb-text-muted);
+  --action: var(--tb-proof-blue);
+  --action-hover: color-mix(in srgb, var(--tb-proof-blue) 86%, var(--tb-ink-navy));
+  --action-ink: #ffffff;
+  --focus: var(--tb-signal-cyan);
+  --success: #147a55;
+  --warning: #8a5700;
+  --danger: #b42335;
+  --info: #285cc4;
+  --pending: #8a5700;
+  --confirmed: #285cc4;
+  --finalized: #147a55;
+  --orphaned: #b42335;
+  --divider: var(--tb-border);
+  --disabled: #8792a5;
+  color-scheme: light;
+}
+
+.dark,
+[data-theme='dark'] {
+  --tb-canvas: #070a12;
+  --tb-surface: #101522;
+  --tb-surface-raised: #151c2b;
+  --tb-text: #f7f9fc;
+  --tb-text-muted: #9aa7bd;
+  --tb-border: #273149;
+
+  --background: var(--tb-canvas);
+  --foreground: var(--tb-text);
+  --card: var(--tb-surface);
+  --card-foreground: var(--tb-text);
+  --popover: var(--tb-surface-raised);
+  --popover-foreground: var(--tb-text);
+  --primary: var(--tb-proof-blue);
+  --primary-foreground: #ffffff;
+  --secondary: var(--tb-surface-raised);
+  --secondary-foreground: var(--tb-text);
+  --muted: var(--tb-surface-raised);
+  --muted-foreground: var(--tb-text-muted);
+  --accent: color-mix(in srgb, var(--tb-signal-cyan) 12%, var(--tb-surface));
+  --accent-foreground: var(--tb-text);
+  --destructive: var(--tb-danger);
+  --border: var(--tb-border);
+  --input: #33405b;
+  --ring: var(--tb-signal-cyan);
+  --sidebar: var(--tb-deep-slate);
+  --sidebar-foreground: var(--tb-text);
+  --sidebar-primary: var(--tb-proof-blue);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--tb-surface-raised);
+  --sidebar-accent-foreground: var(--tb-text);
+  --sidebar-border: var(--tb-border);
+  --sidebar-ring: var(--tb-signal-cyan);
+
+  --canvas: var(--tb-canvas);
+  --surface: var(--tb-surface);
+  --elevated: var(--tb-surface-raised);
+  --ink: var(--tb-text);
+  --ink-secondary: #dce4f1;
+  --ink-muted: var(--tb-text-muted);
+  --action: var(--tb-proof-blue);
+  --action-hover: color-mix(in srgb, var(--tb-proof-blue) 82%, var(--tb-signal-cyan));
+  --action-ink: #ffffff;
+  --focus: var(--tb-signal-cyan);
+  --success: var(--tb-success);
+  --warning: var(--tb-attention);
+  --danger: var(--tb-danger);
+  --info: var(--tb-info);
+  --pending: var(--tb-attention);
+  --confirmed: var(--tb-info);
+  --finalized: var(--tb-success);
+  --orphaned: var(--tb-danger);
+  --divider: var(--tb-border);
+  --disabled: #66738a;
+  color-scheme: dark;
 }
 
 @layer base {
@@ -332,7 +505,7 @@ a {
   }
 
   input:focus, textarea:focus, select:focus, button:focus {
-    outline: 2px solid #5b5bf6;
+    outline: 2px solid var(--focus);
     outline-offset: 2px;
   }
 
@@ -375,7 +548,7 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #5b5bf6;
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -383,7 +556,7 @@ select:focus-visible,
 [role="button"]:focus-visible,
 [role="tab"]:focus-visible,
 [role="menuitem"]:focus-visible {
-  outline: 2px solid #5b5bf6;
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -391,8 +564,8 @@ select:focus-visible,
   position: absolute;
   top: -40px;
   left: 0;
-  background: #5b5bf6;
-  color: white;
+  background: var(--action);
+  color: var(--action-ink);
   padding: 8px 16px;
   z-index: 100;
   text-decoration: none;
@@ -419,11 +592,11 @@ select:focus-visible,
 .dark textarea:focus-visible,
 .dark select:focus-visible,
 .dark [tabindex]:focus-visible {
-  outline-color: #7c7cf7;
+  outline-color: var(--focus);
 }
 
 :focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 

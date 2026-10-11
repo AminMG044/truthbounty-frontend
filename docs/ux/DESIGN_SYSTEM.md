@@ -120,3 +120,24 @@ Storybook coverage: `src/components/ui/primitives/StatusBadge.stories.tsx`.
 - disabled buttons without an accessible explanation;
 - raw wallet/RPC errors shown directly to users;
 - importing test mocks into production modules.
+
+
+## Approved V2 brand foundation (UI-FE-001)
+
+The production token layer now follows Protocol PRs #17 and #18. The canonical
+Evidence Shield assets live in `public/brand` and are addressed through
+`src/lib/brand.ts`; consumers must not redraw, distort, split, or recolour the
+mark. Geist is loaded before landscape lockups render.
+
+- Signal Cyan `#22D3EE`: evidence and focus.
+- Proof Blue `#4F7CFF`: primary actions and resolved context.
+- Ink Navy `#070A12` and Deep Slate `#101522`: dark-first canvas and surfaces.
+- Frost White `#F7F9FC`: primary dark-theme text and light canvas.
+- Bounty Gold `#F5B942`: rewards and staking only.
+- Green, amber, red and information blue retain distinct state semantics.
+
+The compatibility variables used by existing components remain available, but
+are rebound to the approved palette. Purple and lavender are not active V2
+identity tokens. Spacing, control heights, radii and motion durations follow the
+approved machine-readable foundation, and reduced-motion preferences collapse
+non-essential animation to 1 ms.

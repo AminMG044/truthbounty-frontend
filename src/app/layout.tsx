@@ -18,7 +18,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Truth Bounty - Decentralized Claim Verification",
-  description: "A decentralized protocol for verifying claims through community consensus and staking",
+  description: "Evidence-first claim verification with transparent protocol outcomes.",
+  icons: {
+    icon: "/brand/truthbounty-app-icon.svg",
+    shortcut: "/brand/truthbounty-app-icon.svg",
+    apple: "/brand/truthbounty-app-icon.svg",
+  },
 };
 
 export default async function RootLayout({
