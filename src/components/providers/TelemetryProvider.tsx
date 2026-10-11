@@ -26,11 +26,8 @@
 
 import React, {
   createContext,
-  useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
   type ReactNode,
 } from 'react';
 import { useFeatureFlags } from '@/components/providers/FeatureFlagProvider';
@@ -38,7 +35,6 @@ import {
   TelemetryClient,
   initialiseTelemetry,
   type TelemetryConfig,
-  type TelemetryEvent,
 } from '@/lib/telemetry';
 
 // ---------------------------------------------------------------------------
@@ -95,28 +91,15 @@ export function TelemetryProvider({
   const { isEnabled: isFlagEnabled } = useFeatureFlags();
   const flagActive = isFlagEnabled('PRIVACY_SAFE_TELEMETRY');
 
-  // Keep a stable ref to the transport so the effect doesn't re-run when the
-  // parent re-renders with an inline arrow function.
-  const transportRef = useRef(transport);
-  useEffect(() => {
-    transportRef.current = transport;
-  }, [transport]);
-
-  // Read the latest transport only when an event is emitted. This keeps the
-  // callback stable without reading a ref during render.
-  const stableTransport = useCallback((event: TelemetryEvent) => {
-    transportRef.current?.(event);
-  }, []);
-
   const client = useMemo(() => {
     return initialiseTelemetry({
       enabled: flagActive,
       release: release ?? process.env.NEXT_PUBLIC_PROTOCOL_RELEASE,
-      transport: transport ? stableTransport : undefined,
+      transport,
       customRedactionRules,
     });
     // Re-initialise when the flag or configuration changes
-  }, [flagActive, release, transport, stableTransport, customRedactionRules]);
+  }, [flagActive, release, transport, customRedactionRules]);
 
   const value = useMemo<TelemetryContextValue>(
     () => ({ client, isEnabled: flagActive && client.isEnabled }),
