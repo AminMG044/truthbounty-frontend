@@ -118,7 +118,7 @@ export function EvidenceViewer({
                 <img
                   key={idx}
                   src={safeHref}
-                  alt="Evidence image"
+                  alt="Submitted evidence"
                   className="rounded-lg max-h-40 sm:max-h-60 w-full object-cover"
                   loading="lazy"
                   referrerPolicy="no-referrer"
