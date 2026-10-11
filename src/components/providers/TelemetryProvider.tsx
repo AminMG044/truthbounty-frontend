@@ -26,6 +26,7 @@
 
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -101,26 +102,21 @@ export function TelemetryProvider({
     transportRef.current = transport;
   }, [transport]);
 
-  // Wrap the transport ref so we never capture a stale closure
-  const stableTransport = useMemo<TelemetryConfig['transport']>(
-    () =>
-      transportRef.current
-        ? (event: TelemetryEvent) => transportRef.current?.(event)
-        : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps — intentionally only on mount
-    []
-  );
+  // Read the latest transport only when an event is emitted. This keeps the
+  // callback stable without reading a ref during render.
+  const stableTransport = useCallback((event: TelemetryEvent) => {
+    transportRef.current?.(event);
+  }, []);
 
   const client = useMemo(() => {
     return initialiseTelemetry({
       enabled: flagActive,
       release: release ?? process.env.NEXT_PUBLIC_PROTOCOL_RELEASE,
-      transport: stableTransport,
+      transport: transport ? stableTransport : undefined,
       customRedactionRules,
     });
     // Re-initialise when the flag or configuration changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flagActive, release, stableTransport, customRedactionRules]);
+  }, [flagActive, release, transport, stableTransport, customRedactionRules]);
 
   const value = useMemo<TelemetryContextValue>(
     () => ({ client, isEnabled: flagActive && client.isEnabled }),
