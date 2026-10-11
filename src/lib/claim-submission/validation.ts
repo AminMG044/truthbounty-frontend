@@ -274,7 +274,7 @@ export function validateFileType(file: File): ValidationResult {
   const fileName = file.name.toLowerCase();
 
   // Check MIME type
-  if (!ALLOWED_FILE_TYPES.includes(fileType as any)) {
+  if (!ALLOWED_FILE_TYPES.some((item) => item === fileType)) {
     // Also check file extension as fallback
     const hasValidExtension = ALLOWED_FILE_EXTENSIONS.some(ext => 
       fileName.endsWith(ext)
