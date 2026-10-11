@@ -106,7 +106,7 @@ export function ClaimVerifications({ claim }: ClaimVerificationsProps) {
             Recent Verifications
           </h2>
 
-          <ul className="space-y-2" role="list">
+          <ul className="space-y-2">
             {verifications.slice(0, 5).map((verification) => (
               <li
                 key={verification.id}
