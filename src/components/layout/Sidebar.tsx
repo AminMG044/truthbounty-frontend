@@ -214,13 +214,14 @@ const Sidebar = () => {
 
       {/* Backdrop overlay for mobile drawer */}
       {isMobileMenuOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Close navigation menu"
           className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-40 transition-opacity"
           onClick={() => {
             setIsMobileMenuOpen(false);
             hamburgerRef.current?.focus();
           }}
-          role="presentation"
         />
       )}
 
@@ -284,7 +285,7 @@ const Sidebar = () => {
               <div className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
                 {group.label}
               </div>
-              <ul className="space-y-1" role="list">
+              <ul className="space-y-1">
                 {group.items.map((item, index) => {
                   const active = isCurrentActive(item);
                   return (
@@ -346,7 +347,7 @@ const Sidebar = () => {
                 No transactions are waiting for confirmation right now.
               </p>
             ) : (
-              <ul className="mt-3 space-y-2" role="list">
+              <ul className="mt-3 space-y-2">
                 {pendingTransactions.slice(0, 3).map((transaction) => (
                   <li
                     key={transaction.id}
@@ -365,7 +366,7 @@ const Sidebar = () => {
             <div className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 mb-1">
               Resources
             </div>
-            <ul className="space-y-1" role="list">
+            <ul className="space-y-1">
               <li>
                 <Link
                   href={RESOURCE_LINKS.docs}
