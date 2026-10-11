@@ -61,13 +61,13 @@ export function ClaimantActivityTimeline({ activity, isLoading = false }: Claima
           No recent protocol activity recorded for this address.
         </p>
       ) : (
-        <ol className="relative border-l border-border ml-3 space-y-4 py-2" role="list">
+        <ol className="relative border-l border-border ml-3 space-y-4 py-2">
           {activity.map((event) => {
             const { Icon, color, bg } = getActivityIcon(event.type);
             const formattedDate = new Date(event.timestamp).toLocaleString();
 
             return (
-              <li key={event.id} className="ml-5 relative group" role="listitem">
+              <li key={event.id} className="ml-5 relative group">
                 <span
                   className={`absolute -left-[27px] top-1 flex h-6 w-6 items-center justify-center rounded-full border border-border ${bg} ${color}`}
                   aria-hidden="true"
