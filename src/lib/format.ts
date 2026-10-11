@@ -782,3 +782,48 @@ export function formatStatus(status?: string): string {
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+
+// ============================================================================
+// Claims list pagination and projection freshness
+// ============================================================================
+
+/** Compact one-based pagination window. Null entries represent ellipses. */
+export function getPaginationWindow(
+  current: number,
+  total: number
+): Array<number | null> {
+  if (!Number.isInteger(current) || !Number.isInteger(total) || total < 1) {
+    return [1];
+  }
+  const clampedCurrent = Math.min(Math.max(1, current), total);
+  if (total <= 7) return Array.from({ length: total }, (_, index) => index + 1);
+
+  const pages: Array<number | null> = [1];
+  const start = Math.max(2, clampedCurrent - 1);
+  const end = Math.min(total - 1, clampedCurrent + 1);
+  if (start > 2) pages.push(null);
+  for (let page = start; page <= end; page += 1) pages.push(page);
+  if (end < total - 1) pages.push(null);
+  pages.push(total);
+  return pages;
+}
+
+/** Projection age used by claims-list stale-state copy. */
+export function formatRelativeAge(
+  isoTimestamp?: string | null,
+  now: number = Date.now()
+): string {
+  if (!isoTimestamp) return '—';
+  const then = Date.parse(isoTimestamp);
+  if (!Number.isFinite(then)) return '—';
+
+  const ageMs = Math.max(0, now - then);
+  const minuteMs = 60_000;
+  const hourMs = 3_600_000;
+  const dayMs = 86_400_000;
+  if (ageMs < minuteMs) return 'just now';
+  if (ageMs < hourMs) return `${Math.floor(ageMs / minuteMs)}m ago`;
+  if (ageMs < dayMs) return `${Math.floor(ageMs / hourMs)}h ago`;
+  return `${Math.floor(ageMs / dayMs)}d ago`;
+}
