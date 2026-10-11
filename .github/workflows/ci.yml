@@ -74,6 +74,7 @@ jobs:
   test:
     name: Unit & Integration Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -110,7 +111,7 @@ jobs:
             npm ci
           fi
       - name: Run unit & integration tests
-        run: npm run test
+        run: npm run test -- --runInBand
 
   a11y:
     name: Accessibility (axe-core)
