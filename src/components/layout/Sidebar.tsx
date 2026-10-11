@@ -67,15 +67,34 @@ const Sidebar = () => {
     return subscribeToPendingTransactions(setPendingTransactions);
   }, []);
 
-  // Document-level Escape listener to close mobile drawer from anywhere
+  // Close and trap focus for the mobile drawer at the document level.
   useEffect(() => {
     if (!isMobileMenuOpen) return;
-    const handleDocumentKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+
+    const handleDocumentKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         setIsMobileMenuOpen(false);
         hamburgerRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !sidebarRef.current) return;
+      const focusableElements = sidebarRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
       }
     };
+
     document.addEventListener('keydown', handleDocumentKeyDown);
     return () => document.removeEventListener('keydown', handleDocumentKeyDown);
   }, [isMobileMenuOpen, setIsMobileMenuOpen]);
@@ -131,40 +150,6 @@ const Sidebar = () => {
       firstFocusableRef.current?.focus();
     }
   }, [isMobileMenuOpen]);
-
-  // Keyboard navigation: Escape key to close and trap focus
-  const handleSidebarKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsMobileMenuOpen(false);
-        hamburgerRef.current?.focus();
-        return;
-      }
-
-      if (e.key === 'Tab' && isMobileMenuOpen && sidebarRef.current) {
-        const focusableElements = sidebarRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        );
-        if (focusableElements.length === 0) return;
-
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      }
-    },
-    [isMobileMenuOpen, setIsMobileMenuOpen],
-  );
 
   const isCurrentActive = useCallback(
     (item: NavigationItem) => {
@@ -243,7 +228,6 @@ const Sidebar = () => {
         role={isMobileMenuOpen ? 'dialog' : undefined}
         aria-modal={isMobileMenuOpen ? true : undefined}
         tabIndex={isMobileMenuOpen ? -1 : undefined}
-        onKeyDown={handleSidebarKeyDown}
       >
         {/* Brand / Logo */}
         <div className="flex items-center h-16 px-6 py-6 font-bold text-lg tracking-tight border-b border-border">
