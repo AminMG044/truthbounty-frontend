@@ -369,19 +369,11 @@ export async function hashEvidenceId(evidenceId: string): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(evidenceId.trim());
 
-    let hash: ArrayBuffer;
-    if (typeof crypto !== 'undefined' && crypto.subtle) {
-      // Browser
-      hash = await crypto.subtle.digest('SHA-256', data);
-    } else if (typeof require !== 'undefined') {
-      // Node.js fallback
-      const nodeCrypto = require('crypto');
-      const nodeHash = nodeCrypto.createHash('sha256').update(evidenceId.trim()).digest();
-      hash = nodeHash.buffer.slice(nodeHash.byteOffset, nodeHash.byteOffset + nodeHash.byteLength);
-    } else {
-      // No crypto available
+    if (typeof crypto === 'undefined' || !crypto.subtle) {
       return 'ev_nocrypto';
     }
+
+    const hash = await crypto.subtle.digest('SHA-256', data);
 
     const hashArray = Array.from(new Uint8Array(hash));
     const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
