@@ -132,7 +132,7 @@ export function validateCategory(category: string): ValidationResult {
     return { valid: false, error: 'Category is required' };
   }
 
-  if (!PREDEFINED_CATEGORIES.includes(category as any)) {
+  if (!PREDEFINED_CATEGORIES.some((item) => item === category)) {
     return { valid: false, error: 'Invalid category selected' };
   }
 
@@ -152,7 +152,7 @@ export function validateImpact(impact: string): ValidationResult {
     return { valid: false, error: 'Impact is required' };
   }
 
-  if (!PREDEFINED_IMPACTS.includes(impact as any)) {
+  if (!PREDEFINED_IMPACTS.some((item) => item === impact)) {
     return { valid: false, error: 'Invalid impact selected' };
   }
 
