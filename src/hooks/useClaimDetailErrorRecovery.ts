@@ -10,7 +10,7 @@
  * - Unsupported chain: wallet chain switch prompt
  */
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ClaimDetailError } from '@/app/types/claim-detail-projection';
 
@@ -63,9 +63,9 @@ function getRecoveryStrategy(errorCode: string | null): RecoveryStrategy {
 export function useClaimDetailErrorRecovery(
   config: UseClaimDetailErrorRecoveryConfig
 ): UseClaimDetailErrorRecoveryResult {
-  const { error, errorCode, isError, refetch, onChainSwitch } = config;
+  const { errorCode, isError, refetch, onChainSwitch } = config;
   const router = useRouter();
-  const isRecoveringRef = useRef(false);
+  const [isRecovering, setIsRecovering] = useState(false);
   const retryCountRef = useRef(0);
 
   const recoveryStrategy = getRecoveryStrategy(errorCode);
@@ -75,17 +75,17 @@ export function useClaimDetailErrorRecovery(
   }, [router]);
 
   const recover = useCallback(() => {
-    if (isRecoveringRef.current) return;
+    if (isRecovering) return;
 
     switch (recoveryStrategy) {
       case 'retry':
       case 'refresh':
-        isRecoveringRef.current = true;
+        setIsRecovering(true);
         retryCountRef.current += 1;
         refetch();
         // Reset recovering flag after a delay
         setTimeout(() => {
-          isRecoveringRef.current = false;
+          setIsRecovering(false);
         }, 1000);
         break;
 
@@ -104,20 +104,20 @@ export function useClaimDetailErrorRecovery(
         // No recovery action available
         break;
     }
-  }, [recoveryStrategy, refetch, navigateToClaims, onChainSwitch]);
+  }, [isRecovering, recoveryStrategy, refetch, navigateToClaims, onChainSwitch]);
 
   // Reset retry count when error clears
   useEffect(() => {
     if (!isError) {
       retryCountRef.current = 0;
-      isRecoveringRef.current = false;
+      setIsRecovering(false);
     }
   }, [isError]);
 
   return {
     recover,
     navigateToClaims,
-    isRecovering: isRecoveringRef.current,
+    isRecovering,
     recoveryStrategy,
   };
 }
