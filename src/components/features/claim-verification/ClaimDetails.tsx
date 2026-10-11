@@ -20,7 +20,10 @@ export interface ClaimDetailsProps {
 }
 
 export function ClaimDetails({ claimId, claim: initialClaim, isLoading: externalLoading = false, onNotFound }: ClaimDetailsProps) {
-  const projection = useClaimDetailProjection(initialClaim ? undefined : claimId);
+  const projection = useClaimDetailProjection({
+    claimId: initialClaim ? '' : (claimId ?? ''),
+    enabled: !initialClaim && Boolean(claimId),
+  });
   const claim = initialClaim || projection.data?.claim;
   const isLoading = externalLoading || (!initialClaim && projection.viewState === 'loading');
   const notFound = !initialClaim && projection.viewState === 'not-found';
@@ -46,7 +49,7 @@ export function ClaimDetails({ claimId, claim: initialClaim, isLoading: external
   }
 
   if (!claim) {
-    const staleProjection = projection.error?.code === 'PROJECTION_STALE';
+    const staleProjection = projection.errorCode === 'PROJECTION_STALE';
     return (
       <div className={`rounded-xl border p-6 text-center ${staleProjection ? 'border-amber-500/30 bg-amber-500/10' : 'border-red-500/20 bg-[#18181b]'}`} role="alert">
         <h3 className={`mb-2 text-lg font-bold ${staleProjection ? 'text-amber-300' : 'text-red-500'}`}>
@@ -55,7 +58,7 @@ export function ClaimDetails({ claimId, claim: initialClaim, isLoading: external
         <p className="text-sm text-gray-400">
           {staleProjection ? 'The projection service is rebuilding. No claim state is being presented as current.' : 'The canonical claim projection could not be verified.'}
         </p>
-        <button type="button" onClick={projection.retry} className="mt-4 rounded-md border border-gray-600 px-3 py-2 text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400">
+        <button type="button" onClick={projection.refetch} className="mt-4 rounded-md border border-gray-600 px-3 py-2 text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400">
           Try again
         </button>
       </div>
