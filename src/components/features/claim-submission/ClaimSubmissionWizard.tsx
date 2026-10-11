@@ -142,7 +142,7 @@ export default function ClaimSubmissionWizard({
 
           {/* Step Indicator */}
           <nav aria-label="Wizard steps">
-            <ol className="flex items-center justify-between gap-2" role="list">
+            <ol className="flex items-center justify-between gap-2">
               {STEP_ORDER.map((step, index) => {
                 const isCurrent = step === state.currentStep;
                 const isCompleted = index < currentStepIndex;
