@@ -65,18 +65,18 @@ describe('Accessibility: TransactionStatus — every status', () => {
 
   it('announces pending, success, and error status via live regions', async () => {
     const { container: pending } = render(<TransactionStatus status="pending" />);
-    const pendingEl = screen.getByText(/transaction pending/i);
-    expect(pendingEl).toHaveAttribute('role', 'status');
+    const pendingText = screen.getByText(/transaction pending/i);
+    const pendingEl = pendingText.closest('[role="status"]');
     expect(pendingEl).toHaveAttribute('aria-live', 'polite');
 
     const { container: success } = render(<TransactionStatus status="success" />);
-    const successEl = screen.getByText(/verification submitted/i);
-    expect(successEl).toHaveAttribute('role', 'status');
+    const successText = screen.getByText(/verification submitted/i);
+    const successEl = successText.closest('[role="status"]');
     expect(successEl).toHaveAttribute('aria-live', 'polite');
 
     const { container: error } = render(<TransactionStatus status="error" />);
-    const errorEl = screen.getByText(/transaction failed/i);
-    expect(errorEl).toHaveAttribute('role', 'alert');
+    const errorText = screen.getByText(/transaction failed/i);
+    const errorEl = errorText.closest('[role="alert"]');
     expect(errorEl).toHaveAttribute('aria-live', 'assertive');
 
     const { assertAccessible: ax } = await import('../utils/axe');
@@ -232,8 +232,8 @@ describe('Accessibility: appeal rounds and escalation', () => {
         <TransactionStatus status="pending" />
       </div>,
     );
-    const pendingEl = screen.getByText(/transaction pending/i);
-    expect(pendingEl).toHaveAttribute('role', 'status');
+    const pendingText = screen.getByText(/transaction pending/i);
+    const pendingEl = pendingText.closest('[role="status"]');
     expect(pendingEl).toHaveAttribute('aria-live', 'polite');
     await assertAccessible(container);
   });
@@ -254,8 +254,8 @@ describe('Accessibility: appeal rounds and escalation', () => {
         <TransactionStatus status="error" />
       </div>,
     );
-    const errorEl = screen.getByText(/transaction failed/i);
-    expect(errorEl).toHaveAttribute('role', 'alert');
+    const errorText = screen.getByText(/transaction failed/i);
+    const errorEl = errorText.closest('[role="alert"]');
     expect(errorEl).toHaveAttribute('aria-live', 'assertive');
     await assertAccessible(container);
   });
