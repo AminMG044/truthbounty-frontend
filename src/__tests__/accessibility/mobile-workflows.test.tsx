@@ -115,7 +115,14 @@ describe('Accessibility: mobile responsive workflow components', () => {
   });
 
   it('ClaimDetails (claim verification) has no axe violations', async () => {
-    const { container } = render(<ClaimDetails claim={claimFixture} />);
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const { container } = render(
+      <QueryClientProvider client={queryClient}>
+        <ClaimDetails claim={claimFixture} />
+      </QueryClientProvider>
+    );
     await assertAccessible(container);
   });
 
