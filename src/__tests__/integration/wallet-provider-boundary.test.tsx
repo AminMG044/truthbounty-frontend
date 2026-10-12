@@ -18,7 +18,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
 import { http } from 'viem';
 import { optimism, optimismSepolia } from 'viem/chains';
-import { createConfig, mock } from 'wagmi';
+import { createConfig } from 'wagmi';
+import { mock } from 'wagmi/connectors';
 import { useCanonicalWallet } from '@/hooks/useCanonicalWallet';
 
 const ADDR_A = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266' as const;
