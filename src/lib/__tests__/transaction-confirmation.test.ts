@@ -251,7 +251,7 @@ describe('shouldWithholdSuccess', () => {
     expect(shouldWithholdSuccess(createState('preparing'))).toBe(true);
     expect(shouldWithholdSuccess(createState('signature-requested'))).toBe(true);
     expect(shouldWithholdSuccess(createState('submitted'))).toBe(true);
-    expect(shouldWithholdSuccess(createState('confirming'))).toBe(false);
+    expect(shouldWithholdSuccess(createState('confirming'))).toBe(true);
   });
 
   it('returns true for terminal failure states', () => {
