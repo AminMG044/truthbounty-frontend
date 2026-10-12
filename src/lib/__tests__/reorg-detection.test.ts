@@ -65,7 +65,7 @@ const createReorgEvent = (
   return {
     method,
     originalBlockNumber: 12345n,
-    originalBlockHash: '0xabc123' as `0x${string}`,
+    originalBlockHash: `0x${'a'.repeat(64)}` as `0x${string}`,
     timestamp: Date.now(),
     ...overrides,
   };
@@ -155,9 +155,10 @@ describe('createReorgRecoveryState', () => {
     const state = createReorgRecoveryState();
     expect(state).toEqual({
       step: 'detected',
-      invalidatedKeys: [],
-      userNotified: false,
+      isRecovering: true,
       acknowledged: false,
+      retrying: false,
+      invalidatedQueryKeys: [],
     });
   });
 });
@@ -168,28 +169,30 @@ describe('advanceReorgRecovery', () => {
     const next = advanceReorgRecovery(initial, 'caches-invalidated', ['claims', 'verifications']);
     
     expect(next.step).toBe('caches-invalidated');
-    expect(next.invalidatedKeys).toEqual(['claims', 'verifications']);
+    expect(next.invalidatedQueryKeys).toEqual(['claims', 'verifications']);
   });
 
   it('advances from caches-invalidated to user-notified', () => {
     const state = {
       step: 'caches-invalidated' as const,
-      invalidatedKeys: ['claims'],
-      userNotified: false,
+      invalidatedQueryKeys: ['claims'],
+      isRecovering: true,
       acknowledged: false,
+      retrying: false,
     };
     const next = advanceReorgRecovery(state, 'user-notified', []);
     
     expect(next.step).toBe('user-notified');
-    expect(next.userNotified).toBe(true);
+    expect(next.isRecovering).toBe(true);
   });
 
   it('advances from user-notified to acknowledged', () => {
     const state = {
       step: 'user-notified' as const,
-      invalidatedKeys: ['claims'],
-      userNotified: true,
+      invalidatedQueryKeys: ['claims'],
+      isRecovering: true,
       acknowledged: false,
+      retrying: false,
     };
     const next = advanceReorgRecovery(state, 'acknowledged', []);
     
@@ -200,21 +203,22 @@ describe('advanceReorgRecovery', () => {
   it('advances from acknowledged to retrying', () => {
     const state = {
       step: 'acknowledged' as const,
-      invalidatedKeys: ['claims'],
-      userNotified: true,
+      invalidatedQueryKeys: ['claims'],
+      isRecovering: false,
       acknowledged: true,
+      retrying: false,
     };
     const next = advanceReorgRecovery(state, 'retrying', []);
     
     expect(next.step).toBe('retrying');
   });
 
-  it('preserves invalidatedKeys across steps', () => {
+  it('preserves invalidatedQueryKeys across steps', () => {
     const initial = createReorgRecoveryState();
     const step1 = advanceReorgRecovery(initial, 'caches-invalidated', ['claims']);
     const step2 = advanceReorgRecovery(step1, 'user-notified', []);
     
-    expect(step2.invalidatedKeys).toEqual(['claims']);
+    expect(step2.invalidatedQueryKeys).toEqual(['claims']);
   });
 });
 
@@ -289,7 +293,7 @@ describe('isValidReorgEvent', () => {
 
   it('accepts optional fields', () => {
     const event = createReorgEvent('rpc-receipt-missing', {
-      currentBlockHash: '0xdef456' as `0x${string}`,
+      currentBlockHash: `0x${'d'.repeat(64)}` as `0x${string}`,
     });
     expect(isValidReorgEvent(event)).toBe(true);
   });
@@ -322,7 +326,7 @@ describe('assessReorgPlausibility', () => {
   });
 
   it('handles edge case of negative confirmations', () => {
-    expect(assessReorgPlausibility(-1, 10)).toBe('plausible');
+    expect(assessReorgPlausibility(-1, 10)).toBe('anomalous');
   });
 });
 
@@ -337,37 +341,37 @@ describe('generateReorgNotification', () => {
     expect(notification.title).toBe('Chain Reorganization Detected');
     expect(notification.description).toContain('blockchain reorganization');
     expect(notification.severity).toBe('warning');
-    expect(notification.action).toBe('Retry transaction from the beginning');
+    expect(notification.action).toBe('You may retry the transaction.');
   });
 
   it('generates notification for rpc-receipt-missing', () => {
     const notification = generateReorgNotification('rpc-receipt-missing', 5, 10);
     
-    expect(notification.title).toBe('Transaction Receipt Missing');
-    expect(notification.description).toContain('receipt no longer found');
+    expect(notification.title).toBe('Chain Reorganization Detected');
+    expect(notification.description).toContain('no longer found');
     expect(notification.severity).toBe('warning');
   });
 
   it('generates notification for rpc-block-hash-mismatch', () => {
     const notification = generateReorgNotification('rpc-block-hash-mismatch', 3, 10);
     
-    expect(notification.title).toBe('Block Hash Mismatch');
-    expect(notification.description).toContain('block hash changed');
+    expect(notification.title).toBe('Chain Reorganization Detected');
+    expect(notification.description).toContain('different hash');
     expect(notification.severity).toBe('warning');
   });
 
-  it('escalates severity for deep reorgs (suspicious)', () => {
+  it('keeps suspicious reorgs at warning severity', () => {
     const notification = generateReorgNotification('websocket-rollback', 8, 10);
     
-    expect(notification.severity).toBe('error');
-    expect(notification.description).toContain('unusual');
+    expect(notification.severity).toBe('warning');
+    expect(notification.description).toContain('reorganization');
   });
 
   it('escalates severity for very deep reorgs (anomalous)', () => {
     const notification = generateReorgNotification('websocket-rollback', 15, 10);
     
     expect(notification.severity).toBe('error');
-    expect(notification.description).toContain('highly unusual');
+    expect(notification.description).toContain('unusual');
   });
 
   it('includes plausibility context for shallow reorgs', () => {
@@ -389,6 +393,7 @@ describe('createReorgMetrics', () => {
       totalReorgs: 0,
       byMethod: {
         'websocket-rollback': 0,
+        'websocket-replacement': 0,
         'rpc-receipt-missing': 0,
         'rpc-block-hash-mismatch': 0,
       },
@@ -397,7 +402,7 @@ describe('createReorgMetrics', () => {
         medium: 0,
         deep: 0,
       },
-      lastReorgTimestamp: null,
+      lastReorgAt: null,
     });
   });
 });
@@ -439,12 +444,12 @@ describe('recordReorgMetric', () => {
     expect(updated.byDepth.deep).toBe(1);
   });
 
-  it('updates lastReorgTimestamp', () => {
+  it('updates lastReorgAt', () => {
     const metrics = createReorgMetrics();
     const beforeTimestamp = Date.now();
     const updated = recordReorgMetric(metrics, 'websocket-rollback', 2);
     
-    expect(updated.lastReorgTimestamp).toBeGreaterThanOrEqual(beforeTimestamp);
+    expect(updated.lastReorgAt).toBeGreaterThanOrEqual(beforeTimestamp);
   });
 
   it('accumulates multiple reorgs', () => {
