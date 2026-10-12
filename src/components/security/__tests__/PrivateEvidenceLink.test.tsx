@@ -49,7 +49,7 @@ describe('PrivateEvidenceLink', () => {
       render(<PrivateEvidenceLink href={url} />);
 
       const link = screen.getByRole('link');
-      expect(link).toHaveTextContent('QmYwAPJz...F8xFk (IPFS)');
+      expect(link).toHaveTextContent('QmYwAPJz...xF8xFk (IPFS)');
       expect(link).not.toHaveTextContent('QmYwAPJzv5CZsnAzt8auVZRn2tQQkDdqBvHThY6WxF8xFk');
     });
 
@@ -143,7 +143,7 @@ describe('PrivateEvidenceLink', () => {
 
       expect(screen.queryByRole('link')).not.toBeInTheDocument();
       expect(
-        screen.getByText(/blocked.*security/i, { selector: 'span' }),
+        screen.getByRole('note', { name: /blocked for security reasons/i }),
       ).toBeInTheDocument();
     });
 
