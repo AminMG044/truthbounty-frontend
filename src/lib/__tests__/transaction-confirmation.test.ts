@@ -93,9 +93,9 @@ describe('calculateConfirmations', () => {
 });
 
 describe('getConfirmationsFromState', () => {
-  it('uses state.confirmations if available', () => {
+  it('derives confirmations from canonical block numbers', () => {
     const state = createState('confirming', { blockNumber: 100n, confirmations: 5 });
-    expect(getConfirmationsFromState(state, 105n)).toBe(5);
+    expect(getConfirmationsFromState(state, 105n)).toBe(6);
   });
 
   it('calculates from blockNumber if confirmations is null', () => {
@@ -123,8 +123,8 @@ describe('isSafeConfirmations', () => {
     expect(isSafeConfirmations(0, 10)).toBe(false);
   });
 
-  it('returns null for unknown chains (fail-closed)', () => {
-    expect(isSafeConfirmations(1, 999)).toBeNull();
+  it('returns false for unknown chains (fail-closed)', () => {
+    expect(isSafeConfirmations(1, 999)).toBe(false);
   });
 
   it('handles OP Sepolia', () => {
@@ -148,8 +148,8 @@ describe('isFinalizedConfirmations', () => {
     expect(isFinalizedConfirmations(1, 10)).toBe(false);
   });
 
-  it('returns null for unknown chains (fail-closed)', () => {
-    expect(isFinalizedConfirmations(12, 999)).toBeNull();
+  it('returns false for unknown chains (fail-closed)', () => {
+    expect(isFinalizedConfirmations(12, 999)).toBe(false);
   });
 });
 
@@ -168,8 +168,8 @@ describe('getFinalityLevel', () => {
     expect(getFinalityLevel(20, 10)).toBe('finalized');
   });
 
-  it('returns "none" for unknown chains (fail-closed)', () => {
-    expect(getFinalityLevel(12, 999)).toBe('none');
+  it('returns null for unknown chains (fail-closed)', () => {
+    expect(getFinalityLevel(12, 999)).toBeNull();
   });
 });
 
@@ -498,8 +498,8 @@ describe('CONFIRMATION_THRESHOLDS', () => {
   it('defines Optimism Mainnet thresholds', () => {
     const config = CONFIRMATION_THRESHOLDS[10];
     expect(config).toEqual({
-      safe: 1,
-      finalized: 12,
+      safeConfirmations: 1,
+      finalizedConfirmations: 12,
       blockTimeMs: 2000,
     });
   });
@@ -507,8 +507,8 @@ describe('CONFIRMATION_THRESHOLDS', () => {
   it('defines OP Sepolia thresholds', () => {
     const config = CONFIRMATION_THRESHOLDS[11155420];
     expect(config).toEqual({
-      safe: 1,
-      finalized: 12,
+      safeConfirmations: 1,
+      finalizedConfirmations: 12,
       blockTimeMs: 2000,
     });
   });
@@ -516,8 +516,8 @@ describe('CONFIRMATION_THRESHOLDS', () => {
   it('defines Hardhat local fork thresholds', () => {
     const config = CONFIRMATION_THRESHOLDS[31337];
     expect(config).toEqual({
-      safe: 1,
-      finalized: 1,
+      safeConfirmations: 1,
+      finalizedConfirmations: 1,
       blockTimeMs: 100,
     });
   });
