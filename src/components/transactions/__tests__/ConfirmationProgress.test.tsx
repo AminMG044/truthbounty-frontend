@@ -26,7 +26,7 @@ describe('ConfirmationProgress', () => {
         />
       );
 
-      expect(screen.getByText(/confirming/i)).toBeInTheDocument();
+      expect(screen.getByText('Confirming')).toBeInTheDocument();
       expect(screen.getByText('5 / 12')).toBeInTheDocument();
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
