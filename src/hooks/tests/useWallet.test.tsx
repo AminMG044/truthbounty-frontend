@@ -22,6 +22,10 @@ import { createConfig } from 'wagmi';
 import { mock } from 'wagmi/connectors';
 import { useWallet } from '../useWallet';
 
+// These harnesses exercise the real Wagmi store; the shared unit-test mock is not applicable.
+jest.unmock('wagmi');
+jest.unmock('wagmi/connectors');
+
 // ── Test Wagmi config using the built-in mock connector ──────────────────────
 // The config holds mutable connection state, so a fresh instance is created per
 // test to avoid leaking connections/accounts between tests.
