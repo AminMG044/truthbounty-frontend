@@ -134,10 +134,13 @@ export function updateEvidenceStatus(
   status: EvidenceStatus,
   error: string | null = null
 ): EvidenceState {
+  const invalidated = status === 'invalidated';
   return {
     ...state,
     status,
     error,
+    progress: invalidated ? 0 : state.progress,
+    digest: invalidated ? null : state.digest,
     canProceed: status === 'verified',
   };
 }
@@ -150,7 +153,9 @@ export function updateEvidenceProgress(
   progress: number
 ): EvidenceState {
   // Cap at 99% until verified
-  const cappedProgress = state.status === 'verified' ? 100 : Math.min(progress, 99);
+  const cappedProgress = state.status === 'verified'
+    ? 100
+    : Math.max(0, Math.min(progress, 99));
   
   return {
     ...state,
@@ -634,6 +639,11 @@ export function formatRemainingTime(seconds: number | null): string {
     return `${seconds}s remaining`;
   }
 
-  const minutes = Math.floor(seconds / 60);
-  return `${minutes}m ${seconds % 60}s remaining`;
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${remainingSeconds}s remaining`;
+  }
+  return `${minutes}m ${remainingSeconds}s remaining`;
 }
