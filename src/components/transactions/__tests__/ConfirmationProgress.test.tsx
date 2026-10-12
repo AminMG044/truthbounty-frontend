@@ -26,7 +26,7 @@ describe('ConfirmationProgress', () => {
         />
       );
 
-      expect(screen.getByText('Confirming')).toBeInTheDocument();
+      expect(screen.getByText('Confirming...')).toBeInTheDocument();
       expect(screen.getByText('5 / 12')).toBeInTheDocument();
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
@@ -42,7 +42,7 @@ describe('ConfirmationProgress', () => {
       );
 
       // 7 blocks remaining * 2s = 14s
-      expect(screen.getByText(/~14s remaining/i)).toBeInTheDocument();
+      expect(screen.getByText(/^~14s remaining$/i)).toBeInTheDocument();
     });
 
     it('does not render time estimate when disabled', () => {
@@ -168,7 +168,7 @@ describe('ConfirmationProgress', () => {
       );
 
       // 2 blocks * 2s = 4s
-      expect(screen.getByText(/~4s remaining/i)).toBeInTheDocument();
+      expect(screen.getByText(/^~4s remaining$/i)).toBeInTheDocument();
     });
 
     it('formats time in minutes', () => {
@@ -181,7 +181,7 @@ describe('ConfirmationProgress', () => {
       );
 
       // 60 blocks * 2s = 120s = 2m
-      expect(screen.getByText(/~2m remaining/i)).toBeInTheDocument();
+      expect(screen.getByText(/^~2m remaining$/i)).toBeInTheDocument();
     });
 
     it('does not show estimate when target reached', () => {
