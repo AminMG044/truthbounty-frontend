@@ -13,6 +13,11 @@ import type { ClaimDetailEnvelope } from '@/app/types/claim-detail-projection';
 // Mock hooks
 jest.mock('@/hooks/useClaimDetailProjection');
 jest.mock('@/hooks/useClaimDetailFreshness');
+jest.mock('@/hooks/useReducedMotion', () => ({
+  useReducedMotion: () => false,
+  usePrefersReducedMotion: () => false,
+  prefersReducedMotion: () => false,
+}));
 
 const mockUseClaimDetailProjection = claimDetailProjectionHook.useClaimDetailProjection as jest.MockedFunction<
   typeof claimDetailProjectionHook.useClaimDetailProjection
