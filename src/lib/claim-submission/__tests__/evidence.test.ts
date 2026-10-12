@@ -4,7 +4,7 @@
  * Tests for evidence state management, file hashing, and session storage
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import {
   createEvidenceState,
   createFileEvidenceState,
