@@ -354,18 +354,18 @@ describe('Progress Calculation', () => {
 
   describe('getEvidenceStatusMessage', () => {
     it('returns message for each status', () => {
-      expect(getEvidenceStatusMessage('idle')).toBe('Ready to upload');
-      expect(getEvidenceStatusMessage('validating')).toBe('Validating file...');
-      expect(getEvidenceStatusMessage('hashing')).toBe('Calculating hash...');
-      expect(getEvidenceStatusMessage('uploading')).toBe('Uploading...');
-      expect(getEvidenceStatusMessage('verifying')).toBe('Verifying integrity...');
-      expect(getEvidenceStatusMessage('verified')).toBe('Verified ✓');
-      expect(getEvidenceStatusMessage('failed')).toBe('Upload failed');
-      expect(getEvidenceStatusMessage('cancelled')).toBe('Cancelled');
-      expect(getEvidenceStatusMessage('invalidated')).toBe('Invalidated');
+      const state = createEvidenceState();
+      expect(getEvidenceStatusMessage(state)).toBe('Ready to upload evidence');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'validating'))).toBe('Validating file...');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'hashing'))).toBe('Calculating file hash...');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'uploading'))).toBe('Uploading... 0%');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'verifying'))).toBe('Verifying integrity...');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'verified'))).toBe('Evidence verified ✓');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'failed'))).toBe('Upload failed');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'cancelled'))).toBe('Upload cancelled');
+      expect(getEvidenceStatusMessage(updateEvidenceStatus(state, 'invalidated'))).toBe('Evidence invalidated (wallet changed)');
     });
-  });
-});
+  });});
 
 describe('File Metadata', () => {
   describe('extractFileMetadata', () => {
