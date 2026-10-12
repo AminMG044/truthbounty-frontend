@@ -22,6 +22,11 @@ expect.extend(toHaveNoViolations);
 // Mock hooks
 jest.mock('@/hooks/useClaimDetailProjection');
 jest.mock('@/hooks/useClaimDetailFreshness');
+jest.mock('@/hooks/useReducedMotion', () => ({
+  useReducedMotion: () => false,
+  usePrefersReducedMotion: () => false,
+  prefersReducedMotion: () => false,
+}));
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
