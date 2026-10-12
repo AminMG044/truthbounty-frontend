@@ -4,7 +4,7 @@
  * Tests for Step 1 of the claim submission wizard
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, jest } from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClaimDetailsStep from '../ClaimDetailsStep';
@@ -25,10 +25,10 @@ describe('ClaimDetailsStep', () => {
     data: mockClaimDetails,
     errors: mockErrors,
     touched: new Set<keyof ClaimFormData>(),
-    onChange: vi.fn(),
-    onBlur: vi.fn(),
-    onNext: vi.fn(),
-    onCancel: vi.fn(),
+    onChange: jest.fn(),
+    onBlur: jest.fn(),
+    onNext: jest.fn(),
+    onCancel: jest.fn(),
   };
 
   it('renders all form fields', () => {
@@ -49,7 +49,7 @@ describe('ClaimDetailsStep', () => {
   });
 
   it('calls onChange when title input changes', async () => {
-    const onChange = vi.fn();
+    const onChange = jest.fn();
     render(<ClaimDetailsStep {...defaultProps} onChange={onChange} />);
 
     const titleInput = screen.getByLabelText(/title/i);
@@ -59,7 +59,7 @@ describe('ClaimDetailsStep', () => {
   });
 
   it('calls onBlur when field loses focus', async () => {
-    const onBlur = vi.fn();
+    const onBlur = jest.fn();
     render(<ClaimDetailsStep {...defaultProps} onBlur={onBlur} />);
 
     const titleInput = screen.getByLabelText(/title/i);
@@ -193,7 +193,7 @@ describe('ClaimDetailsStep', () => {
   });
 
   it('calls onNext when Next button clicked', async () => {
-    const onNext = vi.fn();
+    const onNext = jest.fn();
     const validData: ClaimFormData = {
       title: 'Valid claim title',
       category: 'Healthcare',
@@ -218,7 +218,7 @@ describe('ClaimDetailsStep', () => {
   });
 
   it('calls onCancel when Cancel button clicked', async () => {
-    const onCancel = vi.fn();
+    const onCancel = jest.fn();
 
     render(<ClaimDetailsStep {...defaultProps} onCancel={onCancel} />);
 
@@ -265,7 +265,7 @@ describe('ClaimDetailsStep', () => {
   });
 
   it('accepts valid HTTPS URL in source field', async () => {
-    const onChange = vi.fn();
+    const onChange = jest.fn();
     render(<ClaimDetailsStep {...defaultProps} onChange={onChange} />);
 
     const sourceInput = screen.getByLabelText(/source url/i);
