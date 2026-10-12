@@ -517,7 +517,7 @@ describe("Reorg path", () => {
     expect(reorged.status).toBe("reorged");
     if (reorged.status === "reorged") {
       expect(reorged.txHash).toBe(MOCK_HASH_1);
-      expect(reorged.error).toBe("REORG");
+      expect(reorged.error).toBe("REORGED");
       expect(reorged.blockNumber).toBe(BigInt(100));
     }
   });
