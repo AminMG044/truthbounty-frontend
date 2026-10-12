@@ -286,6 +286,7 @@ export function shouldWithholdSuccess(txState: TransactionState): boolean {
     'preparing',
     'signature-requested',
     'submitted',
+    'confirming',
     'dropped',
     'reverted',
     'reorged',
