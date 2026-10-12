@@ -36,7 +36,7 @@ export interface TruncatedUrl {
  *   1. Parse URL and extract hostname
  *   2. Strip query parameters and hash fragment
  *   3. Extract filename from path (last segment)
- *   4. If path has ≥3 segments, replace middle with "..."
+ *   4. If path has ≥2 segments, replace intermediate path data with "..."
  *   5. Return: {hostname}/.../filename or {hostname}/... if no filename
  *
  * @param rawUrl - Evidence URL (HTTPS or IPFS)
@@ -93,11 +93,8 @@ export function truncateEvidenceUrl(rawUrl: string): TruncatedUrl {
   } else if (segments.length === 1) {
     // Single segment: hostname/filename
     display = `${hostname}/${segments[0]}`;
-  } else if (segments.length === 2) {
-    // Two segments: hostname/path/filename
-    display = `${hostname}/${segments[0]}/${segments[1]}`;
   } else {
-    // Three or more segments: hostname/.../filename
+    // Two or more segments: hide intermediate path metadata.
     display = filename
       ? `${hostname}/.../${filename}`
       : `${hostname}/...`;
