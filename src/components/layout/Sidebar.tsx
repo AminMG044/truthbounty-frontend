@@ -42,18 +42,11 @@ const Sidebar = () => {
   } = useAppShellContext();
   const pathname = currentRoute || '/';
 
-  const [localIsMobileOpen, setLocalIsMobileOpen] = useState(false);
-  const isMobileMenuOpen = contextIsMobileMenuOpen || localIsMobileOpen;
-  const setIsMobileMenuOpen = useCallback(
-    (open: boolean | ((prev: boolean) => boolean)) => {
-      setLocalIsMobileOpen((prev) => {
-        const next = typeof open === 'function' ? open(prev) : open;
-        contextSetIsMobileMenuOpen(next);
-        return next;
-      });
-    },
-    [contextSetIsMobileMenuOpen],
-  );
+  // AppShellProvider is the single source of truth for drawer state. Keeping a
+  // second local copy caused context updates from inside a state updater during
+  // render and could desynchronise the backdrop, focus trap, and navigation.
+  const isMobileMenuOpen = contextIsMobileMenuOpen;
+  const setIsMobileMenuOpen = contextSetIsMobileMenuOpen;
 
   const [pendingTransactions, setPendingTransactions] = useState<PendingTransactionEntry[]>(
     () => getPendingTransactions(),
