@@ -348,7 +348,8 @@ export function formatTimeEstimate(ms: number | null): string {
   if (ms === null) return '';
   if (ms < 1000) return '~1s';
   if (ms < 60000) return `~${Math.ceil(ms / 1000)}s`;
-  return `~${Math.ceil(ms / 60000)}m`;
+  if (ms < 3600000) return `~${Math.ceil(ms / 60000)}m`;
+  return `~${Math.ceil(ms / 3600000)}h`;
 }
 
 // ---------------------------------------------------------------------------
@@ -508,10 +509,17 @@ export function isConfirmationTransitionValid(
   const prevConf = prevState.confirmations ?? 0;
   const nextConf = nextState.confirmations ?? 0;
 
-  // Reorg: Confirmations can reset
-  if (nextState.status === 'reorged') return true;
+  // Terminal outcomes may clear confirmation metadata. Reorgs may also reset
+  // the count, so validate the status transition independently of monotonicity.
+  const terminalStates: TransactionStatus[] = [
+    'dropped',
+    'replaced',
+    'reverted',
+    'reorged',
+  ];
+  if (terminalStates.includes(nextState.status)) return true;
 
-  // Confirmations should only increase (or stay the same)
+  // Non-terminal confirmation counts should only increase or stay the same.
   if (nextConf < prevConf) return false;
 
   // Transition from submitted to confirming: Should be 1 confirmation
