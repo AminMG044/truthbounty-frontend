@@ -77,7 +77,7 @@ describe('Claim Details Validation', () => {
     it('rejects title with XSS attempt', () => {
       const result = validateTitle('<script>alert("xss")</script>');
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('script');
+      expect(result.error).toMatch(/invalid characters/i);
     });
 
     it('accepts title at minimum length', () => {
@@ -107,7 +107,7 @@ describe('Claim Details Validation', () => {
     it('rejects invalid category', () => {
       const result = validateCategory('InvalidCategory');
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('must be one of');
+      expect(result.error).toMatch(/invalid category/i);
     });
 
     it('rejects empty category', () => {
@@ -132,7 +132,7 @@ describe('Claim Details Validation', () => {
     it('rejects invalid impact', () => {
       const result = validateImpact('InvalidImpact');
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('must be one of');
+      expect(result.error).toMatch(/invalid impact/i);
     });
 
     it('rejects empty impact', () => {
@@ -281,7 +281,7 @@ describe('Evidence Validation', () => {
       const file = new File([''], 'test.exe', { type: 'application/x-msdownload' });
       const result = validateFileType(file);
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('not allowed');
+      expect(result.error).toMatch(/unsupported file type/i);
     });
   });
 
@@ -322,7 +322,7 @@ describe('Evidence Validation', () => {
     it('rejects path traversal attempt', () => {
       const result = validateFileName('../etc/passwd');
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('invalid');
+      expect(result.error).toMatch(/invalid file name/i);
     });
 
     it('rejects null byte', () => {
@@ -356,7 +356,7 @@ describe('Evidence Validation', () => {
     it('rejects localhost URL', () => {
       const result = validateEvidenceUrl('https://localhost/file');
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('localhost');
+      expect(result.error).toMatch(/local urls are not allowed/i);
     });
 
     it('rejects 127.0.0.1 URL', () => {
@@ -377,7 +377,7 @@ describe('Evidence Validation', () => {
       const canonical = '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890';
       const result = verifyEvidenceIntegrity(local, canonical);
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('mismatch');
+      expect(result.error).toMatch(/integrity check failed/i);
     });
   });
 });
@@ -410,7 +410,7 @@ describe('Transaction Validation', () => {
     it('rejects mismatched chains', () => {
       const result = validateChainMatch(1, 10);
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('mismatch');
+      expect(result.error).toMatch(/wrong network/i);
     });
   });
 
@@ -441,7 +441,7 @@ describe('Transaction Validation', () => {
     it('rejects insufficient allowance', () => {
       const result = validateAllowance(100n, 500n);
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('allowance');
+      expect(result.error).toMatch(/token approval required/i);
     });
   });
 
@@ -495,12 +495,12 @@ describe('Sanitization Utilities', () => {
 
     it('handles URL with port', () => {
       const result = sanitizeUrl('https://example.com:8080/file');
-      expect(result).toBe('evidence from example.com:8080');
+      expect(result).toBe('evidence from example.com');
     });
 
     it('handles invalid URL', () => {
       const result = sanitizeUrl('not-a-url');
-      expect(result).toBe('[redacted URL]');
+      expect(result).toBe('evidence source');
     });
   });
 
