@@ -568,6 +568,48 @@ export function formatTime(
   return d.toLocaleTimeString(locale, options);
 }
 
+export interface FormatAbsoluteDateTimeOptions {
+  includeSeconds?: boolean;
+  locale?: string;
+}
+
+/** Format an absolute timestamp in the user's local timezone. */
+export function formatLocalDateTime(
+  date?: DateInput,
+  options: FormatAbsoluteDateTimeOptions = {},
+): string {
+  const parsed = toValidDate(date);
+  if (!parsed) return '—';
+  return new Intl.DateTimeFormat(options.locale ?? 'en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    ...(options.includeSeconds ? { second: '2-digit' as const } : {}),
+    timeZoneName: 'short',
+  }).format(parsed);
+}
+
+/** Format an absolute timestamp in UTC with an explicit UTC suffix. */
+export function formatUtcDateTime(
+  date?: DateInput,
+  options: FormatAbsoluteDateTimeOptions = {},
+): string {
+  const parsed = toValidDate(date);
+  if (!parsed) return '—';
+  return new Intl.DateTimeFormat(options.locale ?? 'en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    ...(options.includeSeconds ? { second: '2-digit' as const } : {}),
+    timeZone: 'UTC',
+    timeZoneName: 'short',
+  }).format(parsed);
+}
+
 /**
  * Format relative time ago (e.g. 'just now', '5m ago', '2h ago', '3d ago').
  */
