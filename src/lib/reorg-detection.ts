@@ -248,11 +248,15 @@ export function analyzeReorgImpact(
  * @param event - Reorg detection event
  * @returns True if event is valid
  */
-export function isValidReorgEvent(event: {
-  method?: string;
-  originalBlockNumber?: unknown;
-  originalBlockHash?: unknown;
-}): boolean {
+export interface ReorgDetectionEvent {
+  readonly method: ReorgDetectionMethod;
+  readonly originalBlockNumber: bigint | number;
+  readonly originalBlockHash?: `0x${string}`;
+  readonly currentBlockHash?: `0x${string}`;
+  readonly timestamp: number;
+}
+
+export function isValidReorgEvent(event: Partial<ReorgDetectionEvent>): boolean {
   // Method must be known
   const validMethods: ReorgDetectionMethod[] = [
     'websocket-rollback',
@@ -260,12 +264,18 @@ export function isValidReorgEvent(event: {
     'rpc-receipt-missing',
     'rpc-block-hash-mismatch',
   ];
-  if (event.method && !validMethods.includes(event.method as ReorgDetectionMethod)) {
+  if (!event.method || !validMethods.includes(event.method)) return false;
+  if (
+    typeof event.timestamp !== 'number' ||
+    !Number.isFinite(event.timestamp) ||
+    event.timestamp <= 0
+  ) {
     return false;
   }
 
-  // Block number must be positive integer
-  if (event.originalBlockNumber !== undefined) {
+  // Block number is required and must be a non-negative integer.
+  if (event.originalBlockNumber === undefined) return false;
+  {
     const bn = event.originalBlockNumber;
     if (typeof bn === 'bigint') {
       if (bn < 0n) return false;
@@ -276,11 +286,11 @@ export function isValidReorgEvent(event: {
     }
   }
 
-  // Block hash must be valid format if provided
-  if (event.originalBlockHash !== undefined) {
-    const bh = event.originalBlockHash;
-    if (typeof bh !== 'string') return false;
-    if (!/^0x[0-9a-fA-F]{64}$/.test(bh)) return false;
+  // Block hashes must be valid if provided.
+  for (const hash of [event.originalBlockHash, event.currentBlockHash]) {
+    if (hash !== undefined && !/^0x[0-9a-fA-F]{64}$/.test(hash)) {
+      return false;
+    }
   }
 
   return true;
@@ -301,6 +311,10 @@ export function assessReorgPlausibility(
   chainId: number,
 ): 'plausible' | 'suspicious' | 'anomalous' {
   // Optimism L2 thresholds
+  if (!Number.isInteger(confirmations) || confirmations < 0) {
+    return 'anomalous';
+  }
+
   const OP_CHAINS = [10, 11155420];
   const isOptimism = OP_CHAINS.includes(chainId);
 
