@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Shield, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { IdentityGlyph } from './IdentityGlyph';
 import type { WorldcoinVerificationStatus, IDKitResponse } from '@/app/types/worldcoin';
 // import { IDKit, VerificationLevel } from '@worldcoin/idkit';
 import {
@@ -114,28 +114,28 @@ function WorldcoinIDKitFlow({
       case 'IN_PROGRESS':
         return (
           <>
-            <Loader2 className="animate-spin" />
+            <IdentityGlyph name="loading" />
             Verifying...
           </>
         );
       case 'SUCCESS':
         return (
           <>
-            <CheckCircle2 />
+            <IdentityGlyph name="success" />
             Verified
           </>
         );
       case 'FAILED':
         return (
           <>
-            <AlertCircle />
+            <IdentityGlyph name="error" />
             Retry Verification
           </>
         );
       default:
         return (
           <>
-            <Shield />
+            <IdentityGlyph name="shield" />
             Verify with Worldcoin
           </>
         );
@@ -266,28 +266,28 @@ export function WorldcoinVerifyButton({
       case 'IN_PROGRESS':
         return (
           <>
-            <Loader2 className="animate-spin" />
+            <IdentityGlyph name="loading" />
             Verifying...
           </>
         );
       case 'SUCCESS':
         return (
           <>
-            <CheckCircle2 />
+            <IdentityGlyph name="success" />
             Verified
           </>
         );
       case 'FAILED':
         return (
           <>
-            <AlertCircle />
+            <IdentityGlyph name="error" />
             Retry Verification
           </>
         );
       default:
         return (
           <>
-            <Shield />
+            <IdentityGlyph name="shield" />
             {useMockMode ? 'Mock Verify' : 'Verify with Worldcoin'}
           </>
         );
@@ -302,7 +302,7 @@ export function WorldcoinVerifyButton({
         className={className}
         title="Worldcoin verification is not configured"
       >
-        <Shield />
+        <IdentityGlyph name="shield" />
         Verify with Worldcoin (Unavailable)
       </Button>
     );
@@ -314,7 +314,7 @@ export function WorldcoinVerifyButton({
     if (rpContextError) {
       return (
         <Button disabled variant="outline" className={className} title={rpContextError}>
-          <Shield />
+          <IdentityGlyph name="shield" />
           Verify with Worldcoin (Unavailable)
         </Button>
       );
@@ -323,7 +323,7 @@ export function WorldcoinVerifyButton({
     if (!rpContext) {
       return (
         <Button disabled variant="outline" className={className}>
-          <Loader2 className="animate-spin" />
+          <IdentityGlyph name="loading" />
           Preparing verification...
         </Button>
       );

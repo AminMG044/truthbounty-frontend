@@ -6,11 +6,10 @@
  * Accessible loading indicator with reduced-motion support.
  */
 
-import { useReducedMotion } from '@/hooks/useReducedMotion';
-
 export function ClaimDetailSkeleton() {
-  const prefersReducedMotion = useReducedMotion();
-  const pulseClass = prefersReducedMotion ? '' : 'animate-pulse';
+  // Tailwind's motion-safe variant keeps the initial render and hydration
+  // deterministic while allowing the browser to disable animation directly.
+  const pulseClass = 'motion-safe:animate-pulse';
 
   return (
     <div

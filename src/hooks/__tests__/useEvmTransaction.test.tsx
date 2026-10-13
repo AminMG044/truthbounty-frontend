@@ -263,17 +263,25 @@ describe('useEvmTransaction — identity change invalidation (V2-FE-046)', () =>
   const OTHER_ADDRESS = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' as const;
 
   it('discards an unsigned intent when the account changes mid-signature', async () => {
+    const writeContractAsync = jest.fn(
+      () => new Promise<`0x${string}`>(() => undefined),
+    );
+    mockedUseWriteContract.mockReturnValue({ writeContractAsync } as any);
     const { result, rerender } = renderHook(() =>
       useEvmTransaction({ expectedChainId: MOCK_CHAIN_ID }),
     );
 
     act(() => {
-      result.current.send({ type: 'PREPARE', chainId: MOCK_CHAIN_ID });
+      void result.current.writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: TEST_ABI,
+        functionName: 'finalizeClaim',
+        args: ['0x' + '11'.repeat(32), 'resolved'],
+      });
     });
-    act(() => {
-      result.current.send({ type: 'REQUEST_SIGNATURE' });
-    });
-    expect(result.current.state.status).toBe('signature-requested');
+    await waitFor(() =>
+      expect(result.current.state.status).toBe('signature-requested'),
+    );
 
     mockedUseAccount.mockReturnValue({ address: OTHER_ADDRESS, isConnected: true } as never);
     rerender();

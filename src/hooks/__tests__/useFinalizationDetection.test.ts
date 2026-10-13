@@ -44,7 +44,7 @@ describe('useFinalizationDetection', () => {
       expect(result.current.requirements).toBeDefined();
     });
 
-    it('should provide finalization requirements', async () => {
+    it('fails closed while finalization requirement adapters are unavailable', async () => {
       (wagmi.useAccount as jest.Mock).mockReturnValue({
         address: mockUserAddress,
         isConnected: true,
@@ -62,10 +62,10 @@ describe('useFinalizationDetection', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      expect(result.current.requirements?.claimId).toBe('claim-123');
-      expect(result.current.requirements?.allSettlementsCompleted).toBeDefined();
-      expect(result.current.requirements?.noActiveAppeals).toBeDefined();
-      expect(result.current.requirements?.finalizationWindowOpen).toBeDefined();
+      expect(result.current.validation?.isValid).toBe(true);
+      expect(result.current.requirements).toBeNull();
+      expect(result.current.finalizationAction).toBeNull();
+      expect(result.current.error).toMatch(/not implemented/i);
     });
   });
 

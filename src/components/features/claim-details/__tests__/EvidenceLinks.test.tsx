@@ -63,8 +63,8 @@ describe('EvidenceLinks', () => {
       />
     );
 
-    const blocked = screen.getByRole('img');
-    expect(blocked).toHaveTextContent('Invalid URI');
+    const blocked = screen.getByRole('note', { name: /blocked for security/i });
+    expect(blocked).toHaveTextContent(/blocked/i);
     expect(screen.queryByRole('link', { name: /view/i })).not.toBeInTheDocument();
   });
 
@@ -82,7 +82,7 @@ describe('EvidenceLinks', () => {
       />
     );
 
-    expect(screen.getByRole('img')).toHaveTextContent('Invalid URI');
+    expect(screen.getByRole('note', { name: /blocked for security/i })).toHaveTextContent(/blocked/i);
     expect(screen.queryByRole('link', { name: /view/i })).not.toBeInTheDocument();
   });
 
@@ -100,7 +100,7 @@ describe('EvidenceLinks', () => {
       />
     );
 
-    expect(screen.getByRole('img')).toHaveTextContent('Invalid URI');
+    expect(screen.getByRole('note', { name: /blocked for security/i })).toHaveTextContent(/blocked/i);
     expect(screen.queryByRole('link', { name: /view/i })).not.toBeInTheDocument();
   });
 
@@ -118,7 +118,7 @@ describe('EvidenceLinks', () => {
       />
     );
 
-    expect(screen.getByRole('img')).toHaveTextContent('Invalid URI');
+    expect(screen.getByRole('note', { name: /blocked for security/i })).toHaveTextContent(/blocked/i);
     expect(screen.queryByRole('link', { name: /view/i })).not.toBeInTheDocument();
   });
 

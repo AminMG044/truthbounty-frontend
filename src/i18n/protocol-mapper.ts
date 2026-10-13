@@ -29,6 +29,7 @@ export const TRANSACTION_ERROR_KEY_MAP: Record<
   REVERT: 'transaction.errors.REVERT',
   DROPPED: 'transaction.errors.DROPPED',
   REPLACED: 'transaction.errors.REPLACED',
+  REORGED: 'transaction.errors.REORGED',
   STALE_RECEIPT: 'transaction.errors.STALE_RECEIPT',
   INVALID_TRANSITION: 'transaction.errors.INVALID_TRANSITION',
   INVALID_PERSISTED_STATE: 'transaction.errors.INVALID_PERSISTED_STATE',
@@ -51,6 +52,7 @@ export const TRANSACTION_STATE_KEY_MAP: Record<TransactionStatus, string> = {
   dropped: 'transaction.states.dropped',
   replaced: 'transaction.states.replaced',
   reverted: 'transaction.states.reverted',
+  reorged: 'transaction.states.reorged',
 };
 
 /**
@@ -68,6 +70,7 @@ export const TRANSACTION_STATE_DESCRIPTION_MAP: Record<TransactionStatus, string
   dropped: 'transaction.stateDescriptions.dropped',
   replaced: 'transaction.stateDescriptions.replaced',
   reverted: 'transaction.stateDescriptions.reverted',
+  reorged: 'transaction.stateDescriptions.reorged',
 };
 
 /**

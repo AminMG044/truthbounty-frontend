@@ -125,8 +125,7 @@ describe('Verification Flow Integration Tests', () => {
       // Check for loading state. The protocol boundary also surfaces a
       // "lifecycle pending" line, so target the transaction status region.
       const pendingStatus = await screen.findByText(/transaction pending/i);
-      expect(pendingStatus).toHaveAttribute('role', 'status');
-      expect(pendingStatus).toHaveAttribute('aria-live', 'polite');
+      expect(pendingStatus.closest('[role="status"]')).toHaveAttribute('aria-live', 'polite');
     })
   })
 
@@ -224,7 +223,7 @@ describe('Verification Flow Integration Tests', () => {
         { queryClient }
       )
 
-      expect(screen.getByText('https://example.com')).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: /evidence link 1/i })).toHaveTextContent('example.com/')
       expect(screen.getByText('Some text evidence')).toBeInTheDocument()
     })
 

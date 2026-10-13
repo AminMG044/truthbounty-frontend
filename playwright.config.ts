@@ -11,7 +11,7 @@ export default defineConfig({
     ...(needsChromeChannel() ? { channel: 'chrome' } : {}),
   },
   webServer: {
-    command: 'pnpm start',
+    command: 'npm run start -- --hostname 127.0.0.1',
     port: 3000,
     reuseExistingServer: true,
     timeout: 60000,

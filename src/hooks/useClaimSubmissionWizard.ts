@@ -149,6 +149,7 @@ export function useClaimSubmissionWizard(): [WizardState, WizardActions] {
   const chainId = useChainId();
   const previousAddressRef = useRef<Address | undefined>(address);
   const previousChainIdRef = useRef<number | undefined>(chainId);
+  const skipNextPersistRef = useRef(false);
 
   // Load initial state from session storage
   const [state, setState] = useState<WizardState>(() => {
@@ -183,6 +184,10 @@ export function useClaimSubmissionWizard(): [WizardState, WizardActions] {
 
   // Persist state to session storage on changes
   useEffect(() => {
+    if (skipNextPersistRef.current) {
+      skipNextPersistRef.current = false;
+      return;
+    }
     if (state.currentStep !== 'confirmation') {
       saveWizardState(state.claimDetails, state.evidence);
     }
@@ -236,6 +241,7 @@ export function useClaimSubmissionWizard(): [WizardState, WizardActions] {
     }, []),
 
     reset: useCallback(() => {
+      skipNextPersistRef.current = true;
       clearWizardState();
       setState({
         currentStep: 'claim-details',

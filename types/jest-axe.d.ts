@@ -25,7 +25,17 @@ declare module 'jest-axe' {
     element: Element,
   ) => Promise<AxeResults>;
 
-  export function axe(element: Element): Promise<AxeResults>;
+  export function axe(
+    element: Element,
+    options?: Record<string, unknown>,
+  ): Promise<AxeResults>;
+
+  export const toHaveNoViolations: {
+    toHaveNoViolations(received: AxeResults): {
+      pass: boolean;
+      message(): string;
+    };
+  };
 }
 
 declare module 'jest-axe/extend-expect' {
@@ -33,7 +43,7 @@ declare module 'jest-axe/extend-expect' {
   export {};
 }
 
-declare namespace jest {
+declare module '@jest/expect' {
   interface Matchers<R> {
     toHaveNoViolations(): R;
   }

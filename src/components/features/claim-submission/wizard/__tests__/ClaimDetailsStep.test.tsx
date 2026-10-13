@@ -7,6 +7,7 @@
 import { describe, it, expect, jest } from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import ClaimDetailsStep from '../ClaimDetailsStep';
 import type { ClaimFormData, ClaimFormErrors } from '@/lib/claim-submission/validation';
 
@@ -266,12 +267,25 @@ describe('ClaimDetailsStep', () => {
 
   it('accepts valid HTTPS URL in source field', async () => {
     const onChange = jest.fn();
-    render(<ClaimDetailsStep {...defaultProps} onChange={onChange} />);
+    function ControlledStep() {
+      const [formData, setFormData] = useState(defaultProps.data);
+      return (
+        <ClaimDetailsStep
+          {...defaultProps}
+          data={formData}
+          onChange={(field, value) => {
+            onChange(field, value);
+            setFormData((current) => ({ ...current, [field]: value }));
+          }}
+        />
+      );
+    }
+    render(<ControlledStep />);
 
     const sourceInput = screen.getByLabelText(/source url/i);
     await userEvent.type(sourceInput, 'https://example.com/evidence');
 
-    expect(onChange).toHaveBeenCalledWith('source', expect.stringContaining('https://'));
+    expect(onChange).toHaveBeenLastCalledWith('source', 'https://example.com/evidence');
   });
 
   it('shows placeholder text for inputs', () => {

@@ -13,6 +13,15 @@ jest.mock('@/components/hooks/useTrust', () => ({
   }),
 }));
 
+jest.mock('@/hooks/useClaimDetailProjection', () => ({
+  useClaimDetailProjection: () => ({
+    data: null,
+    viewState: 'idle',
+    errorCode: null,
+    refetch: jest.fn(),
+  }),
+}));
+
 jest.mock('@/components/ui/TrustScoreTooltip', () => {
   function MockTrustScoreTooltip() {
     return <span data-testid="tooltip">tooltip</span>;

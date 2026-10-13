@@ -20,25 +20,6 @@ export default function ClaimDetailPage() {
 
   const [stakeAmount, setStakeAmount] = useState(0);
   const [claimNotFound, setClaimNotFound] = useState(false);
-  const [claim, setClaim] = useState<Claim | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (params.id) {
-      setIsLoading(true);
-      getClaimById(params.id)
-        .then((data) => {
-          setClaim(data);
-          setIsLoading(false);
-        })
-        .catch((err) => {
-          if (err.message === 'CLAIM_NOT_FOUND') {
-            setClaimNotFound(true);
-          }
-          setIsLoading(false);
-        });
-    }
-  }, [params.id]);
 
   const handleStakeChange = (stake: string) => {
     const value = parseFloat(stake) || 0;

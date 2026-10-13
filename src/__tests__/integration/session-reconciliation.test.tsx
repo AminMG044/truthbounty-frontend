@@ -18,6 +18,7 @@ import { act, render, waitFor } from '@testing-library/react';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { queryClient } from '@/app/queries/queryClient';
 import { clearAuthSession, getAuthSession, setAuthSession } from '@/lib/session-store';
+import { useAccount, useChainId } from 'wagmi';
 
 const ADDRESS_A = '0x1111111111111111111111111111111111111111';
 const ADDRESS_B = '0x2222222222222222222222222222222222222222';
@@ -86,17 +87,18 @@ const wagmiState = {
   reconnect: jest.fn(),
 };
 
-jest.mock('wagmi', () => ({
-  useAccount: () => ({
+const mockedUseAccount = useAccount as jest.MockedFunction<typeof useAccount>;
+const mockedUseChainId = useChainId as jest.MockedFunction<typeof useChainId>;
+
+function installWalletMocks() {
+  mockedUseAccount.mockImplementation(() => ({
     address: wagmiState.address,
     isConnected: wagmiState.isConnected,
     isDisconnected: wagmiState.isDisconnected,
     status: wagmiState.status,
-  }),
-  useChainId: () => wagmiState.chainId,
-  useDisconnect: () => ({ disconnect: wagmiState.disconnect }),
-  useReconnect: () => ({ reconnect: wagmiState.reconnect }),
-}));
+  }) as ReturnType<typeof useAccount>);
+  mockedUseChainId.mockImplementation(() => wagmiState.chainId);
+}
 
 function setConnected(address: string, chainId: number) {
   wagmiState.address = address;
@@ -117,6 +119,7 @@ function setDisconnected() {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  installWalletMocks();
   clearAuthSession();
   queryClient.clear();
   FakeWebSocket.instances = [];

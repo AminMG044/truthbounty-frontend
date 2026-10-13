@@ -438,9 +438,9 @@ describe('Utility Functions', () => {
       expect(remaining).toBeNull();
     });
 
-    it('returns 0 for zero bytes', () => {
+    it('returns null when the upload is already complete at zero bytes', () => {
       const remaining = estimateRemainingTime(0, 0, 1024);
-      expect(remaining).toBe(0);
+      expect(remaining).toBeNull();
     });
   });
 

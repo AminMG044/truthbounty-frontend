@@ -361,7 +361,8 @@ export function generateReorgNotification(
   chainId: number,
 ): ReorgNotificationContent {
   const plausibility = assessReorgPlausibility(confirmations, chainId);
-  const severity = plausibility === 'anomalous' ? 'error' : 'warning';
+  let severity: ReorgNotificationContent['severity'] =
+    plausibility === 'anomalous' ? 'error' : 'warning';
 
   let title = 'Chain Reorganization Detected';
   let description =
@@ -372,7 +373,7 @@ export function generateReorgNotification(
   // Customize based on detection method
   if (method === 'websocket-rollback' || method === 'websocket-replacement') {
     description =
-      'The blockchain reorganized, and this transaction was affected. The network detected and notified us immediately.';
+      'A blockchain reorganization affected this transaction. The network detected and notified us immediately.';
   } else if (method === 'rpc-receipt-missing') {
     description =
       'This transaction is no longer found in the blockchain. It may have been replaced or reorged out.';

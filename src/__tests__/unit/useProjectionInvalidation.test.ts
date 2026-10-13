@@ -32,7 +32,7 @@ async function captureInvalidations(
   const origInvalidate = qc.invalidateQueries.bind(qc);
   jest
     .spyOn(qc, 'invalidateQueries')
-    .mockImplementation(async (filters: { queryKey?: unknown } = {}) => {
+    .mockImplementation(async (filters = {}) => {
       if (Array.isArray(filters.queryKey)) {
         invalidated.push(filters.queryKey as string[]);
       }

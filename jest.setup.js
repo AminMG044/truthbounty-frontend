@@ -116,19 +116,19 @@ global.TextDecoder = TextDecoder;
 
 // Mock Wagmi
 jest.mock('wagmi', () => ({
-  useAccount: () => ({
-    address: '0x742d35Cc6634C0532925a3b844Bc9e7595f0eB1E',
+  useAccount: jest.fn(() => ({
+    address: '0x1111111111111111111111111111111111111111',
     isConnected: true,
     isConnecting: false,
     isDisconnected: false,
     chainId: 10,
     status: 'connected',
-  }),
+  })),
   useDisconnect: () => ({
     disconnect: jest.fn(),
     disconnectAsync: jest.fn().mockResolvedValue(undefined),
   }),
-  useChainId: () => 10,
+  useChainId: jest.fn(() => 10),
   useSwitchChain: () => ({
     switchChain: jest.fn(),
   }),
@@ -137,10 +137,14 @@ jest.mock('wagmi', () => ({
   useBlockNumber: jest.fn(() => ({ data: 100n })),
   useReadContract: jest.fn(() => ({ data: undefined, isLoading: false })),
   useWriteContract: jest.fn(() => ({ writeContractAsync: jest.fn().mockResolvedValue('0x' + '1'.repeat(64)) })),
+  useSignMessage: jest.fn(() => ({
+    signMessageAsync: jest.fn().mockResolvedValue('0x' + '1'.repeat(130)),
+  })),
   useWaitForTransactionReceipt: jest.fn(() => ({ data: null, isLoading: false })),
   useBalance: jest.fn(() => ({ data: { value: 1000000000000000000n, formatted: '1.0' }, isLoading: false })),
   useConnectors: () => [{ id: 'injected', name: 'Injected', type: 'injected' }],
   useConnect: () => ({ connect: jest.fn(), connectAsync: jest.fn().mockResolvedValue(undefined) }),
+  useReconnect: () => ({ reconnect: jest.fn() }),
   WagmiProvider: ({ children }) => children,
   createStorage: jest.fn(() => ({})),
   cookieStorage: {},

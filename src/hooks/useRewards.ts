@@ -99,7 +99,7 @@ export function useRewards(): UseRewardsResult {
     status,
     lastTxHash: claim.txHash,
     receiptProjection: claim.projection,
-    errorMessage: claim.failure?.reason ?? null,
+    errorMessage: claim.failure?.reason ?? entitlements.error,
     isLoading: entitlements.isLoading,
     loadError: entitlements.error,
     isUnsupported: entitlements.isUnsupported || claim.isUnsupported,

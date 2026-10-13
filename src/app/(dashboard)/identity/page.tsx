@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { WorldcoinVerificationPanel } from '@/components/features/worldcoin';
-import { SiweSessionPanel } from '@/components/auth';
+import { WorldcoinVerificationPanel } from '@/components/features/worldcoin/WorldcoinVerificationPanel';
+import { IdentityGlyph } from '@/components/features/worldcoin/IdentityGlyph';
+import { SiweSessionPanel } from '@/components/auth/SiweSessionPanel';
 import { useAccount } from '@/hooks/useAccount';
-import { Info } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
 
 export default function IdentityPage() {
@@ -28,7 +28,7 @@ export default function IdentityPage() {
         {/* Info Banner */}
         <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <Info className="size-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+            <IdentityGlyph name="info" className="size-5 text-blue-600 dark:text-blue-400 mt-0.5" />
             <div className="text-sm text-blue-900 dark:text-blue-100">
               <p className="font-medium mb-1">Why verify with Worldcoin?</p>
               <p className="text-blue-700 dark:text-blue-300">

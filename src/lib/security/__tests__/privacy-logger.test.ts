@@ -134,8 +134,9 @@ describe('logEvidenceEvent', () => {
     expect(loggedData.id).toMatch(/^ev_[0-9a-f]{8}$/);
     expect(loggedData.id).not.toBe('evidence-123');
 
-    // Display value should be truncated
-    expect(loggedData.displayValue).toContain('example.com');
+    // Telemetry retains no source hostname, filename, path, or query metadata.
+    expect(loggedData.displayValue).toBe('[external evidence]');
+    expect(loggedData.displayValue).not.toContain('example.com');
     expect(loggedData.displayValue).not.toContain('secret');
     expect(loggedData.displayValue).not.toContain('token');
 
@@ -223,11 +224,11 @@ describe('assertNoUnredactedEvidence', () => {
   const originalEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
-    process.env.NODE_ENV = 'development';
+    (process.env as Record<string, string | undefined>).NODE_ENV = 'development';
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = originalEnv;
+    (process.env as Record<string, string | undefined>).NODE_ENV = originalEnv;
   });
 
   it('throws in development when evidence metadata detected', () => {
@@ -252,7 +253,7 @@ describe('assertNoUnredactedEvidence', () => {
   });
 
   it('does not throw in production even with evidence metadata', () => {
-    process.env.NODE_ENV = 'production';
+    (process.env as Record<string, string | undefined>).NODE_ENV = 'production';
 
     const data = {
       evidenceUrl: 'https://example.com/secret.pdf',

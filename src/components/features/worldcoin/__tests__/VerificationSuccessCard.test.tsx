@@ -32,10 +32,10 @@ describe('VerificationSuccessCard', () => {
       />
     );
 
-    expect(labelledValue(/Verified:/)).toHaveTextContent('Jan 01, 2026');
-    expect(labelledValue(/Verified:/)).toHaveTextContent('12:00:00 UTC');
-    expect(labelledValue(/Valid until:/)).toHaveTextContent('Jan 01, 2027');
-    expect(labelledValue(/Valid until:/)).toHaveTextContent('12:00:00 UTC');
+    expect(labelledValue(/Verified:/)).toHaveTextContent('Jan 1, 2026');
+    expect(labelledValue(/Verified:/)).toHaveTextContent('12:00:00 PM UTC');
+    expect(labelledValue(/Valid until:/)).toHaveTextContent('Jan 1, 2027');
+    expect(labelledValue(/Valid until:/)).toHaveTextContent('12:00:00 PM UTC');
   });
 
   it('degrades to a visible placeholder for unparseable timestamps instead of throwing', () => {

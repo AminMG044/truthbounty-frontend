@@ -33,6 +33,8 @@ const HEX_64_PLUS_RE = /\b0x[a-fA-F0-9]{64,}\b/g;
 const BEARER_TOKEN_RE = /(?:^|\s)Bearer\s+[A-Za-z0-9\-._~+/]+=*/gi;
 const SENSITIVE_CONTEXT_HEX_RE =
   /((?:(?:private|secret)[_\s-]*key|secret|password|credential|token|api[_\s-]*key)\s*(?:is|[:=])?\s*)(0x[a-fA-F0-9]{64,})\b/gi;
+const SENSITIVE_CONTEXT_VALUE_RE =
+  /((?:(?:private|secret)[_\s-]*key|secret|password|credential|token|api[_\s-]*key)\s*(?:is|[:=])\s*)([^\s,;]+)/gi;
 
 function normalizeKey(key: string): string {
   return key.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -61,6 +63,9 @@ function isLong0xHexString(value: string, minCharsAfter0x = 64): boolean {
 
 function redactStringValue(str: string): string {
   let result = str;
+  result = result.replace(SENSITIVE_CONTEXT_VALUE_RE, (_match, prefix) => {
+    return `${prefix}${REDACTED}`;
+  });
   result = result.replace(SENSITIVE_CONTEXT_HEX_RE, (_match, prefix) => {
     return `${prefix}${REDACTED}`;
   });
@@ -220,6 +225,9 @@ export function redactError(error: unknown): {
 
   const sanitize = (s: string): string => {
     let out = s;
+    out = out.replace(SENSITIVE_CONTEXT_VALUE_RE, (_match, prefix) => {
+      return `${prefix}${REDACTED}`;
+    });
     out = out.replace(SENSITIVE_CONTEXT_HEX_RE, (_match, prefix) => {
       return `${prefix}${REDACTED}`;
     });

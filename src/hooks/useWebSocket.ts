@@ -368,7 +368,7 @@ export function useWebSocket(config?: WebSocketConfig) {
       setConnectionState('error');
       setError(err as Error);
     }
-  }, [url, reconnectAttempts, heartbeatInterval, getBackoffDelay, clearAllTimers, onConnect, onDisconnect, onError, processMessage, fetchCatchupMessages]);
+  }, [url, authToken, config?.sessionScope, reconnectAttempts, heartbeatInterval, getBackoffDelay, clearAllTimers, onConnect, onDisconnect, onError, processMessage, fetchCatchupMessages]);
 
   useEffect(() => {
     connectRef.current = connect;

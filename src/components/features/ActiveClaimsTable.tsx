@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- horizontal table region must be keyboard-scrollable */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ActiveClaimsTableSkeleton } from "@/components/skeletons";
@@ -146,16 +147,16 @@ const ActiveClaimsTable = ({ isLoading = false }: ActiveClaimsTableProps) => {
             </button>
           ))}
         </div>
-        <div className="flex gap-2">
+        <div className="flex w-full gap-2 sm:w-auto">
           <label className="sr-only" htmlFor="claims-search">Search claims</label>
-          <div className="relative">
+          <div className="relative min-w-0 flex-1">
             <input
               id="claims-search"
               ref={searchInputRef}
               type="search"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="bg-[#232329] text-white px-2 py-1 pr-7 rounded text-xs"
+              className="w-full bg-[#232329] text-white px-2 py-1 pr-7 rounded text-xs sm:w-auto"
               placeholder="Search claims..."
               aria-label="Search claims"
             />
@@ -217,8 +218,13 @@ const ActiveClaimsTable = ({ isLoading = false }: ActiveClaimsTableProps) => {
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left" aria-label="Active claims">
+      <div
+        className="overflow-x-auto"
+        role="region"
+        aria-label="Active claims table"
+        tabIndex={0}
+      >
+        <table className="w-full min-w-[640px] text-sm text-left" aria-label="Active claims">
           <thead>
             <tr className="text-[#a1a1aa] border-b border-[#232329]">
               <th scope="col" className="py-2">Claim</th>

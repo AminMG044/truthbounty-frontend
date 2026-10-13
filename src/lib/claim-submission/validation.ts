@@ -20,7 +20,7 @@ import { isAddress, isHex } from 'viem';
 // ---------------------------------------------------------------------------
 
 export type ValidationResult = 
-  | { valid: true }
+  | { valid: true; error?: never }
   | { valid: false; error: string };
 
 export interface ClaimFormData {
@@ -543,7 +543,7 @@ export function validateAllowance(
 /**
  * Validate content digest format (32 bytes hex).
  */
-export function validateContentDigest(digest: Hex): ValidationResult {
+export function validateContentDigest(digest: string): ValidationResult {
   if (!isHex(digest)) {
     return { valid: false, error: 'Content digest must be hex string' };
   }

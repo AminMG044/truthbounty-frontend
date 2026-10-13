@@ -49,7 +49,7 @@ let queryClient: QueryClient;
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider config={testConfig}>
+    <WagmiProvider config={testConfig} reconnectOnMount={false}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
@@ -77,9 +77,9 @@ function getFirstConnector() {
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('useWallet — lifecycle states', () => {
-  it('starts in the disconnected state', () => {
+  it('starts in the disconnected state', async () => {
     const { result } = renderHook(() => useWallet(), { wrapper: Wrapper });
-    expect(result.current.state).toBe('disconnected');
+    await waitFor(() => expect(result.current.state).toBe('disconnected'));
     expect(result.current.isConnected).toBe(false);
     expect(result.current.address).toBeUndefined();
     expect(result.current.connectorError).toBeNull();
@@ -223,6 +223,8 @@ describe('useWallet — connector preference persistence', () => {
 
     const { result } = renderHook(() => useWallet(), { wrapper: Wrapper });
 
+    await waitFor(() => expect(result.current.state).toBe('disconnected'));
+
     act(() => {
       result.current.reconnect();
     });
@@ -231,8 +233,10 @@ describe('useWallet — connector preference persistence', () => {
     expect(result.current.address).toMatch(/^0x/);
   });
 
-  it('reconnect() is a no-op when no preference is stored', () => {
+  it('reconnect() is a no-op when no preference is stored', async () => {
     const { result } = renderHook(() => useWallet(), { wrapper: Wrapper });
+
+    await waitFor(() => expect(result.current.state).toBe('disconnected'));
 
     act(() => {
       result.current.reconnect();

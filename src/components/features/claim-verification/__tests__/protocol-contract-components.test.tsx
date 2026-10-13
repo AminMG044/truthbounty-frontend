@@ -104,7 +104,7 @@ describe('StakeForm boundary conditions', () => {
     };
     getTokenBalance.mockResolvedValueOnce(5);
     render(<StakeForm claimId="claim-1" />);
-    await screen.findByText(/balance: 5 tbnt/i);
+    await screen.findByLabelText(/5 tbnt tokens/i);
     fireEvent.change(screen.getByLabelText(/stake amount/i), {
       target: { value: '50' },
     });

@@ -377,7 +377,7 @@ function DroppedStatus({
   onRetry,
   className,
 }: {
-  txHash: `0x${string}`;
+  txHash: `0x${string}` | null;
   chainId: number;
   onRetry?: () => void;
   className?: string;
@@ -400,14 +400,16 @@ function DroppedStatus({
             Retry Transaction
           </button>
         )}
-        <a
-          href={getTransactionExplorerUrl(txHash, chainId)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-slate-500 hover:underline"
-        >
-          View details
-        </a>
+        {txHash && (
+          <a
+            href={getTransactionExplorerUrl(txHash, chainId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-slate-500 hover:underline"
+          >
+            View details
+          </a>
+        )}
       </div>
     </div>
   );

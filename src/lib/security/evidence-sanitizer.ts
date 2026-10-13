@@ -98,7 +98,7 @@ export function safeUrl(rawUrl: unknown): SafeUrlCheck {
   // Strip characters that can confuse URL parsers or hide schemes from
   // reviewers: control chars, whitespace inside the scheme, and bidi overrides.
   const cleaned = rawUrl
-    .replace(/[\u0000-\u0020\u007f-\u009f]/g, '')
+    .replace(/[\u0000-\u001f\u007f-\u009f]/g, '')
     .replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '')
     .trim();
 
@@ -333,9 +333,15 @@ export function sanitizeEvidenceItem(
     if (!check.ok) {
       return block('This evidence link was blocked for security reasons.');
     }
+    const href = check.url.protocol === 'ipfs:'
+      ? ipfsToHttp(check.href, 'https://dweb.link')
+      : check.href;
+    if (!href) {
+      return block('This evidence link was blocked for security reasons.');
+    }
     return {
       kind: 'link',
-      href: check.href,
+      href,
       rel: SAFE_EXTERNAL_REL,
       text: sanitizeText(value, 512),
     };

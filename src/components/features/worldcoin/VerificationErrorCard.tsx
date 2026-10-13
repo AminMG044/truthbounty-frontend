@@ -1,7 +1,7 @@
 'use client';
 
-import { XCircle, AlertTriangle, RefreshCw, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { IdentityGlyph, type IdentityGlyphName } from './IdentityGlyph';
 
 interface VerificationErrorCardProps {
   error: string;
@@ -23,7 +23,7 @@ export function VerificationErrorCard({
       return {
         title: 'Already Verified',
         message: 'This Worldcoin identity has already been used to verify another account.',
-        icon: AlertTriangle,
+        icon: 'warning',
         canRetry: false,
       };
     }
@@ -32,7 +32,7 @@ export function VerificationErrorCard({
       return {
         title: 'Verification Cancelled',
         message: 'You cancelled the verification process. You can try again when ready.',
-        icon: XCircle,
+        icon: 'error',
         canRetry: true,
       };
     }
@@ -41,7 +41,7 @@ export function VerificationErrorCard({
       return {
         title: 'Connection Error',
         message: 'Unable to connect to Worldcoin services. Please check your internet connection.',
-        icon: AlertTriangle,
+        icon: 'warning',
         canRetry: true,
       };
     }
@@ -49,20 +49,19 @@ export function VerificationErrorCard({
     return {
       title: 'Verification Failed',
       message: error || 'An unexpected error occurred during verification. Please try again.',
-      icon: XCircle,
+      icon: 'error',
       canRetry: true,
     };
   };
 
   const details = getErrorDetails();
-  const Icon = details.icon;
 
   return (
     <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
           <div className="size-12 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
-            <Icon className="size-6 text-red-600 dark:text-red-400" />
+            <IdentityGlyph name={details.icon as IdentityGlyphName} className="size-6 text-red-600 dark:text-red-400" />
           </div>
         </div>
         
@@ -90,7 +89,7 @@ export function VerificationErrorCard({
                 variant="outline"
                 className="border-red-300 dark:border-red-700"
               >
-                <RefreshCw className="size-4" />
+                <IdentityGlyph name="refresh" />
                 Try Again
               </Button>
             )}
@@ -101,7 +100,7 @@ export function VerificationErrorCard({
               variant="ghost"
               className="text-red-700 dark:text-red-300"
             >
-              <HelpCircle className="size-4" />
+              <IdentityGlyph name="help" />
               Get Help
             </Button>
 

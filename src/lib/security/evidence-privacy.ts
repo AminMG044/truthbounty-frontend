@@ -459,8 +459,11 @@ export function redactEvidenceForTelemetry(evidence: {
 
   let displayValue = '[redacted]';
   if (evidence.type === 'link' || evidence.type === 'image' || evidence.type === 'video' || evidence.type === 'document') {
-    const truncated = truncateEvidenceUrl(evidence.value);
-    displayValue = truncated.display;
+    // Telemetry must not retain hostnames, filenames, paths, or CIDs. Those
+    // values can identify sources or reveal protected evidence metadata.
+    displayValue = evidence.value.trim().startsWith('ipfs:')
+      ? '[ipfs evidence]'
+      : '[external evidence]';
   } else if (evidence.type === 'text') {
     // For text evidence, show length only
     displayValue = `[text, ${evidence.value.length} chars]`;

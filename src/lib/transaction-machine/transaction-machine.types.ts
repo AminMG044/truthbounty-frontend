@@ -41,6 +41,7 @@ export type TransactionMachineErrorReason =
   | "REVERT"
   | "DROPPED"
   | "REPLACED"
+  | "REORGED"
   | "STALE_RECEIPT" // receipt chainId does not match expected
   | "INVALID_TRANSITION"
   | "INVALID_PERSISTED_STATE";
@@ -210,8 +211,9 @@ export interface TxStateReorged {
   readonly chainId: number;
   readonly blockNumber: bigint | null;
   readonly confirmations: null;
-  readonly error: "REORG";
+  readonly error: "REORGED";
   readonly replacedBy: null;
+  readonly orphanedBlockHash: `0x${string}` | null;
 }
 
 /** Discriminated union of all 12 transaction states. */
@@ -303,6 +305,7 @@ export interface TxEventRevert {
 /** Previously confirmed transaction was reorged out of the canonical chain. */
 export interface TxEventReorg {
   readonly type: "REORG";
+  readonly orphanedBlockHash?: `0x${string}`;
 }
 
 /** Reset a terminal failure state (dropped, reverted) back to idle for retry. */

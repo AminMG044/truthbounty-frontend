@@ -275,7 +275,7 @@ describe('ClaimDetailView Accessibility', () => {
         />
       );
 
-      const retryButton = screen.getByRole('button', { name: /try again/i });
+      const retryButton = screen.getByRole('button', { name: /retry loading claim details/i });
 
       // Tab to button
       await userEvent.tab();
@@ -326,8 +326,6 @@ describe('ClaimDetailView Accessibility', () => {
 
       const backButton = screen.getByRole('button', { name: /back to claims/i });
 
-      await userEvent.tab();
-      // Focus should be on heading first (from focus management)
       await userEvent.tab();
       expect(backButton).toHaveFocus();
 
@@ -460,9 +458,11 @@ describe('ClaimDetailView Accessibility', () => {
 
       const { container } = render(<ClaimDetailSkeleton />);
 
-      // When prefers-reduced-motion is active, animate-pulse should not be present
-      const pulseElements = container.querySelectorAll('.animate-pulse');
-      expect(pulseElements).toHaveLength(0);
+      // Animation is guarded by the CSS media-query variant, so the browser
+      // disables it without a post-hydration class change.
+      const unsafePulseElements = container.querySelectorAll('.animate-pulse');
+      expect(unsafePulseElements).toHaveLength(0);
+      expect(container.querySelectorAll('.motion-safe\\:animate-pulse').length).toBeGreaterThan(0);
     });
   });
 

@@ -83,5 +83,5 @@ export function parseClaimDetailEnvelope(payload: unknown): ClaimDetailEnvelope 
     );
   }
 
-  return payload as ClaimDetailEnvelope;
+  return payload as unknown as ClaimDetailEnvelope;
 }

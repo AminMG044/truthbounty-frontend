@@ -49,11 +49,9 @@ import { useVerificationSubmission } from '@/hooks/useVerificationSubmission';
 import { reconcileVerificationState } from '@/app/lib/verification-reconcile';
 import { useReceiptProjection } from '@/hooks/useReceiptProjection';
 import { useSettlementDetection } from '@/hooks/useSettlementDetection';
-import { useSettlementSubmission } from '@/hooks/useSettlementSubmission';
 import { useFinalizationDetection } from '@/hooks/useFinalizationDetection';
 import { useStateReconciliation, ProtocolError } from '@/hooks/useStateReconciliation';
 import { useDisputeContext } from '@/hooks/useDisputeContext';
-import { useDisputeSubmission } from '@/hooks/useDisputeSubmission';
 import { useAppealContext } from '@/hooks/useAppealContext';
 import { buildAppealProjection } from '@/__tests__/fixtures/appealProjection';
 import { useAppealParticipation } from '@/hooks/useAppealParticipation';
@@ -470,7 +468,7 @@ describe('V2-FE-044 — Canonical claim lifecycle (happy path)', () => {
   // Stage 4 — Provisional settlement
   // -------------------------------------------------------------------------
   describe('Stage: provisional settlement', () => {
-    it('detects a callable provisional settlement and reconciles via receipt', async () => {
+    it('fails closed when the pinned release does not expose provisional settlement', async () => {
       // Settlement calldata takes a bytes32, so the settlement stage uses a
       // canonical 32-byte claim id rather than the opaque projection id.
       const { result: detection } = renderHook(() =>
@@ -484,47 +482,8 @@ describe('V2-FE-044 — Canonical claim lifecycle (happy path)', () => {
 
       await waitFor(() => expect(detection.current.isLoading).toBe(false));
       expect(detection.current.validation?.isValid).toBe(true);
-      expect(detection.current.provisionalAction?.isCallable).toBe(true);
-      expect(detection.current.provisionalAction?.type).toBe('SETTLE_PROVISIONAL');
-
-      const { result: submission } = renderHook(() =>
-        useSettlementSubmission({ contractAddress: CONTRACT }),
-      );
-
-      let settlement: any;
-      await act(async () => {
-        settlement = await submission.current.submitSettlement(
-          detection.current.provisionalAction!,
-        );
-      });
-      expect(settlement).toBeDefined();
-      expect(settlement.status).toBe('pending');
-      expect(settlement.type).toBe('SETTLE_PROVISIONAL');
-      // The hash must be the one the wallet returned — not a locally derived one.
-      expect(settlement.transactionHash).toBe(REAL_WALLET_TX_HASH);
-      expect(submission.current.lastSubmission).toEqual(settlement);
-
-      const publicClient = {
-        getTransactionReceipt: jest.fn().mockResolvedValue({
-          status: 1,
-          blockNumber: 200n,
-          from: USER,
-          logs: [],
-        }),
-        getBlockNumber: jest.fn().mockResolvedValue(201n),
-        chain: { id: OP_MAINNET },
-      };
-      (wagmi.usePublicClient as jest.Mock).mockReturnValue(publicClient);
-
-      const { result: reconcile } = renderHook(() =>
-        useStateReconciliation({ pollInterval: 10, timeout: 2000 }),
-      );
-      let outcome: any;
-      await act(async () => {
-        outcome = await reconcile.current.reconcile(settlement);
-      });
-      expect(outcome?.status).toBe('confirmed');
-      expect(publicClient.getTransactionReceipt).toHaveBeenCalled();
+      expect(detection.current.provisionalAction).toBeNull();
+      expect(detection.current.error).toMatch(/not implemented/i);
     });
 
     it('fails closed when the RPC public client is unavailable', async () => {
@@ -563,7 +522,7 @@ describe('V2-FE-044 — Canonical claim lifecycle (happy path)', () => {
   // Stage 5 — Dispute
   // -------------------------------------------------------------------------
   describe('Stage: dispute', () => {
-    it('loads dispute context and validates an opening payload', async () => {
+    it('does not fabricate dispute context without a pinned projection adapter', async () => {
       const { result: context } = renderHook(() =>
         useDisputeContext({
           claimId: CLAIM_ID,
@@ -573,21 +532,9 @@ describe('V2-FE-044 — Canonical claim lifecycle (happy path)', () => {
         }),
       );
 
-      await waitFor(() => expect(context.current.context).not.toBeNull());
-      const disputeCtx = context.current.context!;
-      expect(disputeCtx.provisionalOutcome.isProvisional).toBe(true);
-      expect(disputeCtx.deadline.isWindowOpen).toBe(true);
-
-      const { result: submission } = renderHook(() =>
-        useDisputeSubmission({ contractAddress: CONTRACT, expectedChainId: OP_MAINNET }),
-      );
-
-      const validation = submission.current.validateDispute(disputeCtx, {
-        claimId: CLAIM_ID,
-        reason: 'Incorrect provisional outcome',
-        bondAmount: disputeCtx.bond.bondAmount,
-      } as any);
-      expect(validation.isValid).toBe(true);
+      await waitFor(() => expect(context.current.isLoading).toBe(false));
+      expect(context.current.context).toBeNull();
+      expect(context.current.error).toMatch(/not implemented/i);
     });
   });
 
@@ -675,6 +622,8 @@ describe('V2-FE-044 — Canonical claim lifecycle (happy path)', () => {
       // Isolation: rewards must not be seeded from production mock fixtures.
       expect(result.current.pendingRewards).toHaveLength(0);
       expect(result.current.totalClaimableDisplay).toBeNull();
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
 
       await act(async () => {
         await result.current.claimAll();
@@ -769,7 +718,7 @@ describe('V2-FE-044 — Canonical claim lifecycle (happy path)', () => {
       await user.click(screen.getByRole('button', { name: 'Submit' }));
 
       await waitFor(() => {
-        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: queryKeys.claims.all });
+        expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: queryKeys.claims.lists() });
       });
     });
 

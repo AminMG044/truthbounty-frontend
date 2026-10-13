@@ -92,10 +92,10 @@ export function getConfirmationThresholds(
  */
 export function calculateConfirmations(
   txBlockNumber: bigint | null,
-  currentBlockNumber: bigint,
+  currentBlockNumber: bigint | null,
 ): number {
   // Transaction not yet included
-  if (txBlockNumber === null) return 0;
+  if (txBlockNumber === null || currentBlockNumber === null) return 0;
 
   // Stale current block (should not happen with proper RPC, but fail closed)
   if (currentBlockNumber < txBlockNumber) return 0;

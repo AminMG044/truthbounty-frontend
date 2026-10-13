@@ -7,6 +7,7 @@ export type TransactionStatusValue =
   | 'signature-requested'
   | 'submitted'
   | 'confirming'
+  | 'confirmed'
   | 'safe'
   | 'indexing'
   | 'stale'
@@ -47,6 +48,7 @@ const busyStatuses = new Set<TransactionStatusValue>([
   'signature-requested',
   'submitted',
   'confirming',
+  'confirmed',
   'safe',
   'indexing',
   'stale',
@@ -57,8 +59,9 @@ const defaultMessages: Record<TransactionStatusValue, string> = {
   pending: 'Transaction pending...',
   preparing: 'Preparing transaction...',
   'signature-requested': 'Confirm the transaction in your wallet.',
-  submitted: 'Transaction submitted.',
+  submitted: 'Transaction submitted; waiting for confirmation.',
   confirming: 'Transaction confirming...',
+  confirmed: 'Transaction confirmed; waiting for finality.',
   safe: 'Transaction is safe.',
   indexing: 'Transaction confirmed; waiting for indexing.',
   stale: 'Transaction status may be stale.',
@@ -88,6 +91,8 @@ export function TransactionStatus({
       <div
         role="status"
         aria-live="polite"
+        aria-atomic="true"
+        aria-busy="true"
         className="flex items-center space-x-2 text-gray-600 dark:text-gray-300"
       >
         <svg
@@ -114,6 +119,7 @@ export function TransactionStatus({
       <div
         role="alert"
         aria-live="assertive"
+        aria-atomic="true"
         className="flex flex-col space-y-2 text-red-600 dark:text-red-400"
       >
         <p className="text-sm font-medium">{message}</p>
@@ -137,6 +143,7 @@ export function TransactionStatus({
     <div
       role="status"
       aria-live="polite"
+      aria-atomic="true"
       className="flex items-center space-x-2 text-green-600 dark:text-green-400"
     >
       <p className="text-sm font-medium">{message}</p>

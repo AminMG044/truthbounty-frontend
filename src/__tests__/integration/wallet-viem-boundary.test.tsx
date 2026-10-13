@@ -295,8 +295,8 @@ describe('Wallet / Viem boundary — projection invalidation pipeline', () => {
   describe('wrong network — chain mismatch detected before invalidation', () => {
     it('throws a chain-mismatch error so invalidation cannot proceed with wrong-chain data', () => {
       // Simulate: receipt came back from chain 1 (mainnet), expected chain 10 (Optimism).
-      const receiptChainId = 1; // wrong chain
-      const expectedChainId = CHAIN;
+      const receiptChainId: number = 1; // wrong chain
+      const expectedChainId: number = CHAIN;
 
       // The security guard is in useFinalityLevel (async RPC layer).
       // Here we test that deriveFinalityLevel itself is agnostic to chain IDs

@@ -2,6 +2,22 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { EvidenceViewer } from '../EvidenceViewer';
 
+jest.mock('@/hooks/useClaimDetailProjection', () => ({
+  useClaimDetailProjection: () => ({
+    data: {
+      claim: {
+        evidence: [
+          { type: 'link', value: 'https://example.com' },
+          { type: 'text', value: 'Witness testimony text' },
+          { type: 'image', value: 'https://example.com/evidence/img1.png' },
+        ],
+      },
+    },
+    viewState: 'ready',
+    retry: jest.fn(),
+  }),
+}));
+
 describe('EvidenceViewer - accordion aria-expanded', () => {
   it('renders toggle button with aria-expanded=true by default', () => {
     render(<EvidenceViewer claimId="claim-1" />);
@@ -130,7 +146,7 @@ describe('EvidenceViewer - fail-closed unsafe evidence rendering', () => {
       />
     );
 
-    const img = screen.getByAltText('Evidence image') as HTMLImageElement;
+    const img = screen.getByAltText(/Evidence 1/) as HTMLImageElement;
     expect(img.src).toContain('https://example.com/evidence/img1.png');
     expect(img.getAttribute('referrerPolicy')).toBe('no-referrer');
   });

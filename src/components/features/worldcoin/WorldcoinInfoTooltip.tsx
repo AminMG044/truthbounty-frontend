@@ -1,7 +1,7 @@
 'use client';
 
-import { HelpCircle, Shield, Users, Lock, Zap } from 'lucide-react';
 import { useState } from 'react';
+import { IdentityGlyph } from './IdentityGlyph';
 
 export function WorldcoinInfoTooltip() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +14,7 @@ export function WorldcoinInfoTooltip() {
         className="inline-flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
         aria-label="Learn about Worldcoin verification"
       >
-        <HelpCircle className="size-4" />
+        <IdentityGlyph name="help" />
         <span>Why verify?</span>
       </button>
 
@@ -32,7 +32,7 @@ export function WorldcoinInfoTooltip() {
 
             <div className="space-y-2">
               <div className="flex items-start gap-2">
-                <Shield className="size-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                <IdentityGlyph name="shield" className="text-blue-600 dark:text-blue-400 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Sybil Resistance
@@ -44,7 +44,7 @@ export function WorldcoinInfoTooltip() {
               </div>
 
               <div className="flex items-start gap-2">
-                <Users className="size-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                <IdentityGlyph name="users" className="text-green-600 dark:text-green-400 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Higher Trust Score
@@ -56,7 +56,7 @@ export function WorldcoinInfoTooltip() {
               </div>
 
               <div className="flex items-start gap-2">
-                <Zap className="size-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+                <IdentityGlyph name="zap" className="text-purple-600 dark:text-purple-400 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Increased Limits
@@ -68,7 +68,7 @@ export function WorldcoinInfoTooltip() {
               </div>
 
               <div className="flex items-start gap-2">
-                <Lock className="size-4 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
+                <IdentityGlyph name="lock" className="text-orange-600 dark:text-orange-400 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Privacy Preserved

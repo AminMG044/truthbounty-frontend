@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Copy, ExternalLink, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { openTransactionInExplorer } from '@/lib/explorer';
 
 export interface TransactionItemProps {
@@ -154,36 +152,35 @@ export function TransactionItem({
           <code className="text-xs text-slate-500 bg-slate-950 px-2 py-1 rounded font-mono break-all">
             {hash.slice(0, 10)}...{hash.slice(-5)}
           </code>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 hover:bg-slate-700"
+          <button
+            type="button"
+            aria-label="Copy hash"
+            className="inline-flex h-6 w-6 items-center justify-center rounded hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             onClick={() => onCopy?.(hash)}
             title="Copy hash"
           >
-            <Copy className="w-4 h-4 text-slate-400" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 w-6 p-0 hover:bg-slate-700"
+            <span aria-hidden="true" className="text-sm text-slate-400">⧉</span>
+          </button>
+          <button
+            type="button"
+            aria-label="View on explorer"
+            className="inline-flex h-6 w-6 items-center justify-center rounded hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             title="View on explorer"
             onClick={() => openTransactionInExplorer(hash)}
           >
-            <ExternalLink className="w-4 h-4 text-slate-400" />
-          </Button>
+            <span aria-hidden="true" className="text-sm text-slate-400">↗</span>
+          </button>
         </div>
 
         {onRetry && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-6 gap-1 text-xs hover:bg-slate-700 border-slate-600 bg-transparent"
+          <button
+            type="button"
+            className="inline-flex h-6 items-center gap-1 rounded border border-slate-600 bg-transparent px-3 text-xs hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
             onClick={onRetry}
           >
-            <RotateCcw className="w-3 h-3" />
+            <span aria-hidden="true">↻</span>
             Retry
-          </Button>
+          </button>
         )}
       </div>
     </div>

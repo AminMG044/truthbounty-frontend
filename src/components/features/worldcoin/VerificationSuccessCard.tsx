@@ -1,8 +1,8 @@
 'use client';
 
-import { CheckCircle2, Shield, Calendar, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatLocalDateTime, formatUtcDateTime } from '@/app/lib/format';
+import { IdentityGlyph } from './IdentityGlyph';
 
 interface VerificationSuccessCardProps {
   verificationLevel: 'orb' | 'device';
@@ -34,7 +34,7 @@ export function VerificationSuccessCard({
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
           <div className="size-12 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
-            <CheckCircle2 className="size-6 text-green-600 dark:text-green-400" aria-hidden="true" data-testid="decorative-icon" />
+            <IdentityGlyph name="success" className="size-6 text-green-600 dark:text-green-400" data-testid="decorative-icon" />
           </div>
         </div>
         
@@ -50,7 +50,7 @@ export function VerificationSuccessCard({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div className="flex items-center gap-2 text-green-800 dark:text-green-200">
-              <Shield className="size-4" aria-hidden="true" data-testid="decorative-icon" />
+              <IdentityGlyph name="shield" data-testid="decorative-icon" />
               <span>
                 <span className="font-medium">Level:</span>{' '}
                 {verificationLevel === 'orb' ? 'Orb (Highest)' : 'Device'}
@@ -58,7 +58,7 @@ export function VerificationSuccessCard({
             </div>
             
             <div className="flex items-center gap-2 text-green-800 dark:text-green-200">
-              <Calendar className="size-4" aria-hidden="true" data-testid="decorative-icon" />
+              <IdentityGlyph name="calendar" data-testid="decorative-icon" />
               <span>
                 <span className="font-medium">Verified:</span>{' '}
                 {formatVerified(verifiedAt)}
@@ -67,7 +67,7 @@ export function VerificationSuccessCard({
 
             {expiresAt && (
               <div className="flex items-center gap-2 text-green-800 dark:text-green-200 sm:col-span-2">
-                <Award className="size-4" aria-hidden="true" data-testid="decorative-icon" />
+                <IdentityGlyph name="award" data-testid="decorative-icon" />
                 <span>
                   <span className="font-medium">Valid until:</span>{' '}
                   {formatVerified(expiresAt)}

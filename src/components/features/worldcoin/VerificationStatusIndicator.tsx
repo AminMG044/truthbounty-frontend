@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Shield, CheckCircle2, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import type { WorldcoinVerificationStatus } from '@/app/types/worldcoin';
+import { IdentityGlyph, type IdentityGlyphName } from './IdentityGlyph';
 import { cn } from '@/lib/utils';
 import { formatLocalDateTime, formatUtcDateTime } from '@/app/lib/format';
 import { useNow } from '@/components/hooks/useNow';
@@ -33,7 +33,7 @@ export function VerificationStatusIndicator({
     switch (status) {
       case 'SUCCESS':
         return {
-          icon: CheckCircle2,
+          icon: 'success',
           label: verificationLevel === 'orb' ? 'Orb Verified' : 'Device Verified',
           color: 'text-green-600 dark:text-green-400',
           bgColor: 'bg-green-50 dark:bg-green-950/30',
@@ -41,7 +41,7 @@ export function VerificationStatusIndicator({
         };
       case 'IN_PROGRESS':
         return {
-          icon: Clock,
+          icon: 'clock',
           label: 'Verifying...',
           color: 'text-blue-600 dark:text-blue-400',
           bgColor: 'bg-blue-50 dark:bg-blue-950/30',
@@ -49,7 +49,7 @@ export function VerificationStatusIndicator({
         };
       case 'FAILED':
         return {
-          icon: XCircle,
+          icon: 'error',
           label: 'Verification Failed',
           color: 'text-red-600 dark:text-red-400',
           bgColor: 'bg-red-50 dark:bg-red-950/30',
@@ -57,7 +57,7 @@ export function VerificationStatusIndicator({
         };
       case 'EXPIRED':
         return {
-          icon: AlertTriangle,
+          icon: 'warning',
           label: 'Verification Expired',
           color: 'text-orange-600 dark:text-orange-400',
           bgColor: 'bg-orange-50 dark:bg-orange-950/30',
@@ -65,7 +65,7 @@ export function VerificationStatusIndicator({
         };
       default:
         return {
-          icon: Shield,
+          icon: 'shield',
           label: 'Not Verified',
           color: 'text-gray-600 dark:text-gray-400',
           bgColor: 'bg-gray-50 dark:bg-gray-950/30',
@@ -75,7 +75,6 @@ export function VerificationStatusIndicator({
   };
 
   const config = getStatusConfig();
-  const Icon = config.icon;
 
   const deadlineMs = expiresAt ? parseTimestampMs(expiresAt) : null;
   const nowMs = useNow();
@@ -120,7 +119,7 @@ export function VerificationStatusIndicator({
         className
       )}
     >
-      <Icon className={cn('size-4', config.color)} aria-hidden="true" />
+      <IdentityGlyph name={config.icon as IdentityGlyphName} className={cn('size-4', config.color)} />
       {showLabel && (
         <span className={cn('text-sm font-medium', config.color)}>
           {config.label}

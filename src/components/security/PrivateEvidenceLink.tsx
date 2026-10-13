@@ -19,7 +19,7 @@
 
 import React, { useState } from 'react';
 import { truncateEvidenceUrl } from '@/lib/security/evidence-privacy';
-import { safeUrl, SAFE_EXTERNAL_REL } from '@/lib/security/evidence-sanitizer';
+import { ipfsToHttp, safeUrl, SAFE_EXTERNAL_REL } from '@/lib/security/evidence-sanitizer';
 import { privacyError } from '@/lib/security/privacy-logger';
 import { Copy, Check, ExternalLink } from 'lucide-react';
 
@@ -67,7 +67,24 @@ export function PrivateEvidenceLink({
   }
 
   // Truncate for privacy
-  const truncated = truncateEvidenceUrl(href);
+  // Use the canonical serialization returned by the security boundary. This
+  // prevents raw whitespace or control characters from reaching the DOM even
+  // when the original input was parseable.
+  const canonicalHref = check.url.protocol === 'ipfs:'
+    ? ipfsToHttp(check.href, 'https://dweb.link')
+    : check.href;
+  if (!canonicalHref) {
+    return (
+      <span
+        className={`text-gray-500 italic text-xs ${className}`}
+        role="note"
+        aria-label="Evidence URL blocked for security reasons"
+      >
+        [Blocked: unparseable]
+      </span>
+    );
+  }
+  const truncated = truncateEvidenceUrl(canonicalHref);
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault();

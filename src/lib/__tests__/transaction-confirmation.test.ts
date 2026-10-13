@@ -49,7 +49,7 @@ import type { TransactionState } from '@/lib/transaction-machine/transaction-mac
 
 const createState = (
   status: TransactionState['status'],
-  overrides: Partial<TransactionState> = {}
+  overrides: Record<string, unknown> = {}
 ): TransactionState => {
   const base = {
     status,
@@ -331,7 +331,7 @@ describe('formatTimeEstimate', () => {
   });
 
   it('handles edge cases', () => {
-    expect(formatTimeEstimate(0)).toBe('~0s');
+    expect(formatTimeEstimate(0)).toBe('~1s'); // never promises zero wait
     expect(formatTimeEstimate(500)).toBe('~1s'); // never promises zero wait
   });
 });

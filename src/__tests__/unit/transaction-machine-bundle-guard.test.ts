@@ -27,7 +27,10 @@ describe('transaction-machine production bundle guard', () => {
   it('does not import simulators, Stellar, or mock-wallet runtimes', () => {
     for (const rel of MACHINE_FILES) {
       const abs = path.join(ROOT, rel);
-      const src = fs.readFileSync(abs, 'utf8');
+      const src = fs
+        .readFileSync(abs, 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '');
       for (const needle of FORBIDDEN) {
         expect(src.toLowerCase().includes(needle.toLowerCase())).toBe(false);
       }

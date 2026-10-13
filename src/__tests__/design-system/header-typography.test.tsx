@@ -23,6 +23,7 @@ jest.mock('wagmi', () => ({
   useChainId: () => 11155420,
   useBlockNumber: () => ({ data: BigInt(12345678) }),
   usePublicClient: () => ({}),
+  useWriteContract: () => ({ writeContractAsync: jest.fn() }),
 }));
 
 import { ClaimStats } from '@/components/features/claim-details/ClaimStats';

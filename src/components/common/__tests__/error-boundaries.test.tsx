@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
@@ -91,7 +91,7 @@ describe('ErrorBoundary async states', () => {
     expect(screen.getByText(/retry is safe/i)).toBeInTheDocument();
   });
 
-  it('recovers via retry and via resetKeys', () => {
+  it('recovers via retry and via resetKeys', async () => {
     let shouldThrow = true;
     function Flaky() {
       if (shouldThrow) throw new Error('flaky');
@@ -105,7 +105,7 @@ describe('ErrorBoundary async states', () => {
     expect(screen.getByRole('alert')).toBeInTheDocument();
     shouldThrow = false;
     fireEvent.click(screen.getByRole('button', { name: /try again/i }));
-    expect(screen.getByText('recovered')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('recovered')).toBeInTheDocument());
 
     // resetKeys path
     shouldThrow = true;
@@ -121,7 +121,7 @@ describe('ErrorBoundary async states', () => {
         <Flaky />
       </ErrorBoundary>
     );
-    expect(screen.getByText('recovered')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('recovered')).toBeInTheDocument());
   });
 
   it('preserves pending-transaction recovery state across error + retry', () => {

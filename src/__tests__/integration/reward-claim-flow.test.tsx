@@ -203,7 +203,7 @@ describe('useRewards — entitlement loading states', () => {
     const { useRewards } = await import('@/hooks/useRewards');
     const { result } = renderHook(() => useRewards(), { wrapper: makeWrapper() });
 
-    await waitFor(() => expect(result.current.status).toBe('idle'));
+    await waitFor(() => expect(result.current.status).toBe('loading'));
     // No rewards yet, not error
     expect(result.current.pendingRewards).toHaveLength(0);
 
@@ -218,7 +218,8 @@ describe('useRewards — entitlement loading states', () => {
     const { useRewards } = await import('@/hooks/useRewards');
     const { result } = renderHook(() => useRewards(), { wrapper: makeWrapper() });
 
-    await waitFor(() => expect(result.current.pendingRewards).toHaveLength(0));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.pendingRewards).toHaveLength(0);
     expect(result.current.totalClaimableDisplay).toBeNull();
     expect(result.current.status).toBe('idle');
   });

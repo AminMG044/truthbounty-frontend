@@ -52,7 +52,7 @@ describe('fetchClaimDetailProjection', () => {
         ok: true,
         status: 200,
         json: async () => validEnvelope,
-      } as Response);
+      } as unknown as Response);
 
       const result = await fetchClaimDetailProjection('claim-123');
 
@@ -70,7 +70,7 @@ describe('fetchClaimDetailProjection', () => {
         ok: true,
         status: 200,
         json: async () => validEnvelope,
-      } as Response);
+      } as unknown as Response);
 
       await fetchClaimDetailProjection('  claim-123  ');
 
@@ -197,7 +197,7 @@ describe('fetchClaimDetailProjection', () => {
         json: async () => {
           throw new Error('Not JSON');
         },
-      } as Response);
+      } as unknown as Response);
 
       await expect(fetchClaimDetailProjection('claim-123')).rejects.toMatchObject({
         code: 'PROJECTION_MALFORMED',
