@@ -6,7 +6,8 @@
  * Displays claim title with status badge. All content is sanitized.
  */
 
-import { sanitizeText } from '@/lib/security/evidence-sanitizer';
+import { sanitizeText } from '@/app/lib/sanitize';
+import { SafeBoundary } from '@/components/security/SafeBoundary';
 import type { ClaimDetailProjection } from '@/app/types/claim-detail-projection';
 import type { ClaimStatus } from '@/app/types/claim';
 
@@ -58,6 +59,16 @@ export function ClaimHeader({ claim }: ClaimHeaderProps) {
   // V2-FE-075 — claim title is untrusted content; sanitize before rendering
   const safeTitle = sanitizeText(claim.title, 300);
   const statusConfig = STATUS_CONFIGS[claim.status];
+
+  if (!statusConfig) {
+    return (
+      <SafeBoundary reason="Unknown claim status">
+        <h1 className="min-w-0 flex-1 text-lg font-bold break-words text-white sm:text-xl">
+          {safeTitle}
+        </h1>
+      </SafeBoundary>
+    );
+  }
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#232329] pb-4">

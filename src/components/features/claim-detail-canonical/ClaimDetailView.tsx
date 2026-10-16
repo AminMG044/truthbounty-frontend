@@ -9,6 +9,13 @@
  *
  * This component never fabricates protocol state. All data comes from validated
  * canonical projections.
+ *
+ * All claim content is rendered through the centralized,
+ * versioned sanitizer (ClaimContent), which treats every field as untrusted
+ * input and fails closed on unsupported markup.
+ *
+ * Sanitizer configuration is centralized in `@/app/lib/sanitize` and versioned;
+ * this view never bypasses it or renders raw claim fields directly.
  */
 
 import { useClaimDetailProjection } from '@/hooks/useClaimDetailProjection';

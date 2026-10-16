@@ -1,4 +1,4 @@
-@import "tailwindcss";
+import "tailwindcss";
 /* @import "tw-animate-css"; */
 /* @plugin "tailwindcss-animate"; */
 
@@ -78,7 +78,7 @@ body {
 
 body {
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -moz-os-font-smoothing: grayscale;
 }
 
 * {
@@ -409,7 +409,7 @@ select:focus-visible,
   outline: none;
 }
 
-:focus:not(:focus-visible) {
+.focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -422,7 +422,7 @@ select:focus-visible,
   outline-color: #7c7cf7;
 }
 
-:focus-visible {
+:Focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
@@ -453,7 +453,6 @@ select:focus-visible,
   .animate-pulse,
   .animate-spin,
   .animate-bounce,
-  .animate-ping,
   .animate-fadeIn,
   .animate-shimmer {
     animation: none !important;
@@ -476,123 +475,5 @@ select:focus-visible,
   }
 
   /* Hover-driven transforms (scale/lift) are motion, not comprehension.
-     Disable them so hover feedback remains color/border-only. */
-  *:hover {
-    transform: none !important;
-  }
-  .group:hover .group-hover\:translate-x-1,
-  .group:hover .group-hover\:rotate-180 {
-    transform: none !important;
-  }
-}
-
-/* ─── High-contrast mode ──────────────────────────────────────────────────── */
-
-@media (prefers-contrast: more) {
-  :root {
-    --border: oklch(0.4 0 0);
-    --ring: oklch(0.2 0 0);
-    --muted-foreground: oklch(0.3 0 0);
-  }
-
-  .dark {
-    --border: oklch(0.7 0 0);
-    --ring: oklch(0.9 0 0);
-    --muted-foreground: oklch(0.75 0 0);
-  }
-
-  /* Strengthen all focus rings */
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible,
-  [tabindex]:focus-visible {
-    outline-width: 3px !important;
-    outline-offset: 3px !important;
-  }
-
-  /* Ensure skip link is clearly visible when focused */
-  .skip-link:focus {
-    outline: 3px solid currentColor;
-    outline-offset: 2px;
-  }
-
-  /* Skeleton elements should use a solid background rather than gradient shimmer */
-  .animate-shimmer {
-    background: oklch(0.4 0 0) !important;
-    animation: none !important;
-  }
-
-  .dark .animate-shimmer {
-    background: oklch(0.6 0 0) !important;
-  }
-}
-
-/* Code block font-family consistency (#190)
-   Ensures all <code> and <pre> elements use the design-system mono font
-   (--font-geist-mono) rather than the browser default monospace stack. */
-code,
-pre,
-kbd,
-samp {
-  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
-  font-size: 0.875em;
-}
-
-pre {
-  overflow-x: auto;
-  white-space: pre;
-}
-
-/* V2 semantic primitives layer (V2-FE-121).
-   Type-scale and layout helpers bound to the design tokens above.
-   Colour is never the sole carrier of meaning: pair these with the
-   StatusBadge icon + label primitive. */
-@layer components {
-  .tb-data {
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum" 1;
-  }
-
-  .tb-title {
-    font-size: var(--type-title);
-    line-height: 1.25;
-    font-weight: 700;
-  }
-
-  .tb-section {
-    font-size: var(--type-section);
-    line-height: 1.3;
-    font-weight: 600;
-  }
-
-  .tb-body {
-    font-size: var(--type-body);
-    line-height: 1.5;
-  }
-
-  .tb-small {
-    font-size: var(--type-small);
-    line-height: 1.45;
-  }
-
-  .tb-label {
-    font-size: var(--type-label);
-    line-height: 1.4;
-    letter-spacing: 0.02em;
-    font-weight: 600;
-  }
-
-  .tb-touch {
-    min-height: var(--touch-target);
-    min-width: var(--touch-target);
-  }
-
-  .tb-content {
-    width: 100%;
-    max-width: var(--content-width);
-    margin-inline: auto;
-    padding-inline: var(--gutter);
-  }
+     Disable them so hover feedback remains visually stable. */
 }
