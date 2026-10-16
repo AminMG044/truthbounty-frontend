@@ -3,7 +3,6 @@
 /**
  * ApiStaleBanner — Accessible announcement when API projection data is stale.
  * V2-FE-136
- *
  * Renders nothing when data is fresh.
  * Renders a polite warning when stale.
  * Renders an assertive alert when critical (actions may be blocked).
@@ -36,7 +35,7 @@ export function ApiStaleBanner({
 
   const isCritical = status === 'critical' || status === 'unavailable';
   const isError = status === 'error';
-  const ageLabel = dataAgeMs != null ? ` (${formatAge(dataAgeMs)} ago)` : '';
+  const ageLabel = dataAgeMs != null ? `(${formatAge(dataAgeMs)} ago)` : '';
 
   let message: string;
   if (status === 'unavailable') {
@@ -55,13 +54,15 @@ export function ApiStaleBanner({
       aria-live={isCritical || isError ? 'assertive' : 'polite'}
       aria-atomic="true"
       data-testid={`api-stale-banner-${status}`}
-      className={[
-        'flex items-start gap-3 rounded-md border px-4 py-3 text-sm',
-        isCritical || isError
-          ? 'border-red-300 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300'
-          : 'border-yellow-300 bg-yellow-50 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-300',
-        className,
-      ].join(' ')}
+      className={
+        [
+          'flex items-start gap-3 rounded-md border px-4 py-3 text-sm',
+          isCritical || isError
+            ? 'border-red-300 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300'
+            : 'border-yellow-300 bg-yellow-50 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-300',
+          className,
+        ].join(' ')
+      }
     >
       <span aria-hidden="true" className="mt-0.5 flex-none text-base">
         {isCritical || isError ? '⛔' : '⚠'}

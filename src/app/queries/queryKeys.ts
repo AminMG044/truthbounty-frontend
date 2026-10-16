@@ -272,7 +272,191 @@ export const userKeys = {
 // ---------------------------------------------------------------------------
 export const leaderboardKeys = {
   all: ['leaderboard'] as const,
+  global: (filters: Record<string, unknown> = {}) =>
+    ['leaderboard', 'global', filters] as const,
+  byChain: (chainId: ChainId, filters: Record<string, unknown> = {}) =>
+    ['leaderboard', 'chain', chainId, filters] as const,
+} as const;ardKeys = {
+  all: ['leaderboard'] as const,
+  global: (filters: Record<string, unknown> = {}) =>
+    ['leaderboard', 'global', filters] as const,
+  byChain: (chainId: ChainId, filters: Record<string, unknown> = {}) =>
+    ['leaderboard', 'chain', chainId, filters] as const,
+} as const;ardKeys = {
+  all: ['leaderboard'] as const,
 } as const;
+
+// ---------------------------------------------------------------------------
+// Offline / read-only cache semantics (UI-FE-052)
+// ---------------------------------------------------------------------------
+/**
+ * Namespaces that may be cached for offline / read-only presentation.
+ * Only public, documentation, legal, and previously viewed projection data.
+ * Mutation and authorization namespaces are intentionally excluded.
+ */
+export const OFFLINE_CACHEABLE_NAMESPACES = [
+  'chain',
+  'claims',
+  'evidence',
+  'rounds',
+  'disputes',
+  'verifications',
+  'rewards',
+  'reputation',
+  'projectionWatermark',
+  'filters',
+  'finality',
+  'leaderboard',
+  'user',
+  'docs',
+  'legal',
+] as const;
+
+export type OfflineCacheableNamespace = (typeof OFFLINE_CACHEABLE_NAMESPACES)[number];
+
+/**
+ * Namespaces that must never be served from cache while canonical
+ * dependencies are unavailable. Mutations and authorization flows fail closed.
+ */
+export const MUTATION_NAMESPACES = [
+  'mutation',
+  'mutations',
+  'auth',
+  'authorization',
+  'session',
+  'sign',
+  'signing',
+  'submit',
+  'broadcast',
+] as const;
+
+export type MutationNamespace = (typeof MUTATION_NAMESPACES)[number];
+
+/**
+ * Observation metadata attached to any offline / stale cache entry.
+ * Never fabricates protocol state — only records what was observed.
+ */
+export type CacheObservation = {
+  /** Epoch ms when the underlying data was observed from a canonical source. */
+  observedAt: number;
+  /** Chain the observation was made against. */
+  chainId: ChainId;
+  /** Release / build identifier of the client that made the observation. */
+  release: string;
+  /** Finality level at observation time. */
+  finality: 'observed' | 'safe' | 'finalized';
+};
+
+/**
+ * Offline cache key factory. Every offline entry is scoped by wallet
+ * (address + chainId) so cross-account cache isolation is guaranteed.
+ * Returns null (fail closed) when scope is unsupported.
+ */
+export const offlineCacheKeys = {
+  all: ['offline'] as const,
+  /** Root for a wallet+chain offline cache scope. */
+  scope: (address: string, chainId: ChainId) => {
+    const scope = walletScope(address, chainId);
+    return scope
+      ? (['offline', 'scope', scope.address, scope.chainId] as const)
+      : null;
+  },
+  /** Offline-cached entry for a namespace + entity within a wallet scope. */
+  entry: (
+    address: string,
+    chainId: ChainId,
+    namespace: OfflineCacheableNamespace,
+    entityId: string,
+  ) => {
+    const scope = walletScope(address, chainId);
+    if (!scope) return null;
+    if (!(OFFLINE_CACHEABLE_NAMESPACES as readonly string[]).includes(namespace)) {
+      return null;
+    }
+    return ['offline', 'entry', scope.address, scope.chainId, namespace, entityId] as const;
+  },
+  /** Observation metadata for an offline entry. */
+  observation: (
+    address: string,
+    chainId: ChainId,
+    namespace: OfflineCacheableNamespace,
+    entityId: string,
+  ) => {
+    const scope = walletScope(address, chainId);
+    if (!scope) return null;
+    if (!(OFFLINE_CACHEABLE_NAMESPACES as readonly string[]).includes(namespace)) {
+      return null;
+    }
+    return [
+      'offline',
+      'observation',
+      scope.address,
+      scope.chainId,
+      namespace,
+      entityId,
+    ] as const;
+  },
+} as const;
+
+/**
+ * Returns true when a namespace may be cached for offline / read-only use.
+ * Mutation and authorization namespaces always return false (fail closed).
+ */
+export function isOfflineCacheable(namespace: string): boolean {
+  if (typeof namespace !== 'string') return false;
+  if ((MUTATION_NAMESPACES as readonly string[]).includes(namespace)) return false;
+  return (OFFLINE_CACHEABLE_NAMESPACES as readonly string[]).includes(namespace);
+}
+
+/**
+ * Returns true when a query key belongs to a mutation / authorization
+ * namespace that must fail closed while canonical dependencies are unavailable.
+ */
+export function isMutationKey(key: readonly unknown[]): boolean {
+  if (!Array.isArray(key) || key.length === 0) return false;
+  const root = key[0];
+  if (typeof root !== 'string') return false;
+  return (MUTATION_NAMESPACES as readonly string[]).includes(root);
+}
+
+/**
+ * Validate an observation record. Returns null (fail closed) when the
+ * observation is missing, malformed, or references an unsupported chain.
+ */
+export function validateObservation(
+  observation: CacheObservation | null | undefined,
+): CacheObservation | null {
+  if (!observation || typeof observation !== 'object') return null;
+  const { observedAt, chainId, release, finality } = observation;
+  if (typeof observedAt !== 'number' || !Number.isFinite(observedAt) || observedAt <= 0) {
+    return null;
+  }
+  if (typeof chainId !== 'number' || !Number.isInteger(chainId) || chainId <= 0) {
+    return null;
+  }
+  if (typeof release !== 'string' || release.length === 0) return null;
+  if (finality !== 'observed' && finality !== 'safe' && finality !== 'finalized') {
+    return null;
+  }
+  return { observedAt, chainId, release, finality };
+}
+
+/**
+ * Returns true when a cached observation is stale relative to the current
+ * release or chain. Stale content must never be presented as fresh or final.
+ */
+export function isObservationStale(
+  observation: CacheObservation | null | undefined,
+  current: { chainId: ChainId; release: string; maxAgeMs: number; now?: number },
+): boolean {
+  const valid = validateObservation(observation);
+  if (!valid) return true;
+  if (valid.chainId !== current.chainId) return true;
+  if (valid.release !== current.release) return true;
+  const now = typeof current.now === 'number' ? current.now : Date.now();
+  if (now - valid.observedAt > current.maxAgeMs) return true;
+  return false;
+}
 
 /**
  * Unified export — existing `queryKeys.*` consumers keep working.
@@ -294,4 +478,5 @@ export const queryKeys = {
   finality: finalityKeys,
   leaderboard: leaderboardKeys.all,
   user: userKeys,
+  offline: offlineCacheKeys,
 } as const;
