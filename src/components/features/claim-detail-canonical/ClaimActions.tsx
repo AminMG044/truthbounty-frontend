@@ -32,7 +32,7 @@ function getActionBlockingReason(
   wallet: ReturnType<typeof useCanonicalWallet>,
   writeReadiness: ReturnType<typeof useWriteReadiness>,
   freshness: UseClaimDetailFreshnessResult
-]: string | null {
+): string | null {
   // Check wallet state first
   if (wallet.status === 'disconnected') {
     return 'Connect your wallet to take action';
