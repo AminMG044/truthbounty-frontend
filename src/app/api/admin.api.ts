@@ -23,7 +23,7 @@ export interface AdminRequestOptions {
 function buildAdminHeaders(
   adminAddress: string,
   context: CapabilityContext
-]: Record<string, string> {
+): Record<string, string> {
   return {
     Accept: 'application/json',
     'x-admin-address': adminAddress,

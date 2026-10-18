@@ -148,7 +148,7 @@ export function AdminUnauthorizedState({
               </Link>
             )}
             <Link
-              href={APP_ROUTES.DATHBOARD}
+              href={APP_ROUTES.DASHBOARD}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />

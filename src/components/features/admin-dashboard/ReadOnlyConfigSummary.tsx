@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Lock, FileCode } from 'lucide-react';
+import { Settings, Lock, FileCode } from 'lucide-react';
 import type { ReadOnlyProtocolParameter } from '@/app/types/admin';
 import { CopyableValue } from '@/components/ui/CopyableValue';
 

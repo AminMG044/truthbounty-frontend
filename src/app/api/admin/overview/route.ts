@@ -108,7 +108,7 @@ export async function GET(request: Request) {
       },
       {
         id: 'op-archive-dlq',
-        title: 'Archive Stale DDQ Dead-Letter Records',
+        title: 'Archive Stale DLQ Dead-Letter Records',
         description: '3 expired dead-letter task entries exceeded 30-day retention window.',
         authority: 'AUDIT_ADMIN',
         targetResource: 'DeadLetterQueue Storage',

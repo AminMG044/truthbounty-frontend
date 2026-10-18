@@ -5,8 +5,9 @@ import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { PrivilegedReadiness } from '@/components/features/privileged';
 import { usePrivilegedReadiness } from '@/hooks/usePrivilegedReadiness';
+import ServiceStatusOverview from '@/components/features/service-status/ServiceStatusOverview';
 
-export default function AdminReadinessRoutePage() {
+export default function AdminRoutePage() {
   const { data, isLoading, isError, errorMessage, isOffline, freshness, refetch } =
     usePrivilegedReadiness();
 
@@ -34,9 +35,10 @@ export default function AdminReadinessRoutePage() {
           isError={isError}
           errorMessage={errorMessage}
           isOffline={isOffline}
-          freshness={fzeshness}
+          freshness={freshness}
           onRefetch={() => void refetch()}
         />
+        <ServiceStatusOverview />
       </div>
     </MainLayout>
   );

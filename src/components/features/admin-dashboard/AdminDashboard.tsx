@@ -29,6 +29,9 @@ import {
   AlertTriangle,
   AlertCircle,
   RefreshCw,
+  Clock,
+  ShieldAlert,
+  AlertOctagon,
 } from 'lucide-react';
 import { useAdminDashboardData, type UseAdminDashboardDataReturn } from '@/hooks/useAdminDashboardData';
 import { AdminUnauthorizedState } from './AdminUnauthorizedState';
@@ -38,6 +41,8 @@ import { OperationConfirmModal } from './OperationConfirmModal';
 import { SecurityGovernanceNotices } from './SecurityGovernanceNotices';
 import { ReadOnlyConfigSummary } from './ReadOnlyConfigSummary';
 import { AdminAuditTrail } from './AdminAuditTrail';
+import { FormErrorSummary, type FormErrorSummaryItem } from '@/components/ui/FormErrorSummary';
+import { useFormErrorSummary } from '@/hooks/useFormErrorSummary';
 import type { OperationalQueueItem } from '@/app/types/admin';
 
 export interface AdminDashboardProps {
@@ -82,12 +87,15 @@ export function AdminDashboardContent({
     auditRecords,
     readOnlyParameters,
     governanceNotices,
+    freshness,
     execute,
     refetch,
   } = data;
 
   const [selectedOperation, setSelectedOperation] = useState<OperationalQueueItem | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [operationErrors, setOperationErrors] = useState<FormErrorSummaryItem[]>([]);
+  const errorSummaryRef = useFormErrorSummary(operationErrors);
 
   // If unauthorized: return explicit denied state
   if (!isAuthorized) {
@@ -104,12 +112,32 @@ export function AdminDashboardContent({
 
   const handleConfirmOperation = async (operationId: string, confirmationText: string) => {
     setActionFeedback(null);
+    setOperationErrors([]);
     const result = await execute(operationId, confirmationText);
     if (result.success) {
       setActionFeedback({ type: 'success', message: result.message });
       setTimeout(() => setActionFeedback(null), 6000);
     } else {
       setActionFeedback({ type: 'error', message: result.message });
+      // Preserve authoritative error category from the server response.
+      // Authorization failures must remain authorization failures — never
+      // downgraded to client-side validation errors.
+      const category: FormErrorSummaryItem['category'] =
+        result.category === 'authorization'
+          ? 'authorization'
+          : result.category === 'server'
+            ? 'server'
+            : result.category === 'simulation'
+              ? 'simulation'
+              : 'validation';
+      setOperationErrors([
+        {
+          id: 'operation-confirmation',
+          fieldId: 'operation-confirmation-input',
+          category,
+          message: result.message,
+        },
+      ]);
     }
   };
 
@@ -234,13 +262,32 @@ export function AdminDashboardContent({
         </div>
       )}
 
+      {/* 4a. Accessible Error Summary for failed submissions */}
+      {operationErrors.length > 0 && (
+        <FormErrorSummary
+          ref={errorSummaryRef}
+          errors={operationErrors}
+          title="Operation could not be completed"
+          onNavigateToField={(fieldId) => {
+            const el = document.getElementById(fieldId);
+            if (el instanceof HTMLElement) {
+              el.focus();
+            }
+          }}
+        />
+      )}
+
       {/* 4. Action Feedback Notification */}
       {actionFeedback && (
         <div
           role="status"
           aria-live="polite"
           data-testid="admin-action-feedback"
-          className={`p4 rounded-xl border texe-xs font-medium flex items-center justify-between ${ actionFeedback.type === 'success' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-500' : 'border-destructive/40 bg-destructive/10 text-destructive' }`}
+          className={`p-4 rounded-xl border text-xs font-medium flex items-center justify-between ${
+            actionFeedback.type === 'success'
+              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-500'
+              : 'border-destructive/40 bg-destructive/10 text-destructive'
+          }`}
         >
           <span>{actionFeedback.message}</span>
           <button

@@ -4,6 +4,12 @@ import type { ExecuteOperationRequest, ExecuteOperationResponse, AdminAuditRecor
 import { resolveCapabilityContext, isCapabilityActive } from '@/lib/authority/capability-context';
 import type { CapabilityContext } from '@/lib/authority/capability-context';
 
+// UI-FE-036: This route is a protected administrator diagnostic endpoint.
+// Its payloads MUST NOT be reused by the public /status adapter. The public
+// service-status surface composes sanitized observations only and never
+// forwards admin health responses, operator addresses, or audit records.
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   const adminHeader = request.headers.get('x-admin-address');
   const release = getProtocolRelease();
@@ -119,7 +125,14 @@ export async function POST(request: Request) {
       message: `Bounded operation "${targetOp.action}" executed successfully. Audit reference: ${auditId}`,
     };
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, {
+      headers: {
+        // UI-FE-036: prevent protected diagnostic payloads from being cached
+        // or surfaced through any public status composition boundary.
+        'Cache-Control': 'no-store, private',
+        'X-Robots-Tag': 'noindex, nofollow',
+      },
+    });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown server error';
     return NextResponse.json(
