@@ -4,15 +4,18 @@
  * ClaimSettlement — Settlement state and finalization display
  *
  * Shows settlement transaction and finalization status. Never fabricates
- * settlement or finality; all fields null when not settled.
+ * settlement or finality; all fields null when not settled. Finalized and
+ * merely-confirmed states remain distinct.
  *
  * Security: treats all claim projection fields as untrusted. The transaction
  * hash is validated before being interpolated into an external explorer URL,
  * and the explorer URL is built through the centralized sanitizer policy.
  */
 
-import { CheckCircle2, Clock, ExternalLink } from 'lucide-react';
+import { CheckCircle2, Clock, ExternalLink, AlertTriangle } from 'lucide-react';
 import type { ClaimDetailProjection } from '@/app/types/claim-detail-projection';
+import { resolveFinalityState } from '@/app/lib/protocol-time';
+import { formatLocalDateTime, formatUtcDateTime } from '@/app/lib/format';
 
 export interface ClaimSettlementProps {
   claim: ClaimDetailProjection;
@@ -79,7 +82,15 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
     return null;
   }
 
-  const settledDate = formatSettledDate(settlement.settledAt);
+  const settledMs = new Date(settlement.settledAt).getTime();
+  const localSettled = formatLocalDateTime(settledMs, { includeSeconds: true });
+  const utcSettled = formatUtcDateTime(settledMs, { includeSeconds: true });
+
+  const finalityState = resolveFinalityState({
+    isFinalized: settlement.isFinalized,
+    isConfirmed: true,
+  });
+
   const txPrefix = settlement.settlementTxHash.slice(0, 10);
 
   return (
@@ -91,16 +102,23 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
       <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
         {/* Settlement Status */}
         <div className="flex items-center gap-2">
-          {settlement.isFinalized ? (
+          {finalityState === 'finalized' ? (
             <>
               <CheckCircle2 className="h-5 w-5 text-green-500" aria-hidden="true" />
               <span className="text-sm font-medium text-green-500">Finalized</span>
             </>
-          ) : (
+          ) : finalityState === 'confirmed' ?
             <>
               <Clock className="h-5 w-5 text-yellow-500" aria-hidden="true" />
               <span className="text-sm font-medium text-yellow-500">
-                Confirming Settlement
+                Confirmed — awaiting finality
+              </span>
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              <span className="text-sm font-medium text-gray-400">
+                Finality unavailable
               </span>
             </>
           )}
@@ -108,9 +126,11 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
 
         {/* Settlement Details */}
         <dl className="space-y-2 text-xs">
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <dt className="text-gray-400">Settled At:</dt>
-            <dd className="text-gray-200">{settledDate}</dd>
+            <dd className="text-gray-200 text-right">
+              {localSettled} <span className="text-gray-500">({utcSettled})</span>
+            </dd>
           </div>
 
           {settlement.finalizedBlock !== null && (
@@ -139,9 +159,15 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
           </div>
         </dl>
 
-        {!settlement.isFinalized && (
+        {finalityState === 'confirmed' && (
           <p className="text-xs text-gray-500 italic">
-            Settlement is pending finalization. This may take a few minutes.
+            Settlement is confirmed but not yet finalized. This may take a few minutes.
+          </p>
+        )}
+
+        {finalityState === 'unavailable' && (
+          <p className="text-xs text-gray-500 italic">
+            Finality status is unavailable. Refresh once canonical data is available.
           </p>
         )}
       </div>
