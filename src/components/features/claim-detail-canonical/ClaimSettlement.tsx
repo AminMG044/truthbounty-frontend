@@ -14,6 +14,8 @@
 
 import { AlertTriangle, CheckCircle2, Clock, ExternalLink, RefreshCw } from 'lucide-react';
 import type { ClaimDetailProjection } from '@/app/types/claim-detail-projection';
+import { resolveFinalityState } from '@/app/lib/protocol-time';
+import { formatLocalDateTime, formatUtcDateTime } from '@/app/lib/format';
 
 export interface ClaimSettlementProps {
   claim: ClaimDetailProjection;
@@ -167,7 +169,14 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
   const state = resolveSettlementState(claim);
   const presentation = STATE_PRESENTATION[state];
   const Icon = presentation.icon;
-  const settledDate = new Date(settlement.settledAt).toLocaleString();
+  const settledMs = new Date(settlement.settledAt).getTime();
+  const localSettled = formatLocalDateTime(settledMs, { includeSeconds: true });
+  const utcSettled = formatUtcDateTime(settledMs, { includeSeconds: true });
+
+  const finalityState = resolveFinalityState({
+    isFinalized: settlement.isFinalized,
+    isConfirmed: true,
+  });
 
   return (
     <div className="pt-4 border-t border-[#232329] space-y-3">
@@ -191,9 +200,11 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
             <dd className="text-gray-200">Optimism</dd>
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <dt className="text-gray-400">Settled At:</dt>
-            <dd className="text-gray-200">{settledDate}</dd>
+            <dd className="text-gray-200 text-right">
+              {localSettled} <span className="text-gray-500">({utcSettled})</span>
+            </dd>
           </div>
 
           {settlement.finalizedBlock !== null && (
@@ -230,7 +241,13 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
 
         {state === 'confirming' && (
           <p className="text-xs text-gray-500 italic">
-            Settlement is pending finalization. This may take a few minutes.
+            Settlement is confirmed but not yet finalized. This may take a few minutes.
+          </p>
+        )}
+
+        {finalityState === 'unavailable' && (
+          <p className="text-xs text-gray-500 italic">
+            Finality status is unavailable. Refresh once canonical data is available.
           </p>
         )}
       </div>
