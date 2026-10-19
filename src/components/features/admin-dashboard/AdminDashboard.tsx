@@ -20,6 +20,13 @@
  * - Defaults to read-only; context selection grants nothing.
  * - Each capability has separate navigation and expiry handling.
  * - Covers denied, revoked, stale, wrong-chain, and unavailable states.
+ *
+ * UI-FE-025 — Operational Health and Release Status:
+ * - Privileged health composition with degraded/delayed/stale/unavailable/healthy
+ *   observations, ABI/manifest verification, and affected scope.
+ * - Stale or missing observations never render healthy.
+ * - Third-party dependency status is not a TruthBounty guarantee.
+ * - No operational status changes protocol truth.
  */
 
 import React, { useState } from 'react';
@@ -41,6 +48,7 @@ import { OperationConfirmModal } from './OperationConfirmModal';
 import { SecurityGovernanceNotices } from './SecurityGovernanceNotices';
 import { ReadOnlyConfigSummary } from './ReadOnlyConfigSummary';
 import { AdminAuditTrail } from './AdminAuditTrail';
+import { OperationalHealthComposition } from './OperationalHealthComposition';
 import { FormErrorSummary, type FormErrorSummaryItem } from '@/components/ui/FormErrorSummary';
 import { useFormErrorSummary } from '@/hooks/useFormErrorSummary';
 import type { OperationalQueueItem } from '@/app/types/admin';
@@ -178,7 +186,7 @@ export function AdminDashboardContent({
       </div>
 
       {/* 1. Offline & Stale Banner */}
-      {(isOffline || isStale) && (
+      { (isOffline || isStale) && (
         <div
           role="status"
           aria-live="polite"
@@ -300,26 +308,37 @@ export function AdminDashboardContent({
         </div>
       )}
 
-      {/* 5. System Health Summary (Indexer lag, RPC state, Failed jobs, Queue age) */}
+      {/* 5. Operational Health Composition (API/RPC/indexer/database/release) */}
+      <OperationalHealthComposition
+        observations={healthMetrics.observations}
+        compositeStatus={healthMetrics.compositeStatus}
+        freshnessLabel={healthMetrics.freshnessLabel}
+        finalizedBlock={healthMetrics.finalizedBlock}
+        abiManifestVerification={healthMetrics.abiManifestVerification}
+        affectedScope={healthMetrics.affectedScope}
+        isLoading={isLoading}
+      />
+
+      {/* 6. System Health Summary (Indexer lag, RPC state, Failed jobs, Queue age) */}
       <SystemHealthSummary metrics={healthMetrics} isLoading={isLoading} />
 
-      {/* 6. Security and Governance Invariants */}
+      {/* 7. Security and Governance Invariants */}
       <SecurityGovernanceNotices notices={governanceNotices} />
 
-      {/* 7. Bounded Operational Queues (with Mobile Card Alternatives) */}
+      {/* 8. Bounded Operational Queues (with Mobile Card Alternatives) */}
       <OperationalQueueTable
         queue={operationalQueue}
         isLoading={isLoading}
         onSelectOperation={(item) => setSelectedOperation(item)}
       />
 
-      {/* 8. Read-Only Configuration Summary */}
+      {/* 9. Read-Only Configuration Summary */}
       <ReadOnlyConfigSummary parameters={readOnlyParameters} isLoading={isLoading} />
 
-      {/* 9. Immutable Admin Audit References */}
+      {/* 10. Immutable Admin Audit References */}
       <AdminAuditTrail records={auditRecords} isLoading={isLoading} />
 
-      {/* 10. High-Impact Operation Confirmation Modal */}
+      {/* 11. High-Impact Operation Confirmation Modal */}
       <OperationConfirmModal
         operation={selectedOperation}
         isOpen={Boolean(selectedOperation)}

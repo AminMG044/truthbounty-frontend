@@ -5,6 +5,7 @@ import Link from 'next/link';
 import MainLayout from '@/components/layout/MainLayout';
 import { PrivilegedReadiness } from '@/components/features/privileged';
 import { usePrivilegedReadiness } from '@/hooks/usePrivilegedReadiness';
+import { HelpTroubleshooting } from '@/components/features/support/HelpTroubleshooting';
 import ServiceStatusOverview from '@/components/features/service-status/ServiceStatusOverview';
 
 export default function AdminRoutePage() {
@@ -38,6 +39,8 @@ export default function AdminRoutePage() {
           freshness={freshness}
           onRefetch={() => void refetch()}
         />
+        <HelpTroubleshooting />
+        <h1 className="text-2xl font-semibold">Admin</h1>
         <ServiceStatusOverview />
       </div>
     </MainLayout>
