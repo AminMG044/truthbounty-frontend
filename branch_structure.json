@@ -1,0 +1,33 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "dependabot/github_actions/actions/upload-artifact-7.0.2",
+    "issue-572-approved-brand",
+    "main",
+    "origin",
+    "review/572-screenshots",
+    "stabilization/fe-gate-b-followup-616",
+    "validate/572-approved-brand",
+    "validate/572-baseline"
+  ],
+  "parent": {
+    "dependabot/github_actions/actions/upload-artifact-7.0.2": "main",
+    "issue-572-approved-brand": "main",
+    "main": null,
+    "origin": "main",
+    "review/572-screenshots": "main",
+    "stabilization/fe-gate-b-followup-616": "main",
+    "validate/572-approved-brand": "main",
+    "validate/572-baseline": "main"
+  },
+  "order": [
+    "main",
+    "dependabot/github_actions/actions/upload-artifact-7.0.2",
+    "issue-572-approved-brand",
+    "origin",
+    "review/572-screenshots",
+    "stabilization/fe-gate-b-followup-616",
+    "validate/572-approved-brand",
+    "validate/572-baseline"
+  ]
+}
