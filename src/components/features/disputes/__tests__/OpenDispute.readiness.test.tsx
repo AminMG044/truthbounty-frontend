@@ -24,7 +24,12 @@ let mockReadiness: {
 
 const mockContext = {
   isEligible: true,
-  bond: { bondAmount: '1000000000000000000' },
+  bond: {
+    bondAmount: '1000000000000000000',
+    slashAmount: '100000000000000000',
+    slashPercentage: 10,
+    potentialReward: '1500000000000000000',
+  },
   walletPosition: {
     userAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
     currentBalance: '5000000000000000000',
@@ -41,6 +46,8 @@ jest.mock('@/hooks/useDisputeContext', () => ({
 
 /** Toggled per test to exercise the canonical-ABI gate. */
 let mockIsDisputeSupported = true;
+/** Toggled per test to exercise the receipt-wait feedback. */
+let mockIsConfirming = false;
 
 jest.mock('@/hooks/useDisputeSubmission', () => ({
   useDisputeSubmission: () => ({
@@ -49,6 +56,7 @@ jest.mock('@/hooks/useDisputeSubmission', () => ({
     submitDispute: mockSubmitDispute,
     isSimulating: false,
     isSubmitting: false,
+    isConfirming: mockIsConfirming,
     error: null,
     isDisputeSupported: mockIsDisputeSupported,
   }),
@@ -81,6 +89,7 @@ describe('OpenDispute — write readiness gate (V2-FE-100)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsDisputeSupported = true;
+    mockIsConfirming = false;
     mockReadiness = {
       isReady: true,
       message: null,
@@ -185,6 +194,34 @@ describe('OpenDispute — write readiness gate (V2-FE-100)', () => {
     });
     expect(onSuccess).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('states the slash and refund risk of the bond before submission', () => {
+    render(
+      <OpenDispute claimId="claim_1" isOpen={true} onClose={jest.fn()} />,
+    );
+
+    const risk = screen.getByTestId('dispute-bond-risk');
+    expect(risk).toHaveAttribute('role', 'note');
+    expect(risk).toHaveTextContent(/1\.0000 ETH\s*is locked while the dispute is open/i);
+    expect(risk).toHaveTextContent(/the challenge fails/i);
+    expect(risk).toHaveTextContent(/0\.1000 ETH\s*\(10%\) is slashed/i);
+    expect(risk).toHaveTextContent(/the challenge succeeds/i);
+    expect(risk).toHaveTextContent(/1\.5000 ETH/i);
+  });
+
+  it('announces the receipt wait as a polite status while confirming', () => {
+    mockIsConfirming = true;
+
+    render(
+      <OpenDispute claimId="claim_1" isOpen={true} onClose={jest.fn()} />,
+    );
+
+    const confirming = screen.getByTestId('dispute-confirming');
+    expect(confirming).toHaveAttribute('role', 'status');
+    expect(confirming).toHaveAttribute('aria-live', 'polite');
+    expect(confirming).toHaveTextContent(/waiting for on-chain confirmation/i);
+    expect(screen.getByRole('button', { name: /waiting for on-chain confirmation/i })).toBeDisabled();
   });
 
   it('blocks submission and explains when the canonical ABI has no dispute function', async () => {

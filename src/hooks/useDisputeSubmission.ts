@@ -53,6 +53,8 @@ interface DisputeSubmissionResult {
 
   isSimulating: boolean;
   isSubmitting: boolean;
+  /** True while a submitted hash is waiting for its on-chain receipt. */
+  isConfirming: boolean;
   error: string | null;
   lastTransaction: DisputeTransaction | null;
   artifactVersion: string;
@@ -89,6 +91,7 @@ export function useDisputeSubmission(
 
   const [isSimulating, setIsSimulating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastTransaction, setLastTransaction] = useState<DisputeTransaction | null>(
     null
@@ -473,9 +476,16 @@ export function useDisputeSubmission(
           chainId: expectedChainId,
         } as never);
 
-        // The bond lock and dispute id are only known from a mined receipt,
-        // so they are left unasserted here rather than predicted.
-        const transaction: DisputeTransaction = {
+        if (
+          typeof transactionHash !== 'string' ||
+          !/^0x[0-9a-fA-F]{64}$/.test(transactionHash)
+        ) {
+          throw new Error('Wallet did not return a transaction hash; failing closed.');
+        }
+
+        // Nothing about the bond is asserted before the chain confirms it: the
+        // receipt is the only authority for the lock and the final status.
+        const pending: DisputeTransaction = {
           transactionHash,
           from: userAddress as string,
           to: contractAddress,
@@ -486,8 +496,45 @@ export function useDisputeSubmission(
           timestamp: new Date().toISOString(),
           bondLocked: false,
         };
-        setLastTransaction(transaction);
-        return transaction;
+        setLastTransaction(pending);
+
+        if (!publicClient?.waitForTransactionReceipt) {
+          throw new Error(
+            'No RPC endpoint is available to confirm the dispute transaction.'
+          );
+        }
+
+        setIsConfirming(true);
+        try {
+          const receipt = await publicClient.waitForTransactionReceipt({
+            hash: transactionHash as `0x${string}`,
+            confirmations: 1,
+          });
+
+          const confirmed = receipt.status === 'success';
+          const transaction: DisputeTransaction = {
+            ...pending,
+            status: confirmed ? 'CONFIRMED' : 'REVERTED',
+            blockNumber: Number(receipt.blockNumber),
+            gasUsed: receipt.gasUsed?.toString(),
+            bondLocked: confirmed,
+            ...(confirmed
+              ? { bondLockConfirmedAt: new Date().toISOString() }
+              : {}),
+          };
+          setLastTransaction(transaction);
+          return transaction;
+        } catch (receiptErr) {
+          // The hash stays on `lastTransaction` so the user can follow the
+          // transaction instead of losing it to a confirmation failure.
+          throw new Error(
+            `Transaction ${transactionHash} was submitted but not confirmed: ${
+              receiptErr instanceof Error ? receiptErr.message : String(receiptErr)
+            }`
+          );
+        } finally {
+          setIsConfirming(false);
+        }
       } catch (err) {
         const errorMsg =
           err instanceof Error ? err.message : 'Submission failed';
@@ -506,6 +553,7 @@ export function useDisputeSubmission(
       abi,
       expectedChainId,
       userAddress,
+      publicClient,
     ]
   );
 
@@ -515,6 +563,7 @@ export function useDisputeSubmission(
     submitDispute,
     isSimulating,
     isSubmitting,
+    isConfirming,
     error,
     lastTransaction,
     artifactVersion,
