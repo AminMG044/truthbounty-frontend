@@ -156,6 +156,17 @@ describe('useWallet', () => {
     expect(mockConnect).not.toHaveBeenCalled();
   });
 
+  it('fails closed when no wallet connector is available', () => {
+    mockConnectors = [];
+    const { result } = renderHook(() => useWallet());
+
+    expect(result.current.connectors).toHaveLength(0);
+    expect(result.current.isConnected).toBe(false);
+    expect(result.current.state).toBe('disconnected');
+    act(() => result.current.reconnect());
+    expect(mockConnect).not.toHaveBeenCalled();
+  });
+
   it('exposes pending and reconnecting lifecycle states', () => {
     mockConnectPending = true;
     const pending = renderHook(() => useWallet());
