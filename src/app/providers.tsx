@@ -17,6 +17,7 @@ import {
 import { SiweAuthProvider } from '@/context/SiweAuthProvider';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { IntegrityBoundary } from '@/components/security/IntegrityBoundary';
+import { PlatformSupportGuard } from '@/components/providers/PlatformSupportGuard';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -24,28 +25,30 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ThemeProvider defaultTheme="system">
-      <ReducedDataProvider>
-        <Web3Provider>
-          <QueryProvider>
-            <RainbowKitThemedProvider>
-              <SiweAuthProvider>
-                <FeatureFlagProvider enablePersistence={true}>
-                  <ErrorBoundary>
-                    <WalletStateGuard>
-                      <CrossTabSyncProvider>
-                        {children}
-                        {/* Feature flag panel for development debugging */}
-                        <FeatureFlagPanel defaultOpen={false} position="bottom-right" />
-                      </CrossTabSyncProvider>
-                    </WalletStateGuard>
-                  </ErrorBoundary>
-                </FeatureFlagProvider>
-              </SiweAuthProvider>
-            </RainbowKitThemedProvider>
-          </QueryProvider>
-        </Web3Provider>
-      </ReducedDataProvider>
-    </ThemeProvider>
+    <PlatformSupportGuard>
+      <ThemeProvider defaultTheme="system">
+        <ReducedDataProvider>
+          <Web3Provider>
+            <QueryProvider>
+              <RainbowKitThemedProvider>
+                <SiweAuthProvider>
+                  <FeatureFlagProvider enablePersistence={true}>
+                    <ErrorBoundary>
+                      <WalletStateGuard>
+                        <CrossTabSyncProvider>
+                          {children}
+                          {/* Feature flag panel for development debugging */}
+                          <FeatureFlagPanel defaultOpen={false} position="bottom-right" />
+                        </CrossTabSyncProvider>
+                      </WalletStateGuard>
+                    </ErrorBoundary>
+                  </FeatureFlagProvider>
+                </SiweAuthProvider>
+              </RainbowKitThemedProvider>
+            </QueryProvider>
+          </Web3Provider>
+        </ReducedDataProvider>
+      </ThemeProvider>
+    </PlatformSupportGuard>
   );
 }
