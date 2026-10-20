@@ -174,6 +174,16 @@ describe('discard and verified persistence', () => {
     expect(localStorage.getItem(`truthbounty:form-draft:${FORM_ID}`)).toBeNull();
   });
 
+  it('discardDraft also clears a quarantined draft', () => {
+    saveLocalDraft(FORM_ID, { ...SCOPE, releaseId: 'previous-release' }, { reason: 'x' }, isPayload);
+    const { result } = renderHook(() => useRecoverableFormDraft(baseOptions()));
+    expect(readQuarantinedDraft(FORM_ID)).not.toBeNull();
+
+    act(() => result.current.discardDraft());
+
+    expect(readQuarantinedDraft(FORM_ID)).toBeNull();
+  });
+
   it('markPersisted clears the draft and reports persisted', () => {
     saveLocalDraft(FORM_ID, SCOPE, { reason: 'x' }, isPayload);
     const { result } = renderHook(() =>
