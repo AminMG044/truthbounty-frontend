@@ -82,7 +82,9 @@ describe('useDisputeReconciliation', () => {
   });
 
   describe('Transaction confirmation', () => {
-    it('should reconcile confirmed transaction', async () => {
+    it('never reports a confirmed dispute from a receipt alone', async () => {
+      const onConfirmed = jest.fn();
+
       mockUseWaitForTransactionReceipt.mockReturnValue({
         data: mockReceipt,
         isLoading: false,
@@ -93,6 +95,7 @@ describe('useDisputeReconciliation', () => {
         useDisputeReconciliation({
           transaction: mockTransaction,
           confirmations: 1,
+          onConfirmed,
         })
       );
 
@@ -100,52 +103,15 @@ describe('useDisputeReconciliation', () => {
         expect(result.current.result).not.toBeNull();
       });
 
-      expect(result.current.result?.status).toBe('confirmed');
-      expect(result.current.result?.bondLocked).toBe(true);
-      expect(result.current.result?.disputeId).toBeDefined();
-      expect(result.current.bondLocked).toBe(true);
-      expect(result.current.disputeId).not.toBeNull();
-    });
-
-    it('should extract dispute ID from logs', async () => {
-      mockUseWaitForTransactionReceipt.mockReturnValue({
-        data: mockReceipt,
-        isLoading: false,
-        error: null,
-      } as any);
-
-      const { result } = renderHook(() =>
-        useDisputeReconciliation({
-          transaction: mockTransaction,
-        })
-      );
-
-      await waitFor(() => {
-        expect(result.current.result).not.toBeNull();
-      });
-
-      expect(result.current.disputeId).toMatch(/^dispute-/);
-      expect(result.current.result?.disputeId).toContain('0xabc123def4');
-    });
-
-    it('should update wallet balance after bond lock', async () => {
-      mockUseWaitForTransactionReceipt.mockReturnValue({
-        data: mockReceipt,
-        isLoading: false,
-        error: null,
-      } as any);
-
-      const { result } = renderHook(() =>
-        useDisputeReconciliation({
-          transaction: mockTransaction,
-        })
-      );
-
-      await waitFor(() => {
-        expect(result.current.result).not.toBeNull();
-      });
-
-      expect(result.current.result?.newBalance).toBe('4000000000000000000'); // 4 ETH
+      // A mined receipt is not a dispute. Without the canonical DisputeOpened
+      // event the hook fails closed rather than inventing an id or a balance.
+      expect(result.current.result?.status).toBe('reverted');
+      expect(result.current.result?.bondLocked).toBe(false);
+      expect(result.current.result?.disputeId).toBeUndefined();
+      expect(onConfirmed).not.toHaveBeenCalled();
+      expect(result.current.bondLocked).toBe(false);
+      expect(result.current.disputeId).toBeNull();
+      expect(result.current.error).toBeDefined();
     });
 
     it('should track isWaiting state', () => {
@@ -163,34 +129,6 @@ describe('useDisputeReconciliation', () => {
 
       expect(result.current.isWaiting).toBe(true);
       expect(result.current.result).toBeNull();
-    });
-
-    it('should call onConfirmed callback', async () => {
-      const onConfirmed = jest.fn();
-
-      mockUseWaitForTransactionReceipt.mockReturnValue({
-        data: mockReceipt,
-        isLoading: false,
-        error: null,
-      } as any);
-
-      renderHook(() =>
-        useDisputeReconciliation({
-          transaction: mockTransaction,
-          onConfirmed,
-        })
-      );
-
-      await waitFor(() => {
-        expect(onConfirmed).toHaveBeenCalled();
-      });
-
-      expect(onConfirmed).toHaveBeenCalledWith(
-        expect.objectContaining({
-          status: 'confirmed',
-          bondLocked: true,
-        })
-      );
     });
   });
 
@@ -399,28 +337,6 @@ describe('useDisputeReconciliation', () => {
       );
     });
 
-    it('should clear pending transaction on confirmation', async () => {
-      mockUseWaitForTransactionReceipt.mockReturnValue({
-        data: mockReceipt,
-        isLoading: false,
-        error: null,
-      } as any);
-
-      renderHook(() =>
-        useDisputeReconciliation({
-          transaction: mockTransaction,
-        })
-      );
-
-      await waitFor(() => {
-        expect(mockClearPendingTransaction).toHaveBeenCalled();
-      });
-
-      expect(mockClearPendingTransaction).toHaveBeenCalledWith(
-        mockTransaction.transactionHash
-      );
-    });
-
     it('should clear pending transaction on revert', async () => {
       const revertedReceipt = {
         ...mockReceipt,
@@ -466,7 +382,7 @@ describe('useDisputeReconciliation', () => {
   });
 
   describe('Manual reconciliation', () => {
-    it('should allow manual reconcile call', async () => {
+    it('should fail closed on a manual reconcile without a canonical event', async () => {
       mockUseWaitForTransactionReceipt.mockReturnValue({
         data: mockReceipt,
         isLoading: false,
@@ -486,7 +402,8 @@ describe('useDisputeReconciliation', () => {
       const manualResult = await result.current.reconcile();
 
       expect(manualResult).not.toBeNull();
-      expect(manualResult?.status).toBe('confirmed');
+      expect(manualResult?.status).toBe('reverted');
+      expect(manualResult?.bondLocked).toBe(false);
     });
 
     it('should return null when no transaction', async () => {

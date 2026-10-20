@@ -111,11 +111,14 @@ export function useRecoverableFormDraft<TPayload>(
   const [quarantinedReason, setQuarantinedReason] = useState<string | null>(null);
 
   const payloadRef = useRef(payload);
-  payloadRef.current = payload;
   const validateRef = useRef(validatePayload);
-  validateRef.current = validatePayload;
   const isDirtyRef = useRef(isDirty);
-  isDirtyRef.current = isDirty;
+
+  useEffect(() => {
+    payloadRef.current = payload;
+    validateRef.current = validatePayload;
+    isDirtyRef.current = isDirty;
+  }, [payload, validatePayload, isDirty]);
 
   // Load/quarantine on mount and whenever the wallet/release scope changes.
   useEffect(() => {
@@ -184,10 +187,11 @@ export function useRecoverableFormDraft<TPayload>(
       saveDraft();
     }, autosaveDelayMs);
     return () => clearTimeout(timer);
-  }, [autosave, autosaveDelayMs, isDirty, payload, saveDraft, status]); // eslint-disable-line react-hooks/exhaustive-deps -- payload identity drives the debounce
+  }, [autosave, autosaveDelayMs, isDirty, payload, saveDraft, status]);
 
   const discardDraft = useCallback(() => {
     clearLocalDraft(formId);
+    clearQuarantinedDraft(formId);
     setRestored(null);
     setLastSavedAt(null);
     setStatus('clean');

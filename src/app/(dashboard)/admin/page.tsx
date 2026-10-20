@@ -7,6 +7,7 @@ import { PrivilegedReadiness } from '@/components/features/privileged';
 import { usePrivilegedReadiness } from '@/hooks/usePrivilegedReadiness';
 import { HelpTroubleshooting } from '@/components/features/support/HelpTroubleshooting';
 import ServiceStatusOverview from '@/components/features/service-status/ServiceStatusOverview';
+import { GovernanceProposalsSection } from '@/components/features/governance-proposals/GovernanceProposalsSection';
 
 export default function AdminRoutePage() {
   const { data, isLoading, isError, errorMessage, isOffline, freshness, refetch } =
@@ -42,6 +43,7 @@ export default function AdminRoutePage() {
         <HelpTroubleshooting />
         <h1 className="text-2xl font-semibold">Admin</h1>
         <ServiceStatusOverview />
+        <GovernanceProposalsSection />
       </div>
     </MainLayout>
   );
