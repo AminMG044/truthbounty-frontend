@@ -1,10 +1,10 @@
 # UI-FE-093 Approved-Board Conformity Review Bundle
 
-> **Frontend Revision:** `9efbc5ec545b1dc3dd065e92fb750805b41350ee`  
+> **Frontend Revision:** `9f913fa119d339332e4e46d707986b8c34f69bbc`  
 > **Protocol Authority Commit:** [`60c66b78cf797d8f821089c99ae1bc461009fecc`](https://github.com/DigiNodes/truthbounty-protocol/commit/60c66b78cf797d8f821089c99ae1bc461009fecc)  
 > **Total Approved Boards:** 58 across 6 Batches  
-> **Implemented Surfaces:** 32 / **Planned & Blocked:** 26  
-> **Bundle SHA-256 Digest:** `fe63e8be17e1943c0e862b29f06d99d11873a2822dd19b42b1a577b2fa0ea859`
+> **Implemented Surfaces:** 34 / **Planned & Blocked:** 24  
+> **Bundle SHA-256 Digest:** `64a564c020fb183dbe15e7a8e5650ecefe1a397f5b61493671a806f794c040d5`
 
 ---
 
@@ -17,7 +17,7 @@
 | **Batch 3: Verifier Eligibility, Queue & Workspace** | 7 | 0 | 7 | ✅ Approved |
 | **Batch 4: Public Dispute Register & Appeal Resolution** | 6 | 1 | 5 | ✅ Approved |
 | **Batch 5: Privileged Operations, Emergency & Governance Timelock** | 13 | 12 | 1 | ✅ Approved |
-| **Batch 6: Support, Incident Status, Security & Legal Compliance** | 13 | 3 | 10 | ✅ Approved |
+| **Batch 6: Support, Incident Status, Security & Legal Compliance** | 13 | 5 | 8 | ✅ Approved |
 
 ---
 
@@ -82,8 +82,8 @@
 | `11-role-administration.svg` | privileged | /admin | ✅ Implemented | None | `662193bcbb` |
 | `12-upgrade-controlled-unpause.svg` | privileged | /admin | ✅ Implemented | None | `6b036044e1` |
 | `13-emergency-scope-pause-control.svg` | privileged | /admin | ✅ Implemented | None | `9e344fddf6` |
-| `01-documentation-home.svg` | support-legal | /docs | ⏳ Planned | None | `dbf294039c` |
-| `02-documentation-article.svg` | support-legal | /docs/:slug | ⏳ Planned | None | `1ed98b1a94` |
+| `01-documentation-home.svg` | support-legal | /docs | ✅ Implemented | None | `13284364de` |
+| `02-documentation-article.svg` | support-legal | /docs/:slug | ✅ Implemented | None | `487116a7a0` |
 | `03-help-troubleshooting.svg` | support-legal | /support | ⏳ Planned | None | `993c71253c` |
 | `04-service-status-overview.svg` | support-legal | /status | ⏳ Planned | None | `2512c7a1cb` |
 | `05-incident-detail-history.svg` | support-legal | /status/incidents/:incidentId | ⏳ Planned | None | `88d19764e5` |

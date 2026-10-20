@@ -66,7 +66,7 @@ export function UnsavedChangesDialog({
     <div className="fixed inset-0 z-[60] modal-shell bg-black/60" role="presentation">
       <div
         ref={dialogRef}
-        className="modal-panel bg-[#18181b] border border-[#232329]"
+        className="modal-panel bg-card border border-border"
         role="dialog"
         aria-modal="true"
         aria-labelledby="unsaved-changes-title"
@@ -95,7 +95,7 @@ export function UnsavedChangesDialog({
             ref={cancelRef}
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-[#232329] bg-[#232329] px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+            className="rounded-lg border border-border bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
           >
             {cancelLabel}
           </button>

@@ -3,16 +3,14 @@
 import { useEffect, useRef } from 'react';
 import type { FormErrorSummaryItem } from '@/components/ui/FormErrorSummary';
 
-export function useFormErrorSummary(errors: FormErrorSummaryItem[]) {
+export function useFormErrorSummary(errors: readonly FormErrorSummaryItem[]) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (errors.length > 0 && ref.current) {
+    if (errors && errors.length > 0 && ref.current) {
       ref.current.focus();
     }
   }, [errors]);
 
   return ref;
 }
-
-export default useFormErrorSummary;
