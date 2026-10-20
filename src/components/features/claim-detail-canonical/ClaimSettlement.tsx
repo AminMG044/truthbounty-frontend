@@ -49,7 +49,7 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
               <CheckCircle2 className="h-5 w-5 text-green-500" aria-hidden="true" />
               <span className="text-sm font-medium text-green-500">Finalized</span>
             </>
-          ) : finalityState === 'confirmed' ?
+          ) : finalityState === 'confirmed' ? (
             <>
               <Clock className="h-5 w-5 text-yellow-500" aria-hidden="true" />
               <span className="text-sm font-medium text-yellow-500">

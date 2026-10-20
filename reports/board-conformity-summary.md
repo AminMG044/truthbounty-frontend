@@ -1,10 +1,10 @@
 # UI-FE-093 Approved-Board Conformity Review Bundle
 
-> **Frontend Revision:** `f9e2e158f7e11afc315199337e2fa183180603b3`  
+> **Frontend Revision:** `9efbc5ec545b1dc3dd065e92fb750805b41350ee`  
 > **Protocol Authority Commit:** [`60c66b78cf797d8f821089c99ae1bc461009fecc`](https://github.com/DigiNodes/truthbounty-protocol/commit/60c66b78cf797d8f821089c99ae1bc461009fecc)  
 > **Total Approved Boards:** 58 across 6 Batches  
-> **Implemented Surfaces:** 31 / **Planned & Blocked:** 27  
-> **Bundle SHA-256 Digest:** `98f419109c89c04992a215971774a5486fea2af629267bf1d02b219ee7a26d32`
+> **Implemented Surfaces:** 32 / **Planned & Blocked:** 26  
+> **Bundle SHA-256 Digest:** `fe63e8be17e1943c0e862b29f06d99d11873a2822dd19b42b1a577b2fa0ea859`
 
 ---
 
@@ -17,7 +17,7 @@
 | **Batch 3: Verifier Eligibility, Queue & Workspace** | 7 | 0 | 7 | ✅ Approved |
 | **Batch 4: Public Dispute Register & Appeal Resolution** | 6 | 1 | 5 | ✅ Approved |
 | **Batch 5: Privileged Operations, Emergency & Governance Timelock** | 13 | 12 | 1 | ✅ Approved |
-| **Batch 6: Support, Incident Status, Security & Legal Compliance** | 13 | 2 | 11 | ✅ Approved |
+| **Batch 6: Support, Incident Status, Security & Legal Compliance** | 13 | 3 | 10 | ✅ Approved |
 
 ---
 
@@ -90,7 +90,7 @@
 | `06-contact-support-entry.svg` | support-legal | /contact | ⏳ Planned | None | `3750c43156` |
 | `07-support-request-form.svg` | support-legal | /support | ⏳ Planned | None | `bb78dfcdc1` |
 | `08-security-reporting.svg` | support-legal | /security | ⏳ Planned | None | `9e2a4df094` |
-| `09-privacy-notice.svg` | support-legal | /privacy | ⏳ Planned | None | `284a19d0f8` |
+| `09-privacy-notice.svg` | support-legal | /privacy | ✅ Implemented | None | `2ba694d5be` |
 | `10-terms-of-use.svg` | support-legal | /terms | ✅ Implemented | None | `7e8c5e471f` |
 | `11-protocol-risk-disclosures.svg` | support-legal | /disclosures | ⏳ Planned | None | `d5404f28b2` |
 | `12-legal-version-consent.svg` | support-legal | /settings | ⏳ Planned | None | `6d26e95d80` |

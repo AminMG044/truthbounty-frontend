@@ -29,3 +29,18 @@ const mockBaseData: UseRoleAdministrationDataReturn = {
       field: 'Role/capability identifiers',
       source: 'verified-release-manifest',
       unavailableReason: MANIFEST_UNAVAILABLE_REASON,
+    },
+  ],
+  prepareDraft: () => ({ action: 'grant', roleId: null, address: '', warnings: [] }),
+  refetch: async () => {},
+};
+
+const meta: Meta<typeof RoleAdministration> = {
+  title: 'Features/Governance/RoleAdministration',
+  component: RoleAdministration,
+};
+
+export default meta;
+type Story = StoryObj<typeof RoleAdministration>;
+
+export const Default: Story = {};

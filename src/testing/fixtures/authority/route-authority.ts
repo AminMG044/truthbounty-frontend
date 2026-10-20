@@ -759,7 +759,7 @@ export const CANONICAL_ROUTE_EXPECTATIONS: readonly CanonicalRouteExpectation[] 
       mutationControls: [],
       boardRefs: [board('support-legal', '09-privacy-notice.svg')],
       boardAuthority: 'route',
-      implementationStatus: 'planned',
+      implementationStatus: 'implemented',
       aliases: [],
     },
     {
@@ -922,6 +922,12 @@ export const DISCOVERED_ROUTE_CLASSIFICATIONS: readonly DiscoveredRouteClassific
       kind: 'canonical',
       canonicalPath: '/terms',
       note: 'Terms of use',
+    },
+    {
+      pattern: '/privacy',
+      kind: 'canonical',
+      canonicalPath: '/privacy',
+      note: 'Versioned privacy notice',
     },
     { pattern: '/verifier', kind: 'legacy-alias', canonicalPath: '/dashboard/verifications', note: 'Legacy verifier alias' },
     { pattern: '/rewards', kind: 'legacy-alias', canonicalPath: '/dashboard/rewards', note: 'Legacy rewards alias' },

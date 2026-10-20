@@ -67,7 +67,11 @@ export function useNetworkStatus() {
   return { isOnline: true, saveData: false, effectiveType: '4g', isLowBandwidth: false };
 }
 
-// ─── useWebSocketStatus ─────────────────────────────────────────────────────
+export function readLowBandwidth(): boolean {
+  return false;
+}
+
+// ─── useWebSocketStatus & useWebSocketContext ───────────────────────────────
 
 export function useWebSocketStatus() {
   const { webSocket } = useStorybookFixture();
@@ -78,6 +82,22 @@ export function useWebSocketStatus() {
     reconnectAttempts: webSocket === 'reconnecting' ? 1 : 0,
   };
 }
+
+export function useWebSocketContext() {
+  return {
+    isConnected: true,
+    connectionState: 'connected' as const,
+    lastMessage: null,
+    lastCursor: null,
+    reconnectAttempts: 0,
+    connect: () => {},
+    disconnect: () => {},
+    subscribe: () => () => {},
+    send: () => {},
+    clearPersistedCursor: () => {},
+  };
+}
+
 
 // ─── useReducedMotion ────────────────────────────────────────────────────────
 

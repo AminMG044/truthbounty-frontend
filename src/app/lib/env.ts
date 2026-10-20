@@ -97,7 +97,7 @@ function parseUrl(name: PublicEnvVar, raw: string, requireHttps: boolean): strin
   if (url.protocol !== "https:" && url.protocol !== "http:") {
     throw new EnvValidationError(name, `must use https or http, not "${url.protocol}"`);
   }
-  if (requireHttps && url.protocol !== "https") {
+  if (requireHttps && url.protocol !== "https:") {
     throw new EnvValidationError(name, "must use https in production builds");
   }
   return url.toString().replace(/\/$/, "");

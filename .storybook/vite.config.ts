@@ -31,6 +31,11 @@ export const storybookViteConfig = defineConfig({
         'mocks.ts',
       ),
       '@/components/providers/ThemeProvider': path.resolve(__dirname, 'mocks.ts'),
+      '@storybook/jest': path.resolve(__dirname, 'test-shim.ts'),
+      '@storybook/testing-library': path.resolve(__dirname, 'test-shim.ts'),
+      '@storybook/test': path.resolve(__dirname, 'test-shim.ts'),
     },
   },
 });
+
+export default storybookViteConfig;

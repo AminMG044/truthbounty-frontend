@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { expect } from '@storybook/jest';
+import { userEvent, within } from '@storybook/testing-library';
 
 import HelpTroubleshooting from './HelpTroubleshooting';
-import { troubleshootingContent } from './troubleshootingTopics';
+import { troubleshootingContent } from './troubleshooting-topics';
 
 const meta = {
   title: 'Features/Support/HelpTroubleshooting',

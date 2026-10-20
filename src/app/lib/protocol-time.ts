@@ -130,7 +130,7 @@ const EPSILON = Number.EPSILON;
  */
 export function normalizeBlockNumber(
   value: bigint | number | string | null | undefined
-]: bigint | null {
+): bigint | null {
   if (value === null || value === undefined) return null;
 
   try {
