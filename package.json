@@ -26,7 +26,6 @@
     "test:a11y": "jest --runInBand src/__tests__/accessibility",
     "verify:accessibility": "node scripts/verify-accessibility.mjs",
     "verify:staging-smoke": "node scripts/verify-staging-smoke.mjs",
-    "verify:env": "node scripts/verify-env.mjs",
     "check:token-drift": "node scripts/check-token-drift.mjs",
     "check:token-drift:report": "node scripts/check-token-drift.mjs --report-file reports/token-drift-report.json",
     "verify:providers": "node scripts/verify-provider-drift.mjs",
