@@ -39,6 +39,7 @@ jest.mock('@/hooks/useDisputeSubmission', () => ({
     submitDispute: jest.fn(),
     isSimulating: false,
     isSubmitting: false,
+    isConfirming: false,
     error: null,
     isDisputeSupported: true,
   }),

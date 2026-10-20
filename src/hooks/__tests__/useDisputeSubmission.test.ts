@@ -26,6 +26,11 @@ import type {
 
 const mockEstimateGas = jest.fn(async () => 213_456n);
 const mockSimulateContract = jest.fn(async () => ({ request: {} }));
+const mockWaitForTransactionReceipt = jest.fn(async () => ({
+  status: 'success',
+  blockNumber: 12_345_678n,
+  gasUsed: 180_000n,
+}));
 const mockWriteContractAsync = jest.fn(
   async () => `0x${'ab'.repeat(32)}` as `0x${string}`,
 );
@@ -162,10 +167,16 @@ describe('useDisputeSubmission', () => {
 
     mockEstimateGas.mockResolvedValue(213_456n);
     mockSimulateContract.mockResolvedValue({ request: {} });
+    mockWaitForTransactionReceipt.mockResolvedValue({
+      status: 'success',
+      blockNumber: 12_345_678n,
+      gasUsed: 180_000n,
+    });
     mockWriteContractAsync.mockResolvedValue(`0x${'ab'.repeat(32)}`);
     (usePublicClient as jest.Mock).mockReturnValue({
       estimateGas: mockEstimateGas,
       simulateContract: mockSimulateContract,
+      waitForTransactionReceipt: mockWaitForTransactionReceipt,
     });
     (useWriteContract as jest.Mock).mockReturnValue({
       writeContractAsync: mockWriteContractAsync,
@@ -449,7 +460,7 @@ describe('useDisputeSubmission', () => {
   });
 
   describe('Submission', () => {
-    it('submits through the wallet and returns the real transaction hash', async () => {
+    it('submits through the wallet and confirms the receipt on-chain', async () => {
       const { result } = renderHook(() => useDisputeSubmission());
 
       const transaction = await act(() =>
@@ -460,14 +471,75 @@ describe('useDisputeSubmission', () => {
       );
 
       expect(mockWriteContractAsync).toHaveBeenCalledTimes(1);
+      expect(mockWaitForTransactionReceipt).toHaveBeenCalledWith({
+        hash: `0x${'ab'.repeat(32)}`,
+        confirmations: 1,
+      });
       expect(transaction.transactionHash).toBe(`0x${'ab'.repeat(32)}`);
-      expect(transaction.status).toBe('PENDING');
-      // The bond lock and dispute id are only known from a mined receipt.
-      expect(transaction.bondLocked).toBe(false);
+      // The receipt, not the write, decides the status.
+      expect(transaction.status).toBe('CONFIRMED');
+      expect(transaction.bondLocked).toBe(true);
+      expect(transaction.blockNumber).toBe(12345678);
+      expect(transaction.gasUsed).toBe('180000');
+      // No on-chain dispute id exists until the contract emits one.
       expect(transaction.disputeId).toBeUndefined();
+      expect(result.current.lastTransaction?.status).toBe('CONFIRMED');
+    });
+
+    it('reports a reverted receipt as REVERTED and locks no bond', async () => {
+      mockWaitForTransactionReceipt.mockResolvedValue({
+        status: 'reverted',
+        blockNumber: 12_345_679n,
+        gasUsed: 21_000n,
+      });
+      const { result } = renderHook(() => useDisputeSubmission());
+
+      const transaction = await act(() =>
+        result.current.submitDispute(mockContext, {
+          ...mockPayload,
+          claimId: CLAIM_ID_BYTES32,
+        }),
+      );
+
+      expect(transaction.status).toBe('REVERTED');
+      expect(transaction.bondLocked).toBe(false);
+      expect(transaction.bondLockConfirmedAt).toBeUndefined();
+    });
+
+    it('fails closed when no RPC endpoint can confirm the transaction', async () => {
+      (usePublicClient as jest.Mock).mockReturnValue({
+        estimateGas: mockEstimateGas,
+        simulateContract: mockSimulateContract,
+      });
+      const { result } = renderHook(() => useDisputeSubmission());
+
+      await expect(
+        result.current.submitDispute(mockContext, {
+          ...mockPayload,
+          claimId: CLAIM_ID_BYTES32,
+        })
+      ).rejects.toThrow(/confirm/i);
+      // The real hash is still recorded so the submission is not lost.
       expect(result.current.lastTransaction?.transactionHash).toBe(
         `0x${'ab'.repeat(32)}`,
       );
+      expect(result.current.lastTransaction?.bondLocked).toBe(false);
+    });
+
+    it('keeps the submitted hash when confirmation times out', async () => {
+      mockWaitForTransactionReceipt.mockRejectedValue(new Error('timed out'));
+      const { result } = renderHook(() => useDisputeSubmission());
+
+      await expect(
+        result.current.submitDispute(mockContext, {
+          ...mockPayload,
+          claimId: CLAIM_ID_BYTES32,
+        })
+      ).rejects.toThrow(/not confirmed/i);
+      expect(result.current.lastTransaction?.transactionHash).toBe(
+        `0x${'ab'.repeat(32)}`,
+      );
+      expect(result.current.lastTransaction?.status).toBe('PENDING');
     });
 
     it('fails closed when the wallet write path is unavailable', async () => {
