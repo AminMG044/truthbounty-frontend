@@ -4,6 +4,7 @@
 
 import React from "react";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { WalletBoundaryGate } from "../WalletBoundaryGate";
 import { deriveWalletBoundaryState } from "@/hooks/useCanonicalWallet";
 import type { WalletBoundaryState } from "@/lib/wallet-boundary/types";
@@ -90,6 +91,27 @@ describe("WalletBoundaryGate accessibility", () => {
     expect(
       screen.getByRole("button", { name: /disconnect/i }),
     ).toBeInTheDocument();
+  });
+
+  it("allows keyboard activation of unsupported-network recovery", async () => {
+    const user = userEvent.setup();
+    const switchToSupportedNetwork = jest.fn().mockResolvedValue(undefined);
+    useCanonicalWallet.mockReturnValue(
+      createBoundaryState({
+        status: "unsupported",
+        chainId: 1,
+        switchToSupportedNetwork,
+      }),
+    );
+    render(
+      <WalletBoundaryGate>
+        <button type="button">Child</button>
+      </WalletBoundaryGate>,
+    );
+
+    await user.tab();
+    await user.keyboard("{Enter}");
+    expect(switchToSupportedNetwork).toHaveBeenCalledTimes(1);
   });
 
   it("renders dismiss/disconnect actions for account errors", () => {

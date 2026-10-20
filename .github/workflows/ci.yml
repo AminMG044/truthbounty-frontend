@@ -305,12 +305,17 @@ jobs:
       - name: Scan browser bundles, source maps, HTML, and RSC payloads
         run: node scripts/secret-scan.mjs .next
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium firefox webkit
       - name: Run E2E tests (including deployment-preview verification)
         env:
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
           E2E_HARNESS: "1"
         run: npm run test:e2e
+      - name: Run supported-platform smoke matrix
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
+          E2E_HARNESS: "1"
+        run: npm run test:e2e:platform-support
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
