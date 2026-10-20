@@ -18,6 +18,7 @@ jest.mock('@/hooks/useDisputeSubmission', () => ({
     simulateDispute: jest.fn(),
     isSimulating: false,
     isSubmitting: mockIsSubmitting,
+    isConfirming: false,
     error: null,
   }),
   formatBondAmount: jest.fn(),
