@@ -1,17 +1,17 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
-import ClaimSubmissionForm from '@/components/features/claim-submission/ClaimSubmissionForm';
+import ClaimStatementForm from '@/components/features/claim-submission/ClaimStatementForm';
+import { useDraftScope } from '@/hooks/useDraftScope';
 
 export default function NewClaimPage() {
-  const router = useRouter();
+  const scope = useDraftScope();
 
   return (
     <MainLayout>
       <div className="min-h-full bg-background px-4 py-8 sm:px-6 lg:px-8">
-        <ClaimSubmissionForm onClose={() => router.push('/')} />
+        <ClaimStatementForm scope={scope} />
       </div>
     </MainLayout>
   );
