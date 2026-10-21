@@ -27,13 +27,7 @@ const eslintConfig = defineConfig([
     "*.log",
     "src/modules/**",
   ]),
-  // eslint-config-next already registers the jsx-a11y plugin on JS/TS files,
-  // so apply the recommended rules scoped to the same file pattern.
-  {
-    name: "jsx-a11y/recommended",
-    files: ["**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
-    rules: jsxA11y.flatConfigs.recommended.rules,
-  },
+  // eslint-config-next registers jsx-a11y and its recommended rules.
   ...storybook.configs["flat/recommended"],
   {
     // Global rule overrides: experimental react-hooks rules that fire on

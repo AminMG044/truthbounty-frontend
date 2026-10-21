@@ -9,12 +9,15 @@ export interface ReadOnlyConfigSummaryProps {
   parameters: ReadOnlyProtocolParameter[];
   isLoading?: boolean;
   className?: string;
+  /** Freshness label for the projection data source. Never grants authority. */
+  freshness?: 'live' | 'stale' | 'unavailable';
 }
 
 export function ReadOnlyConfigSummary({
   parameters,
   isLoading = false,
   className = '',
+  freshness = 'live',
 }: ReadOnlyConfigSummaryProps) {
   if (isLoading) {
     return (
@@ -29,6 +32,26 @@ export function ReadOnlyConfigSummary({
     );
   }
 
+  if (freshness === 'unavailable' || parameters.length === 0) {
+    return (
+      <div
+        className={`rounded-2xl border border-border bg-card p-6 space-y-2 ${className}`}
+        data-testid="readonly-config-summary"
+        data-freshness="unavailable"
+        role="status"
+        aria-live="polite"
+      >
+        <h2 className="text-base font-semibold tracking-tight text-foreground flex items-center gap-2">
+          <Lock className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          <span>Read-Only Protocol Configuration</span>
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          Configuration projection unavailable. No parameters are shown and no actions are enabled.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className={`space-y-4 ${className}`} data-testid="readonly-config-summary">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -39,6 +62,14 @@ export function ReadOnlyConfigSummary({
             <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
               Enforced Read-Only
             </span>
+            {freshness === 'stale' && (
+              <span
+                className="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20 uppercase tracking-wider"
+                data-testid="readonly-config-stale-badge"
+              >
+                Stale Projection
+              </span>
+            )}
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
             Immutable parameters verified against canonical release artifacts. Configuration changes require on-chain multi-sig execution.
@@ -54,6 +85,7 @@ export function ReadOnlyConfigSummary({
             <div
               key={param.key}
               className="rounded-xl border border-border bg-card p-4 flex flex-col justify-between shadow-xs transition-colors hover:border-border/80"
+              data-freshness={freshness}
             >
               <div>
                 <div className="flex items-center justify-between gap-1 text-[11px] text-muted-foreground">

@@ -9,7 +9,9 @@ import { EvidenceViewer } from '@/components/features/claim-verification/Evidenc
 import { StakeForm } from '@/components/features/claim-verification/StakeForm';
 import { VerificationActions } from '@/components/features/claim-verification/VerificationActions';
 import { FeatureErrorBoundary } from '@/components/common/FeatureErrorBoundary';
+import { ClaimReviewAuthorize } from '@/components/features/claim-verification/ClaimReviewAuthorize';
 import { getClaimById } from '@/lib/api/claims';
+import type { Claim } from '@/types/claim';
 
 export default function ClaimDetailPage() {
   // Route params are read through useParams() rather than the page props:
@@ -192,6 +194,29 @@ export default function ClaimDetailPage() {
                 </FeatureErrorBoundary>
               </div>
             </div>
+
+            {/* Review & Authorize Composition */}
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <div className="border-b border-gray-100 px-5 py-4 dark:border-gray-800 sm:px-6">
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                  Review &amp; Authorize
+                </h2>
+
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Confirm the exact transaction before authorizing submission.
+                </p>
+              </div>
+
+              <div className="p-5 sm:p-6">
+                <FeatureErrorBoundary scope="claim-review-authorize">
+                  <ClaimReviewAuthorize
+                    claimId={claimId}
+                    claim={claim}
+                    stakeAmount={stakeAmount}
+                  />
+                </FeatureErrorBoundary>
+              </div>
+            </div>
           </section>
 
           <aside className="space-y-6 lg:sticky lg:top-6">
@@ -270,26 +295,14 @@ export default function ClaimDetailPage() {
                 </FeatureErrorBoundary>
               </div>
 
-            </div>
-            {/* Actions */}
-            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
-              <div className="border-b border-gray-100 px-5 py-4 dark:border-gray-800">
-                <h2 className="text-base font-semibold text-gray-900 dark:text-white">
-                  Decision
-                </h2>
-
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Submit your final verification decision.
-                </p>
-              </div>
-
-              <div className="p-5">
-                <FeatureErrorBoundary scope="verification-actions">
-                  <VerificationActions
-                    claimId={claimId}
-                  />
-                </FeatureErrorBoundary>
-              </div>
+            {/* Verification Actions */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <FeatureErrorBoundary scope="verification-actions">
+                <VerificationActions
+                  claimId={claimId}
+                  stakeAmount={stakeAmount}
+                />
+              </FeatureErrorBoundary>
             </div>
           </aside>
         </div>
