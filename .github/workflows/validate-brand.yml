@@ -1,0 +1,114 @@
+{
+  "name": "Validate approved brand foundation",
+  "on": {
+    "push": {
+      "branches": [
+        "validate/572-approved-brand"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "checks": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 35,
+      "steps": [
+        {
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "uses": "actions/setup-node@v4",
+          "with": {
+            "node-version": "24"
+          }
+        },
+        {
+          "name": "Install without lifecycle scripts",
+          "run": "corepack enable pnpm\npnpm install --frozen-lockfile --ignore-scripts"
+        },
+        {
+          "name": "Lint",
+          "run": "pnpm lint"
+        },
+        {
+          "name": "Types",
+          "if": "always()",
+          "run": "pnpm type-check"
+        },
+        {
+          "name": "Full unit and integration suite",
+          "if": "always()",
+          "run": "pnpm test --runInBand"
+        },
+        {
+          "name": "Token drift and source guards",
+          "if": "always()",
+          "run": "pnpm check:token-drift\nnode scripts/secret-scan.mjs src release next.config.ts"
+        }
+      ]
+    },
+    "stories": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 30,
+      "steps": [
+        {
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "uses": "actions/setup-node@v4",
+          "with": {
+            "node-version": "24"
+          }
+        },
+        {
+          "name": "Install without lifecycle scripts",
+          "run": "corepack enable pnpm\npnpm install --frozen-lockfile --ignore-scripts"
+        },
+        {
+          "name": "Build Storybook",
+          "run": "pnpm build-storybook"
+        },
+        {
+          "name": "Install Chromium",
+          "run": "pnpm exec playwright install --with-deps chromium"
+        },
+        {
+          "name": "Brand Storybook interactions and a11y",
+          "run": "pnpm exec vitest run src/components/brand/BrandFoundation.stories.tsx --project storybook"
+        }
+      ]
+    },
+    "build": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 30,
+      "env": {
+        "NEXT_PUBLIC_CHAIN_ID": "11155420",
+        "NEXT_PUBLIC_RPC_URL": "https://sepolia.optimism.io",
+        "NEXT_PUBLIC_API_BASE_URL": "https://validation.invalid",
+        "NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID": "00000000000000000000000000000000",
+        "NEXT_PUBLIC_EXPLORER_BASE_URL": "https://sepolia-optimism.etherscan.io"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "uses": "actions/setup-node@v4",
+          "with": {
+            "node-version": "24"
+          }
+        },
+        {
+          "name": "Install without lifecycle scripts",
+          "run": "corepack enable pnpm\npnpm install --frozen-lockfile --ignore-scripts"
+        },
+        {
+          "name": "Production compile with non-live validation configuration",
+          "run": "pnpm build"
+        }
+      ]
+    }
+  }
+}

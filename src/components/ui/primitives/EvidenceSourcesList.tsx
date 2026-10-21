@@ -39,7 +39,7 @@ const TYPE_CONFIG: Record<EvidenceType, { icon: React.ReactNode; label: string; 
   link: { icon: <Link2 size={14} aria-hidden="true" />, label: 'Link', tone: 'text-blue-400' },
   text: { icon: <FileText size={14} aria-hidden="true" />, label: 'Text', tone: 'text-slate-400' },
   image: { icon: <Image size={14} aria-hidden="true" />, label: 'Image', tone: 'text-green-400' },
-  video: { icon: <Video size={14} aria-hidden="true" />, label: 'Video', tone: 'text-purple-400' },
+  video: { icon: <Video size={14} aria-hidden="true" />, label: 'Video', tone: 'text-action-text' },
   document: { icon: <FileText size={14} aria-hidden="true" />, label: 'Document', tone: 'text-amber-400' },
   onchain: { icon: <Shield size={14} aria-hidden="true" />, label: 'On-chain', tone: 'text-emerald-400' },
 };

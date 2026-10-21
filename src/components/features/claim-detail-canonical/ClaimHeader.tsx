@@ -27,33 +27,33 @@ interface StatusBadgeConfig {
 const STATUS_CONFIGS: Record<ClaimStatus, StatusBadgeConfig> = {
   OPEN: {
     label: 'Open',
-    bgColor: 'bg-blue-500/10',
-    textColor: 'text-blue-500',
-    borderColor: 'border-blue-500/20',
+    bgColor: 'bg-info/10',
+    textColor: 'text-info',
+    borderColor: 'border-info/20',
   },
   UNDER_REVIEW: {
     label: 'Under Review',
-    bgColor: 'bg-yellow-500/10',
-    textColor: 'text-yellow-500',
-    borderColor: 'border-yellow-500/20',
+    bgColor: 'bg-warning/10',
+    textColor: 'text-warning',
+    borderColor: 'border-warning/20',
   },
   VERIFIED: {
     label: 'Verified',
-    bgColor: 'bg-green-500/10',
-    textColor: 'text-green-500',
-    borderColor: 'border-green-500/20',
+    bgColor: 'bg-success/10',
+    textColor: 'text-success',
+    borderColor: 'border-success/20',
   },
   REJECTED: {
     label: 'Rejected',
-    bgColor: 'bg-red-500/10',
-    textColor: 'text-red-500',
-    borderColor: 'border-red-500/20',
+    bgColor: 'bg-danger/10',
+    textColor: 'text-danger',
+    borderColor: 'border-danger/20',
   },
   DISPUTED: {
     label: 'Disputed',
-    bgColor: 'bg-purple-500/10',
-    textColor: 'text-purple-500',
-    borderColor: 'border-purple-500/20',
+    bgColor: 'bg-warning/10',
+    textColor: 'text-warning',
+    borderColor: 'border-warning/20',
   },
 };
 
@@ -146,12 +146,12 @@ function finalityLabel(finality: CanonicalFinality): { label: string; className:
     case 'finalized':
       return {
         label: 'Finalized',
-        className: 'text-green-400 border-green-500/30 bg-green-500/10',
+        className: 'text-green-400 border-success/30 bg-success/10',
       };
     case 'confirmed':
       return {
         label: `Confirmed (${finality.confirmations}/${finality.requiredConfirmations})`,
-        className: 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10',
+        className: 'text-yellow-400 border-warning/30 bg-warning/10',
       };
     case 'pending':
       return {
@@ -161,7 +161,7 @@ function finalityLabel(finality: CanonicalFinality): { label: string; className:
     case 'reorged':
       return {
         label: 'Reorged',
-        className: 'text-red-400 border-red-500/30 bg-red-500/10',
+        className: 'text-red-400 border-danger/30 bg-danger/10',
       };
     default:
       return {

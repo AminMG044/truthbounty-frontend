@@ -1,3 +1,4 @@
+import { BRAND_COLORS } from "@/lib/brand-tokens";
 // src/components/providers/Web3Provider.tsx
 
 "use client";
@@ -29,14 +30,14 @@ export function RainbowKitThemedProvider({
   const { resolvedTheme } = useTheme();
 
   const customDarkTheme = darkTheme({
-    accentColor: "#5b5bf6",
-    accentColorForeground: "#ffffff",
+    accentColor: BRAND_COLORS["proof-blue"],
+    accentColorForeground: BRAND_COLORS["ink-navy"],
     borderRadius: "medium",
   });
 
   const customLightTheme = lightTheme({
-    accentColor: "#5b5bf6",
-    accentColorForeground: "#ffffff",
+    accentColor: BRAND_COLORS["proof-blue"],
+    accentColorForeground: BRAND_COLORS["ink-navy"],
     borderRadius: "medium",
   });
 

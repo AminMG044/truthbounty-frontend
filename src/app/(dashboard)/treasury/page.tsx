@@ -18,7 +18,7 @@ export default function TreasuryPage() {
           </p>
           <Link
             href="/treasury/stake"
-            className="inline-block mt-3 text-sm text-[#5b5bf6] underline hover:text-white"
+            className="inline-block mt-3 text-sm text-action-text underline hover:text-white"
           >
             Stake &amp; recipient withdrawal
           </Link>

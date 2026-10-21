@@ -34,7 +34,7 @@ export default function PublicLandingPage() {
           </div>
           <Link
             href="/treasury"
-            className="text-sm font-semibold text-[#5b5bf6] underline underline-offset-2"
+            className="text-sm font-semibold text-action-text underline underline-offset-2"
           >
             Open treasury UX
           </Link>
@@ -48,7 +48,7 @@ export default function PublicLandingPage() {
           </div>
           <Link
             href="/disputes"
-            className="text-sm font-semibold text-[#5b5bf6] underline underline-offset-2"
+            className="text-sm font-semibold text-action-text underline underline-offset-2"
           >
             Open dispute register
           </Link>

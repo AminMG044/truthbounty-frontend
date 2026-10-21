@@ -56,7 +56,7 @@ export function WorldcoinInfoTooltip() {
               </div>
 
               <div className="flex items-start gap-2">
-                <Zap className="size-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+                <Zap className="size-4 text-action-text dark:text-action-text mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Increased Limits

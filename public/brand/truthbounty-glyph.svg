@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">TruthBounty Evidence Shield glyph</title>
+  <desc id="desc">Two evidence paths converge at a diamond verification point and resolve into one output inside a shield.</desc>
+  <defs>
+    <linearGradient id="tb-signal" x1="48" y1="40" x2="208" y2="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#4F7CFF"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#tb-signal)" d="M120 20 51 42c-7 2-11 9-11 16v54c0 54 27 96 80 120v-90l-38-38 38-38V20Z"/>
+  <path fill="url(#tb-signal)" d="m136 20 69 22c7 2 11 9 11 16v54c0 54-27 96-80 120v-90l38-38-38-38V20Z"/>
+  <path fill="#22D3EE" d="m128 88 16 16-16 16-16-16 16-16Z"/>
+</svg>

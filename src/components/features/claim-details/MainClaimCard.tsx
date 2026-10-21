@@ -133,7 +133,7 @@ export const MainClaimCard = ({ data, isLoading = false }: MainClaimCardProps) =
             <div className="flex-1 h-2.5 rounded-full bg-gray-800 overflow-hidden">
               <div
                 style={{ width: `${data.confidenceScore}%` }}
-                className="h-full bg-linear-to-r from-indigo-500 via-purple-500 to-indigo-400"
+                className="h-full bg-linear-to-r from-signal-cyan to-proof-blue"
               ></div>
             </div>
             <span className="text-green-600 font-bold text-xl font-mono tabular-nums">

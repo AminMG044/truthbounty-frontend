@@ -89,7 +89,7 @@ export function TermsReviewState({ status, reviewerNotes, clauseTitle, network, 
             )}
             {network === 'mainnet' && (
               <span
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-purple-900/30 text-purple-400 border-purple-700"
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-info/10 text-info border-info/30"
                 aria-label="Mainnet clause"
               >
                 Mainnet

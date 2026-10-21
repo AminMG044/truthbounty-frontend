@@ -1,0 +1,27 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "color": {
+    "brand": {
+      "signalCyan": { "$value": "#22D3EE", "$type": "color" },
+      "proofBlue": { "$value": "#4F7CFF", "$type": "color" },
+      "bountyGold": { "$value": "#F5B942", "$type": "color" }
+    },
+    "semantic": {
+      "success": { "$value": "#41D39A", "$type": "color" },
+      "attention": { "$value": "#F4B860", "$type": "color" },
+      "danger": { "$value": "#FF6B7A", "$type": "color" },
+      "info": { "$value": "#74A7FF", "$type": "color" }
+    }
+  },
+  "dimension": {
+    "touchMin": { "$value": "44px", "$type": "dimension" },
+    "sidebar": { "$value": "256px", "$type": "dimension" },
+    "topbar": { "$value": "64px", "$type": "dimension" },
+    "contentMax": { "$value": "1440px", "$type": "dimension" }
+  },
+  "duration": {
+    "feedback": { "$value": "120ms", "$type": "duration" },
+    "component": { "$value": "180ms", "$type": "duration" },
+    "drawer": { "$value": "240ms", "$type": "duration" }
+  }
+}

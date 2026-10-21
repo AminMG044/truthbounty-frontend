@@ -28,7 +28,7 @@ const VerificationNodes = ({
       <div className="flex justify-between items-center mb-4">
         <div className="text-white font-semibold">Verification Nodes</div>
         <button
-          className="text-xs text-[#5b5bf6] cursor-pointer hover:underline"
+          className="text-xs text-action-text cursor-pointer hover:underline"
           aria-label="View all verification nodes"
         >
           View All

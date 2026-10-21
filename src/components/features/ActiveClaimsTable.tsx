@@ -184,7 +184,7 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
                 onClick={handleClearSearch}
                 aria-label="Clear search"
                 title="Clear search"
-                className="absolute right-1 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-5 h-5 rounded text-[#a1a1aa] hover:text-white hover:bg-[#3a3a42] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5b5bf6]"
+                className="absolute right-1 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-5 h-5 rounded text-[#a1a1aa] hover:text-white hover:bg-[#3a3a42] focus:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               >
                 <span aria-hidden="true" className="text-sm leading-none">
                   ×
@@ -217,11 +217,11 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
                   >
                     <td className="py-3">
                       <div className="flex flex-col">
-                        <span className="text-xs text-[#5b5bf6] font-semibold flex items-center gap-1.5">
+                        <span className="text-xs text-action-text font-semibold flex items-center gap-1.5">
                           <CategoryIcon size={14} />
                           {item.category ?? 'General'}
                           {item.highImpact && (
-                            <span className="ml-2 bg-[#232329] text-[#5b5bf6] px-2 py-0.5 rounded-full text-[10px]">
+                            <span className="ml-2 bg-[#232329] text-action-text px-2 py-0.5 rounded-full text-[10px]">
                               High Impact
                             </span>
                           )}
@@ -246,7 +246,7 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
                     </td>
                     <td className="py-3">
                       <button
-                        className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-[#5b5bf6]"
+                        className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-action hover:text-action-ink"
                         aria-label={`View claim: ${item.title}`}
                       >
                         View
@@ -267,7 +267,7 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
                       <p className="mb-2">No claims match the current search or filter.</p>
                       <button
                         onClick={onClearFilters}
-                        className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-[#5b5bf6]"
+                        className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-action hover:text-action-ink"
                       >
                         Clear filters
                       </button>
@@ -290,7 +290,7 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
               onClick={() => onPageChange(page - 1)}
               disabled={!canGoPrevious}
               aria-label="Go to previous page"
-              className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-[#5b5bf6] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-action hover:text-action-ink disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
@@ -308,8 +308,8 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
                       aria-current={p === page ? 'page' : undefined}
                       className={`px-3 py-1 rounded text-xs ${
                         p === page
-                          ? "bg-[#5b5bf6] text-white"
-                          : "bg-[#232329] text-white hover:bg-[#5b5bf6]"
+                          ? "bg-action text-action-ink"
+                          : "bg-[#232329] text-white hover:bg-action hover:text-action-ink"
                       }`}
                     >
                       {p}
@@ -321,7 +321,7 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
               onClick={() => onPageChange(page + 1)}
               disabled={!canGoNext}
               aria-label="Go to next page"
-              className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-[#5b5bf6] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-action hover:text-action-ink disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>

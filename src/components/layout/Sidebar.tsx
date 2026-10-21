@@ -1,5 +1,7 @@
 'use client';
 
+import { BrandMark } from "@/components/brand/BrandMark";
+
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -251,13 +253,7 @@ const Sidebar = () => {
             className="flex items-center text-foreground hover:opacity-90 transition-opacity"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <span
-              className="bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center mr-2 shadow-sm font-bold"
-              aria-hidden="true"
-            >
-              T
-            </span>
-            TruthBounty
+            <BrandMark />
           </Link>
         </div>
 

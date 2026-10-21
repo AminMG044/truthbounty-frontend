@@ -34,7 +34,7 @@ export interface DeploymentPreviewBannerProps {
 const CHAIN_ENVIRONMENT_COLORS: Record<string, string> = {
   preview: 'bg-sky-950 border-sky-700 text-sky-100',
   staging: 'bg-amber-950 border-amber-700 text-amber-100',
-  development: 'bg-violet-950 border-violet-700 text-violet-100',
+  development: 'bg-info/10 border-info/30 text-info',
 };
 
 const BLOCKED_COLORS = 'bg-red-950 border-red-700 text-red-100';

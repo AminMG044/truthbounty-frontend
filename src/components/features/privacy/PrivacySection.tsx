@@ -102,7 +102,7 @@ export function PrivacySection({ clause, sectionId, network }: PrivacySectionPro
           )}
           {network === 'mainnet' && (
             <span
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-purple-900/30 text-purple-400 border-purple-700"
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-info/10 text-info border-info/30"
               aria-label="Mainnet notice — Optimism Mainnet"
             >
               Mainnet
