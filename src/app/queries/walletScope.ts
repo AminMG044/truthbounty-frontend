@@ -21,6 +21,8 @@ import {
   walletKeys,
   walletScope,
 } from './queryKeys';
+import { clearWalletScopedCache } from './offlineCache';
+
 
 export interface ProtocolContextSnapshot {
   address?: string | null;
@@ -118,8 +120,9 @@ export function onWalletScopeChange(
   const nextChain = typeof next?.chainId === 'number' ? next.chainId : null;
 
   const previousScope =
-    prevAddr && prevChain ? `${prevAddr}:${prevChain}` : null;
-  const nextScope = nextAddr && nextChain ? `${nextAddr}:${nextChain}` : null;
+    prevAddr && prevChain !== null ? `${prevAddr}:${prevChain}` : null;
+  const nextScope =
+    nextAddr && nextChain !== null ? `${nextAddr}:${nextChain}` : null;
 
   const releaseAwarePrevious = buildProtocolContextKey({
     address: prevAddr,
@@ -132,12 +135,15 @@ export function onWalletScopeChange(
 
   if (previousScope && previousScope !== nextScope) {
     const removed = invalidateWalletScope(queryClient, prevAddr, prevChain);
+    // Also drop any meta-tagged entries for the departing scope.
+    clearWalletScopedCache(queryClient, previousScope);
     return { removed, previousScope: releaseAwarePrevious, nextScope: releaseAwareNext };
   }
 
   // Disconnect: clear last known wallet roots without touching global claims.
   if (previousScope && !nextScope) {
     const removed = invalidateWalletScope(queryClient, prevAddr, prevChain);
+    clearWalletScopedCache(queryClient, previousScope);
     return { removed, previousScope: releaseAwarePrevious, nextScope: releaseAwareNext };
   }
 

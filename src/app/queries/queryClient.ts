@@ -6,6 +6,18 @@ import {
   registerPersistedKey,
   type PersistedKeyRegistration,
 } from '@/app/lib/persistedState';
+import { CACHE_RELEASE, isNonCacheable } from './offlineCache';
+
+type QueryKeyRoot = string | number | null | undefined;
+
+interface QueryLike {
+  queryKey?: readonly unknown[];
+  state?: { data?: unknown };
+}
+
+interface MutationLike {
+  options?: { mutationKey?: readonly unknown[] };
+}
 
 const BASE_STALE_TIME = 1000 * 60 * 5; // 5 mins
 const LOW_BANDWIDTH_STALE_TIME = 1000 * 60 * 15; // 15 mins when data-saver/slow
@@ -29,6 +41,106 @@ function retryDelay(attemptIndex: number): number {
 
 function resolveStaleTime(): number {
   return isBrowser() && readLowBandwidth() ? LOW_BANDWIDTH_STALE_TIME : BASE_STALE_TIME;
+}
+
+/** Observation metadata attached to every successful query. */
+export interface ObservationMeta {
+  observedAt: number;
+  chainId: number | null;
+  release: string;
+  finality: 'unknown' | 'pending' | 'finalized';
+  walletScope: string | null;
+  stale: boolean;
+  source: 'cache' | 'network';
+}
+
+/**
+ * Cache allow-list. Only public, documentation, legal, and previously viewed
+ * projection data may be cached. Everything else (mutations, auth, wallet,
+ * evidence, user content) is treated as non-cacheable and fails closed.
+ */
+export const CACHEABLE_ROOTS: ReadonlySet<string> = new Set([
+  'public',
+  'docs',
+  'documentation',
+  'legal',
+  'projection',
+  'projections',
+  'viewed',
+  'history',
+]);
+
+/** Roots that must never be cached or served from cache. */
+export const NON_CACHEABLE_ROOTS: ReadonlySet<string> = new Set([
+  'auth',
+  'authorization',
+  'session',
+  'wallet',
+  'account',
+  'mutation',
+  'mutations',
+  'evidence',
+  'user',
+  'userContent',
+  'receipt',
+  'receipts',
+]);
+
+function rootOf(queryKey: readonly unknown[] | undefined): QueryKeyRoot {
+  const root = queryKey?.[0];
+  if (typeof root === 'string' || typeof root === 'number') return root;
+  return undefined;
+}
+
+/** True when the query root is explicitly allowed to be cached. */
+export function isCacheableRoot(root: QueryKeyRoot): boolean {
+  if (root === undefined || root === null) return false;
+  if (isNonCacheable(root)) return false;
+  if (NON_CACHEABLE_ROOTS.has(String(root))) return false;
+  return CACHEABLE_ROOTS.has(String(root));
+}
+
+/** True when the query root must never be cached. */
+export function isBlockedRoot(root: QueryKeyRoot): boolean {
+  if (root === undefined || root === null) return true;
+  if (isNonCacheable(root)) return true;
+  return NON_CACHEABLE_ROOTS.has(String(root));
+}
+
+/**
+ * Attach observation metadata to every successful query. Non-cacheable roots
+ * are marked stale so they are never presented as fresh or final.
+ */
+function attachObservationMeta(
+  _data: unknown,
+  query: QueryLike,
+): ObservationMeta {
+  const root = rootOf(query.queryKey);
+  const blocked = isBlockedRoot(root);
+  const cacheable = isCacheableRoot(root);
+  return {
+    observedAt: Date.now(),
+    chainId: null,
+    release: CACHE_RELEASE,
+    finality: 'unknown',
+    walletScope: null,
+    stale: blocked || !cacheable,
+    source: 'network',
+  };
+}
+
+/**
+ * Fail closed: any mutation whose key is not explicitly allowed is rejected
+ * while canonical dependencies are unavailable (offline / stale / wrong chain).
+ */
+function guardMutation(mutation: MutationLike): void {
+  const root = rootOf(mutation.options?.mutationKey);
+  if (isBlockedRoot(root)) {
+    throw new Error('Mutation blocked: canonical dependencies unavailable.');
+  }
+  if (isBrowser() && navigator.onLine === false) {
+    throw new Error('Mutation blocked: offline.');
+  }
 }
 
 /**
@@ -65,8 +177,12 @@ export const queryClient = new QueryClient({
       networkMode: 'online',
       retry: shouldRetry,
       retryDelay,
+      // Offline read-only: serve last observed projections with metadata.
+      // Mutations remain gated by networkMode: 'online'.
+      meta: attachObservationMeta,
     },
     mutations: {
+      onMutate: guardMutation,
       onError: (error) => console.error('Mutation error:', error),
       networkMode: 'online',
     },
