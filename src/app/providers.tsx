@@ -14,6 +14,7 @@ import {
   ReducedDataProvider,
   CrossTabSyncProvider,
 } from '@/components/providers';
+import { OfflineCacheProvider } from '@/components/providers/OfflineCacheProvider';
 import { SiweAuthProvider } from '@/context/SiweAuthProvider';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { IntegrityBoundary } from '@/components/security/IntegrityBoundary';
@@ -33,15 +34,19 @@ export function Providers({ children }: ProvidersProps) {
               <RainbowKitThemedProvider>
                 <SiweAuthProvider>
                   <FeatureFlagProvider enablePersistence={true}>
-                    <ErrorBoundary>
-                      <WalletStateGuard>
-                        <CrossTabSyncProvider>
-                          {children}
-                          {/* Feature flag panel for development debugging */}
-                          <FeatureFlagPanel defaultOpen={false} position="bottom-right" />
-                        </CrossTabSyncProvider>
-                      </WalletStateGuard>
-                    </ErrorBoundary>
+                    <OfflineCacheProvider>
+                      <ErrorBoundary>
+                        <IntegrityBoundary>
+                          <WalletStateGuard>
+                            <CrossTabSyncProvider>
+                              {children}
+                              {/* Feature flag panel for development debugging */}
+                              <FeatureFlagPanel defaultOpen={false} position="bottom-right" />
+                            </CrossTabSyncProvider>
+                          </WalletStateGuard>
+                        </IntegrityBoundary>
+                      </ErrorBoundary>
+                    </OfflineCacheProvider>
                   </FeatureFlagProvider>
                 </SiweAuthProvider>
               </RainbowKitThemedProvider>

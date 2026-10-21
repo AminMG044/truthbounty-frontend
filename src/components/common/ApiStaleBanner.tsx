@@ -3,7 +3,6 @@
 /**
  * ApiStaleBanner — Accessible announcement when API projection data is stale.
  * V2-FE-136
- *
  * Renders nothing when data is fresh.
  * Renders a polite warning when stale.
  * Renders an assertive alert when critical (actions may be blocked).
