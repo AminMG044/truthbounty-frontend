@@ -63,6 +63,20 @@
           "name": "Brand Storybook interactions and accessibility",
           "if": "always()",
           "run": "pnpm exec vitest run --config .storybook/brand/vitest.config.ts"
+        },
+        {
+          "name": "Brand visual, contrast and keyboard checks",
+          "if": "always()",
+          "run": "node .review/capture-brand.mjs"
+        },
+        {
+          "uses": "actions/upload-artifact@v4",
+          "if": "always()",
+          "with": {
+            "name": "brand-572-visual-evidence",
+            "path": "screenshots/",
+            "retention-days": 7
+          }
         }
       ]
     }
