@@ -1,5 +1,11 @@
 import type { Claim } from './claim';
 import type { ProjectionFreshness } from './claim-list';
+import { sanitizeRichText } from '../lib/sanitize';
+
+export interface SanitizedRichText {
+  html: string;
+  text: string;
+}
 
 export interface ClaimDetailEnvelope {
   claim: Claim;
@@ -7,6 +13,20 @@ export interface ClaimDetailEnvelope {
     freshness: ProjectionFreshness;
     generatedAt: string;
     reason?: string;
+  };
+}
+
+export interface SanitizedClaimDetailContent {
+  description: SanitizedRichText;
+  evidence: SanitizedRichText[];
+}
+
+export function sanitizeClaimDetailContent(
+  envelope: ClaimDetailEnvelope,
+): SanitizedClaimDetailContent {
+  return {
+    description: sanitizeRichText(envelope.claim.description),
+    evidence: envelope.claim.evidence.map((item) => sanitizeRichText(item)),
   };
 }
 

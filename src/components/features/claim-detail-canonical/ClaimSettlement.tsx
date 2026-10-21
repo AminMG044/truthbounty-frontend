@@ -178,6 +178,8 @@ export function ClaimSettlement({ claim }: ClaimSettlementProps) {
     isConfirmed: true,
   });
 
+  const txPrefix = settlement.settlementTxHash.slice(0, 10);
+
   return (
     <div className="pt-4 border-t border-[#232329] space-y-3">
       <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
