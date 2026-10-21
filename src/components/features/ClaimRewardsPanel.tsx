@@ -65,7 +65,7 @@ export default function ClaimRewardsPanel({
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#232329]">
           <div className="flex items-center gap-3">
             <div
-              className="w-8 h-8 rounded-lg bg-[#5b5bf6]/20 flex items-center justify-center"
+              className="w-8 h-8 rounded-lg bg-action/20 flex items-center justify-center"
               aria-hidden="true"
             >
               <svg
@@ -77,7 +77,7 @@ export default function ClaimRewardsPanel({
               >
                 <path
                   d="M8 1l1.94 3.93L14 5.27l-3 2.93.71 4.13L8 10.27l-3.71 2.06.71-4.13L2 5.27l4.06-.34L8 1z"
-                  fill="#5b5bf6"
+                  fill="var(--action)"
                 />
               </svg>
             </div>
@@ -115,7 +115,7 @@ export default function ClaimRewardsPanel({
           <button
             type="button"
             onClick={() => void refresh()}
-            className="mt-3 text-sm text-white underline hover:text-[#d4d4d8] focus:outline-none focus:ring-2 focus:ring-[#5b5bf6] rounded"
+            className="mt-3 text-sm text-white underline hover:text-[#d4d4d8] focus:outline-none focus:ring-2 focus:ring-focus rounded"
           >
             Retry
           </button>
@@ -130,7 +130,7 @@ export default function ClaimRewardsPanel({
       <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-4 border-b border-[#232329]">
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-lg bg-[#5b5bf6]/20 flex items-center justify-center"
+            className="w-8 h-8 rounded-lg bg-action/20 flex items-center justify-center"
             aria-hidden="true"
           >
             <svg
@@ -142,7 +142,7 @@ export default function ClaimRewardsPanel({
             >
               <path
                 d="M8 1l1.94 3.93L14 5.27l-3 2.93.71 4.13L8 10.27l-3.71 2.06.71-4.13L2 5.27l4.06-.34L8 1z"
-                fill="#5b5bf6"
+                fill="var(--action)"
               />
             </svg>
           </div>
@@ -162,7 +162,7 @@ export default function ClaimRewardsPanel({
             <p className="text-xs text-[#a1a1aa]">Total available</p>
             <p
               className={`text-xl font-bold font-mono tabular-nums transition-colors ${
-                hasRewards ? "text-[#5b5bf6]" : "text-[#a1a1aa]"
+                hasRewards ? "text-action-text" : "text-[#a1a1aa]"
               }`}
             >
               {totalClaimableDisplay ?? "0"}
@@ -183,7 +183,7 @@ export default function ClaimRewardsPanel({
                   : isError
                     ? "bg-red-500/20 text-red-400 border border-red-500/30"
                     : hasRewards && !isConfirming
-                      ? "bg-[#5b5bf6] text-white hover:bg-[#4a4ae5] hover:shadow-lg hover:shadow-[#5b5bf6]/20 active:scale-95"
+                      ? "bg-action text-action-ink hover:bg-action-hover hover:shadow-lg hover:shadow-action/20 active:scale-95"
                       : "bg-[#232329] text-[#a1a1aa] cursor-not-allowed border border-[#232329]"
               }
             `}
@@ -281,7 +281,7 @@ export default function ClaimRewardsPanel({
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div
-                  className="w-2 h-2 rounded-full bg-[#5b5bf6] shrink-0"
+                  className="w-2 h-2 rounded-full bg-action shrink-0"
                   aria-hidden="true"
                 />
                 <div className="min-w-0">
@@ -293,7 +293,7 @@ export default function ClaimRewardsPanel({
                   </p>
                 </div>
               </div>
-              <span className="text-[#5b5bf6] font-semibold text-sm ml-4 shrink-0 font-mono">
+              <span className="text-action-text font-semibold text-sm ml-4 shrink-0 font-mono">
                 +{reward.amountFormatted}
               </span>
             </li>

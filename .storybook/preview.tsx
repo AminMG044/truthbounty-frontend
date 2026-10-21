@@ -19,8 +19,12 @@
 
 import type { Preview } from '@storybook/nextjs-vite';
 import React from 'react';
+import { Geist, Geist_Mono } from 'next/font/google';
 import '../src/app/globals.css';
 import { StorybookFixtureProvider } from './StorybookFixtureProvider';
+
+const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 const preview: Preview = {
   parameters: {
@@ -61,8 +65,8 @@ const preview: Preview = {
     backgrounds: {
       default: 'light',
       values: [
-        { name: 'light', value: '#ffffff' },
-        { name: 'dark', value: '#0b0b0b' },
+        { name: 'light', value: '#f7f9fc' },
+        { name: 'dark', value: '#070a12' },
       ],
     },
 
@@ -99,6 +103,7 @@ const preview: Preview = {
       return React.createElement(
         'div',
         {
+          className: `${geistSans.variable} ${geistMono.variable}`,
           style: {
             minWidth: '320px',
             maxWidth: '100%',

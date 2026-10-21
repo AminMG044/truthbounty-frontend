@@ -121,7 +121,7 @@ export function PrivacyRenderer({
               className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
                 network === 'testnet'
                   ? 'bg-blue-900/30 text-blue-400 border-blue-700'
-                  : 'bg-purple-900/30 text-purple-400 border-purple-700'
+                  : 'bg-info/10 text-info border-info/30'
               }`}
               aria-label={network === 'testnet' ? 'Testnet notice' : 'Mainnet notice'}
             >
@@ -130,7 +130,7 @@ export function PrivacyRenderer({
             <span
               className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
                 safeSource === 'governance'
-                  ? 'bg-purple-900/30 text-purple-400 border-purple-700'
+                  ? 'bg-info/10 text-info border-info/30'
                   : safeSource === 'board'
                   ? 'bg-blue-900/30 text-blue-400 border-blue-700'
                   : 'bg-green-900/30 text-green-400 border-green-700'

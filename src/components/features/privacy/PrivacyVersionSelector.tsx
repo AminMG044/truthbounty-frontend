@@ -141,7 +141,7 @@ function VersionListItem({ version, isCurrent, onSelect, network }: VersionListI
 
   const sourceLabels: Record<string, { label: string; className: string }> = {
     board: { label: 'Board', className: 'bg-blue-900/30 text-blue-400 border-blue-700' },
-    governance: { label: 'Governance', className: 'bg-purple-900/30 text-purple-400 border-purple-700' },
+    governance: { label: 'Governance', className: 'bg-info/10 text-info border-info/30' },
     legal: { label: 'Legal', className: 'bg-green-900/30 text-green-400 border-green-700' },
   };
 
@@ -186,7 +186,7 @@ function VersionListItem({ version, isCurrent, onSelect, network }: VersionListI
             )}
             {network === 'mainnet' && (
               <span
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-purple-900/30 text-purple-400 border-purple-700"
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-info/10 text-info border-info/30"
                 aria-label="Mainnet version"
               >
                 Mainnet
@@ -297,7 +297,7 @@ function DraftVersionListItem({ version, network }: DraftVersionListItemProps) {
             )}
             {network === 'mainnet' && (
               <span
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-purple-900/30 text-purple-400 border-purple-700"
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border bg-info/10 text-info border-info/30"
                 aria-label="Mainnet version"
               >
                 Mainnet

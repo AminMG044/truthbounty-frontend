@@ -43,7 +43,7 @@ function EvidenceShell({ evidence, loading, error, stale, onRetry }: EvidenceShe
         onClick={() => setExpanded((prev) => !prev)}
         aria-expanded={expanded}
         aria-controls="evidence-content"
-        className="flex items-center justify-between w-full font-semibold mb-3 text-base sm:text-lg text-left focus-visible:outline-2 focus-visible:outline-[#5b5bf6] focus-visible:outline-offset-2 rounded"
+        className="flex items-center justify-between w-full font-semibold mb-3 text-base sm:text-lg text-left focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 rounded"
       >
         <span>Evidence</span>
         <span aria-hidden="true">{expanded ? '▲' : '▼'}</span>

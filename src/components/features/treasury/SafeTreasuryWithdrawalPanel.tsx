@@ -182,7 +182,7 @@ export function SafeTreasuryWithdrawalPanel() {
                 onChange={(e) => setDraft({ recipient: e.target.value.trim() })}
                 disabled={blocked}
                 placeholder="0x…"
-                className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-[#5b5bf6]"
+                className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-focus"
                 aria-invalid={validation.errors.some((x) => x.startsWith('Recipient'))}
                 aria-describedby={`${formId}-errors`}
               />
@@ -199,7 +199,7 @@ export function SafeTreasuryWithdrawalPanel() {
                 onChange={(e) => setDraft({ amountWei: e.target.value.replace(/[^\d]/g, '') })}
                 disabled={blocked}
                 placeholder="0"
-                className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-[#5b5bf6]"
+                className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-focus"
                 aria-invalid={validation.errors.some((x) => x.startsWith('Amount'))}
               />
               <p className="text-[11px] text-[#71717a] mt-1">{formatWei(draft.amountWei || undefined)}</p>
@@ -214,13 +214,13 @@ export function SafeTreasuryWithdrawalPanel() {
                 value={draft.reason ?? ''}
                 onChange={(e) => setDraft({ reason: e.target.value })}
                 disabled={blocked}
-                className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#5b5bf6]"
+                className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-focus"
               />
             </div>
             <button
               type="submit"
               disabled={blocked || !validation.ok}
-              className="w-full sm:w-auto px-5 py-2 rounded-lg text-sm font-semibold bg-[#5b5bf6] text-white disabled:bg-[#232329] disabled:text-[#71717a] disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-5 py-2 rounded-lg text-sm font-semibold bg-action text-action-ink disabled:bg-[#232329] disabled:text-[#71717a] disabled:cursor-not-allowed"
             >
               Review withdrawal
             </button>
@@ -252,7 +252,7 @@ export function SafeTreasuryWithdrawalPanel() {
               <button
                 type="button"
                 onClick={goTypedConfirm}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#5b5bf6] text-white"
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-action text-action-ink"
               >
                 Continue to typed confirm
               </button>
@@ -270,7 +270,7 @@ export function SafeTreasuryWithdrawalPanel() {
               id={`${formId}-confirm`}
               value={typedConfirm}
               onChange={(e) => setTypedConfirm(e.target.value)}
-              className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#5b5bf6]"
+              className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-focus"
               aria-required="true"
             />
             <div className="flex flex-wrap gap-2">
@@ -315,7 +315,7 @@ export function SafeTreasuryWithdrawalPanel() {
                 href={getTransactionExplorerUrl(receipt.txHash, receipt.chainId ?? undefined)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-[#5b5bf6]"
+                className="underline text-action-text"
                 aria-label="View treasury withdrawal on explorer"
               >
                 View on Explorer ({receipt.txHash.slice(0, 10)}…{receipt.txHash.slice(-6)})

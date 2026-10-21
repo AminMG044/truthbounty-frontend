@@ -38,7 +38,7 @@ function ErrorState({ error, onRetry }: { error: { code: string; message: string
         </p>
         <button
           onClick={onRetry}
-          className="px-4 py-2 rounded bg-[#5b5bf6] text-xs text-white hover:bg-[#4a4ae0]"
+          className="px-4 py-2 rounded bg-action text-xs text-white hover:bg-action-hover"
         >
           Try again
         </button>

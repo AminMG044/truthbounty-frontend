@@ -218,7 +218,7 @@ export const ApiFreshnessIndicator = memo(function ApiFreshnessIndicator({
               label="Chain Head"
               value={freshness.chainHeadHeight.toLocaleString()}
               description="Current chain head"
-              icon={<Wifi className="w-4 h-4 text-purple-400" />}
+              icon={<Wifi className="w-4 h-4 text-action-text" />}
             />
             <MetricCard
               label="Lag"

@@ -61,7 +61,7 @@ export default function IdentityPage() {
 
           {/* Benefits */}
           {isVerified && (
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200 dark:border-purple-800 rounded-lg p-6">
+            <div className="bg-gradient-to-br from-signal-cyan/10 to-proof-blue/10 border border-action/30 rounded-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 🎉 You're All Set!
               </h2>

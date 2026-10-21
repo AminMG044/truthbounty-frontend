@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">TruthBounty application icon</title>
+  <desc id="desc">Evidence Shield on an Ink Navy rounded-square application tile.</desc>
+  <defs>
+    <linearGradient id="tb-tile" x1="96" y1="88" x2="416" y2="432" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#4F7CFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#070A12"/>
+  <path fill="url(#tb-tile)" d="M240 82 120 120c-12 4-20 15-20 28v94c0 94 47 167 140 209V294l-66-66 66-66V82Z"/>
+  <path fill="url(#tb-tile)" d="m272 82 120 38c12 4 20 15 20 28v94c0 94-47 167-140 209V294l66-66-66-66V82Z"/>
+  <path fill="#22D3EE" d="m256 200 28 28-28 28-28-28 28-28Z"/>
+</svg>

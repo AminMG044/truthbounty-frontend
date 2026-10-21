@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">TruthBounty Evidence Shield monochrome glyph</title>
+  <desc id="desc">Monochrome Evidence Shield using the current text colour.</desc>
+  <path fill="currentColor" d="M120 20 51 42c-7 2-11 9-11 16v54c0 54 27 96 80 120v-90l-38-38 38-38V20Zm16 0 69 22c7 2 11 9 11 16v54c0 54-27 96-80 120v-90l38-38-38-38V20Zm-8 68 16 16-16 16-16-16 16-16Z"/>
+</svg>

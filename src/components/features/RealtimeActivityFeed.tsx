@@ -108,7 +108,7 @@ export function RealtimeActivityFeed() {
       case 'dispute':
         return 'bg-red-500';
       case 'dispute_resolved':
-        return 'bg-purple-500';
+        return 'bg-info';
       case 'leaderboard':
         return 'bg-indigo-500';
       default:

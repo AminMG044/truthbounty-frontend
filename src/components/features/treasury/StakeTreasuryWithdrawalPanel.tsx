@@ -236,7 +236,7 @@ export default function StakeTreasuryWithdrawalPanel() {
                       placeholder="0x…"
                       aria-invalid={rowMessages.some((m) => m.startsWith('Recipient'))}
                       aria-describedby={`${addressId}-error`}
-                      className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-[#5b5bf6]"
+                      className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-focus"
                     />
                   </div>
                   <div>
@@ -254,7 +254,7 @@ export default function StakeTreasuryWithdrawalPanel() {
                       placeholder="0"
                       aria-invalid={rowMessages.some((m) => m.startsWith('Amount'))}
                       aria-describedby={`${amountId}-error`}
-                      className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-[#5b5bf6]"
+                      className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white placeholder:text-[#52525b] focus:outline-none focus:ring-2 focus:ring-focus"
                     />
                   </div>
                   <div>
@@ -268,7 +268,7 @@ export default function StakeTreasuryWithdrawalPanel() {
                       onChange={(e) =>
                         updateRecipient(row.id, { asset: e.target.value as StakeTreasuryAsset })
                       }
-                      className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#5b5bf6]"
+                      className="w-full rounded-lg bg-[#121216] border border-[#232329] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-focus"
                     >
                       {SUPPORTED_WITHDRAWAL_ASSETS.map((asset) => (
                         <option key={asset} value={asset}>
@@ -331,7 +331,7 @@ export default function StakeTreasuryWithdrawalPanel() {
           type="button"
           onClick={() => void submit()}
           disabled={submitDisabled}
-          className="w-full sm:w-auto px-5 py-2 rounded-lg text-sm font-semibold bg-[#5b5bf6] text-white disabled:bg-[#232329] disabled:text-[#71717a] disabled:cursor-not-allowed"
+          className="w-full sm:w-auto px-5 py-2 rounded-lg text-sm font-semibold bg-action text-action-ink disabled:bg-[#232329] disabled:text-[#71717a] disabled:cursor-not-allowed"
           aria-describedby={`${formId}-submit-help`}
         >
           Submit withdrawals
@@ -370,7 +370,7 @@ export default function StakeTreasuryWithdrawalPanel() {
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline text-[#5b5bf6]"
+                      className="underline text-action-text"
                       aria-label={`View withdrawal for ${outcome.recipient} on explorer`}
                     >
                       View on Explorer ({outcome.txHash.slice(0, 10)}…{outcome.txHash.slice(-6)})
