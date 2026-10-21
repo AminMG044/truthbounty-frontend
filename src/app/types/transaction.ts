@@ -2,13 +2,91 @@
  * V2 Transaction State Types - Canonical EVM/Optimism
  *
  * Represents transaction lifecycle with blockchain-aware state transitions:
- * submitted -> confirmed -> safe -> finalized -> indexing -> indexed
+ * review -> simulation -> signature -> submitted -> confirmed -> safe -> finalized -> indexing -> indexed
  *
  * Each state is exclusive and represents validated on-chain facts, never fabricated state.
  * Security: Always validate chain, address, amount, artifact version against contracts.
+ *
+ * Authorization boundary: no success may be shown at review, simulation, signature,
+ * or hash receipt. Success is only valid once the canonical transaction-state
+ * authority reports confirmed/safe/finalized/indexed with a matching receipt.
  */
 
 import type { Address } from 'viem';
+
+/**
+ * Review state: exact review summary before any authorization.
+ * - No transaction exists yet; no hash, no receipt, no success.
+ * - Must display chain, contract, method, parameters, and costs.
+ * - Authorization is disabled unless the release is pinned and simulation succeeds.
+ */
+export interface TransactionReview {
+  state: 'review';
+  chainId: number; // Canonical chain ID (10 for Optimism)
+  contractAddress: Address; // Target contract
+  method: string; // Contract method selector/name
+  parameters: Record<string, unknown>; // Exact reviewed parameters
+  costs: {
+    estimatedGas: bigint;
+    estimatedFeeWei: bigint;
+    maxFeePerGasWei?: bigint;
+    maxPriorityFeePerGasWei?: bigint;
+  };
+  releasePinned: boolean; // Unpinned release disables authorization
+  simulationPassed: boolean; // Simulation failure disables authorization
+  recoverableTransactionReference?: string; // Recoverable reference for retry/recovery
+  hash?: never;
+  receipt?: never;
+}
+
+/**
+ * Simulation state: dry-run result before signature.
+ * - No transaction exists yet; no hash, no receipt, no success.
+ * - Simulation failure disables authorization.
+ */
+export interface TransactionSimulation {
+  state: 'simulation';
+  chainId: number;
+  contractAddress: Address;
+  method: string;
+  parameters: Record<string, unknown>;
+  costs: {
+    estimatedGas: bigint;
+    estimatedFeeWei: bigint;
+    maxFeePerGasWei?: bigint;
+    maxPriorityFeePerGasWei?: bigint;
+  };
+  releasePinned: boolean;
+  simulationPassed: boolean;
+  simulationError?: string;
+  recoverableTransactionReference?: string;
+  hash?: never;
+  receipt?: never;
+}
+
+/**
+ * Signature state: awaiting wallet signature.
+ * - No hash receipt yet; no success.
+ * - Rejection must remain distinct from failure/revert.
+ */
+export interface TransactionSignature {
+  state: 'signature';
+  chainId: number;
+  contractAddress: Address;
+  method: string;
+  parameters: Record<string, unknown>;
+  costs: {
+    estimatedGas: bigint;
+    estimatedFeeWei: bigint;
+    maxFeePerGasWei?: bigint;
+    maxPriorityFeePerGasWei?: bigint;
+  };
+  releasePinned: boolean;
+  simulationPassed: boolean;
+  recoverableTransactionReference?: string;
+  hash?: never;
+  receipt?: never;
+}
 
 /**
  * Transaction submission state: submitted to mempool
@@ -212,6 +290,9 @@ export interface TransactionIndexed {
  * Union of all transaction states
  */
 export type TransactionState =
+  | TransactionReview
+  | TransactionSimulation
+  | TransactionSignature
   | TransactionSubmitted
   | TransactionConfirmed
   | TransactionSafe
@@ -228,14 +309,25 @@ export type TransactionStateName = TransactionState['state'];
  * Failed/rejected transaction state (terminal)
  */
 export interface TransactionFailed {
-  state: 'failed' | 'rejected' | 'reverted';
+  state: 'failed' | 'rejected' | 'replaced' | 'reverted' | 'reorged';
   hash?: string;
   fromAddress?: Address;
   toAddress?: Address;
   chainId: number;
   timestamp: number;
-  reason: 'insufficient-balance' | 'nonce-too-low' | 'replacement-underpriced' | 'revert' | 'timeout' | 'user-rejected' | 'network-error' | 'unknown';
+  reason:
+    | 'insufficient-balance'
+    | 'nonce-too-low'
+    | 'replacement-underpriced'
+    | 'revert'
+    | 'timeout'
+    | 'user-rejected'
+    | 'network-error'
+    | 'replaced'
+    | 'reorged'
+    | 'unknown';
   error?: string; // Raw error message
+  recoverableTransactionReference?: string; // Recoverable reference for retry/recovery
   receipt?: {
     status: 'reverted' | 'failed';
     gasUsed?: bigint;
@@ -249,9 +341,25 @@ export interface TransactionFailed {
 }
 
 /**
+ * Projection-lag state: API/indexer projection is behind canonical contract state.
+ * - Distinct from finalized and indexed; must not be shown as success.
+ * - Contract state remains canonical for mutations.
+ */
+export interface TransactionProjectionLag {
+  state: 'projection-lag';
+  hash: string;
+  chainId: number;
+  timestamp: number;
+  canonicalBlockNumber: bigint;
+  projectedBlockNumber: bigint;
+  lagBlocks: number;
+  recoverableTransactionReference?: string;
+}
+
+/**
  * Complete transaction including failed states
  */
-export type Transaction = TransactionState | TransactionFailed;
+export type Transaction = TransactionState | TransactionFailed | TransactionProjectionLag;
 
 /**
  * Transaction metadata for stale state detection
@@ -276,3 +384,9 @@ export interface StalenessConfig {
   retryDelayMs: number; // Delay between retries
   maxConfirmationTimeMs: number; // Max time to wait for confirmation
 }
+
+/**
+ * Alias for the terminal error states of a transaction.
+ * Used by error surfaces to narrow the union without re-listing members.
+ */
+export type TransactionErrorState = Extract<Transaction, { state: 'failed' | 'rejected' | 'replaced' | 'reverted' | 'reorged' }>;

@@ -16,6 +16,94 @@ interface Props {
     onDismiss?: () => void;
 }
 
+type CanonicalTxStatus =
+    | 'idle'
+    | 'simulating'
+    | 'simulation_failed'
+    | 'awaiting_signature'
+    | 'rejected'
+    | 'submitted'
+    | 'pending'
+    | 'stuck'
+    | 'replaced'
+    | 'reverted'
+    | 'confirmed'
+    | 'finalized'
+    | 'indexed'
+    | 'projection_lag'
+    | 'reorged';
+
+const SUCCESS_STATES: ReadonlySet<CanonicalTxStatus> = new Set(['finalized', 'indexed']);
+const AUTHORIZATION_BLOCKING_STATES: ReadonlySet<CanonicalTxStatus> = new Set([
+    'idle',
+    'simulating',
+    'simulation_failed',
+    'awaiting_signature',
+    'rejected',
+    'reverted',
+    'replaced',
+    'reorged',
+]);
+
+const STATUS_LABELS: Record<CanonicalTxStatus, string> = {
+    idle: 'Ready to review',
+    simulating: 'Simulating',
+    simulation_failed: 'Simulation failed',
+    awaiting_signature: 'Awaiting signature',
+    rejected: 'Rejected in wallet',
+    submitted: 'Submitted',
+    pending: 'Pending confirmation',
+    stuck: 'Stuck — replacement available',
+    replaced: 'Replaced by another transaction',
+    reverted: 'Reverted on-chain',
+    confirmed: 'Confirmed (awaiting finality)',
+    finalized: 'Finalized',
+    indexed: 'Indexed',
+    projection_lag: 'Projection lag — awaiting indexer',
+    reorged: 'Reorged — confirmation revoked',
+};
+
+const STATUS_TONES: Record<CanonicalTxStatus, string> = {
+    idle: 'bg-slate-500/10 text-slate-300',
+    simulating: 'bg-indigo-500/10 text-indigo-400',
+    simulation_failed: 'bg-rose-500/10 text-rose-400',
+    awaiting_signature: 'bg-indigo-500/10 text-indigo-400',
+    rejected: 'bg-rose-500/10 text-rose-400',
+    submitted: 'bg-indigo-500/10 text-indigo-400',
+    pending: 'bg-indigo-500/10 text-indigo-400',
+    stuck: 'bg-amber-500/10 text-amber-400 animate-pulse',
+    replaced: 'bg-amber-500/10 text-amber-400',
+    reverted: 'bg-rose-500/10 text-rose-400',
+    confirmed: 'bg-emerald-500/10 text-emerald-400',
+    finalized: 'bg-emerald-500/10 text-emerald-400',
+    indexed: 'bg-emerald-500/10 text-emerald-400',
+    projection_lag: 'bg-amber-500/10 text-amber-400',
+    reorged: 'bg-rose-500/10 text-rose-400',
+};
+
+const STATUS_GLYPHS: Record<CanonicalTxStatus, string> = {
+    idle: '•',
+    simulating: '🔄',
+    simulation_failed: '⚠',
+    awaiting_signature: '✎ ',
+    rejected: '✕',
+    submitted: '↗',
+    pending: '🔄',
+    stuck: '⏳',
+    replaced: '↻',
+    reverted: '↺',
+    confirmed: '✓',
+    finalized: '✓',
+    indexed: '✓',
+    projection_lag: '…',
+    reorged: '⚠',
+};
+
+const normalizeStatus = (status: string): CanonicalTxStatus => {
+    if (status in STATUS_LABELS) return status as CanonicalTxStatus;
+    return 'pending';
+};
+
 export const TransactionStatusTracker: React.FC<Props> = ({
     txState,
     action = 'claim',
@@ -30,7 +118,13 @@ export const TransactionStatusTracker: React.FC<Props> = ({
 
     if (!txState) return null;
 
-    const isPendingOrStuck = txState.status === 'pending' || txState.status === 'stuck';
+    const status = normalizeStatus(txState.status);
+    const isPendingOrStuck = status === 'pending' || status === 'stuck';
+    const isSuccess = SUCCESS_STATES.has(status);
+    const authorizationBlocked = AUTHORIZATION_BLOCKING_STATES.has(status);
+    const statusLabel = STATUS_LABELS[status];
+    const statusTone = STATUS_TONES[status];
+    const statusGlyph = STATUS_GLYPHS[status];
     const isStale = freshness === 'stale' || freshness === 'missing';
     const isDegraded = publicStatus?.overall === 'degraded' || publicStatus?.overall === 'partial';
     const isUnavailable = publicStatus?.overall === 'unavailable';
@@ -50,17 +144,34 @@ export const TransactionStatusTracker: React.FC<Props> = ({
 
     return (
         <>
-            <div className="fixed bottom-6 right-6 z-50 w-full max-w-sm rounded-xl bg-slate-900 border border-slate-800 p-4 shadow-2xl text-slate-100 animate-slide-up">
+            <div
+                className="fixed bottom-6 right-6 z-50 w-full max-w-sm rounded-xl bg-slate-900 border border-slate-800 p-4 shadow-2xl text-slate-100 animate-slide-up motion-reduce:animate-none"
+                role="status"
+                aria-live={isSuccess ? 'polite' : 'assertive'}
+                aria-atomic="true"
+                data-tx-status={status}
+                data-tx-success={isSuccess ? 'true' : 'false'}
+                data-tx-authorization-blocked={authorizationBlocked ? 'true' : 'false'}
+            >
                 <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-2.5">
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-full ${txState.status === 'stuck' ? 'bg-amber-500/10 text-amber-400 animate-pulse' : 'bg-indigo-500/10 text-indigo-400'}`}>
-                            {txState.status === 'stuck' ? '⏳' : '🔄'}
+                        <div
+                            className={`flex h-8 w-8 items-center justify-center rounded-full ${statusTone}`}
+                            aria-hidden="true"
+                        >
+                            {statusGlyph}
                         </div>
                         <div>
-                            <h4 className="text-sm font-semibold capitalize">Transaction {txState.status}</h4>
-                            <p className="text-[10px] text-slate-400 font-mono">
-                                {txState.hash.slice(0, 8)}...{txState.hash.slice(-6)}
-                            </p>
+                            <h4 className="text-sm font-semibold">{statusLabel}</h4>
+                            {txState.hash ? (
+                                <p className="text-[10px] text-slate-400 font-mono">
+                                    {txState.hash.slice(0, 8)}...{txState.hash.slice(-6)}
+                                </p>
+                            ) : (
+                                <p className="text-[10px] text-slate-500 font-mono">
+                                    No transaction hash yet
+                                </p>
+                            )}
                         </div>
                     </div>
                     {onDismiss && (
