@@ -29,6 +29,8 @@ import { ClaimContent } from './ClaimContent';
 import { ClaimVerifications } from './ClaimVerifications';
 import { ClaimSettlement } from './ClaimSettlement';
 import { ClaimActions } from './ClaimActions';
+import { ClaimReviewAuthorize } from './ClaimReviewAuthorize';
+import type { Transaction } from '@/app/types/transaction';
 import {
   ErrorSummary,
   useErrorSummaryFocus,
@@ -53,6 +55,18 @@ export interface ClaimDetailViewProps {
   onVerify?: () => void;
   /** Callback when user clicks Dispute button */
   onDispute?: () => void;
+  /** Canonical transaction state from the transaction-state authority */
+  transaction?: Transaction | null;
+  /** Whether the action release is pinned (contract address + artifact) */
+  releasePinOk?: boolean;
+  /** Whether simulation succeeded for the current parameters */
+  simulationOk?: boolean;
+  /** Simulation failure reason (if any) */
+  simulationError?: string | null;
+  /** Callback when user authorizes the transaction */
+  onAuthorize?: () => void | Promise<void>;
+  /** Callback when user rejects */
+  onReject?: () => void;
   /**
    * Optional collected form errors from child forms (e.g. claim actions)
    */
@@ -90,6 +104,12 @@ export function ClaimDetailView({
   showActions = true,
   onVerify,
   onDispute,
+  transaction,
+  releasePinOk,
+  simulationOk,
+  simulationError,
+  onAuthorize,
+  onReject,
   formErrors,
   onErrorSummaryActivate,
   preserveRecoveryFocus = false,
@@ -193,7 +213,21 @@ export function ClaimDetailView({
             <ClaimContent claim={claim} />
             <ClaimVerifications claim={claim} />
             <ClaimSettlement claim={claim} />
-            
+
+            {/* Review + authorization composition */}
+            {showActions && (
+              <ClaimReviewAuthorize
+                claim={claim}
+                freshness={freshness}
+                transaction={transaction}
+                releasePinOk={releasePinOk}
+                simulationOk={simulationOk}
+                simulationError={simulationError}
+                onAuthorize={onAuthorize}
+                onReject={onReject}
+              />
+            )}
+
             {/* Wallet-gated actions */}
             {showActions && (
               <ClaimActions
@@ -208,15 +242,7 @@ export function ClaimDetailView({
       );
     }
 
-    default: {
-      // Exhaustiveness check: should never reach here
-      const _exhaustive: never = projection.viewState;
-      return (
-        <ClaimDetailError
-          error={new Error(`Unknown view state: ${_exhaustive}`)}
-          onRetry={() => projection.refetch()}
-        />
-      );
-    }
+    default:
+      return null;
   }
 }

@@ -15,6 +15,12 @@
  * - Operational tables have approved mobile card alternatives.
  * - Security, keyboard, screen-reader and audit-reference tests pass.
  *
+ * UI-FE-024 Privileged Access and Overview Compositions:
+ * - Privileged entry separates operations, governance, and guardian capability contexts.
+ * - Defaults to read-only; context selection grants nothing.
+ * - Each capability has separate navigation and expiry handling.
+ * - Covers denied, revoked, stale, wrong-chain, and unavailable states.
+ *
  * UI-FE-025 — Operational Health and Release Status:
  * - Privileged health composition with degraded/delayed/stale/unavailable/healthy
  *   observations, ABI/manifest verification, and affected scope.
@@ -149,9 +155,9 @@ export function AdminDashboardContent({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2">
-            <Shield className="h6 w-6 text-primary" aria-hidden="true" />
+            <Shield className="h-6 w-6 text-primary" aria-hidden="true" />
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Bounded Admin Operations & Health
+              Bounded Admin Operations &amp; Health
             </h1>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -196,7 +202,7 @@ export function AdminDashboardContent({
               <p className="text-xs text-muted-foreground">
                 {isOffline
                   ? 'Displaying cached administrative diagnostics. Reconnect to resume live telemetry.'
-                  : 'Last indexer sync was over 45s ogo. Health states may not reflect current block.'}
+                  : 'Last indexer sync was over 45s ago. Health states may not reflect current block.'}
               </p>
             </div>
           </div>
@@ -267,7 +273,7 @@ export function AdminDashboardContent({
       {/* 4a. Accessible Error Summary for failed submissions */}
       {operationErrors.length > 0 && (
         <FormErrorSummary
-          ref=errorSummaryRef}
+          ref={errorSummaryRef}
           errors={operationErrors}
           title="Operation could not be completed"
           onNavigateToField={(fieldId) => {
@@ -321,9 +327,9 @@ export function AdminDashboardContent({
 
       {/* 8. Bounded Operational Queues (with Mobile Card Alternatives) */}
       <OperationalQueueTable
-        items={operationalQueue}
+        queue={operationalQueue}
         isLoading={isLoading}
-        onSelectOperation={(op) => setSelectedOperation(op)}
+        onSelectOperation={(item) => setSelectedOperation(item)}
       />
 
       {/* 9. Read-Only Configuration Summary */}

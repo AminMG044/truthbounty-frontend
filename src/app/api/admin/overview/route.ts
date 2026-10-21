@@ -1,21 +1,31 @@
 import { NextResponse } from 'next/server';
 import { getProtocolRelease, getProtocolDiagnostics } from '@/lib/contracts/registry';
+import { resolveAdminAuthority } from '@/lib/authority/adminAuthority';
 import type { AdminDashboardOverview } from '@/app/types/admin';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
-  const adminHeader = request.headers.get('x-admin-address');
+  const adminHeader: string | null = request.headers.get('x-admin-address');
   const release = getProtocolRelease();
   const rawAdmin = String(release.roles.admin || process.env.NEXT_PUBLIC_ADMIN_ADDRESS || '');
   const rawArbiter = String(release.roles.arbiter || '0x90F79bf6EB2c4f870365E785982E1f101E93b906');
-  const canonicalAdmin = rawAdmin.toLowerCase();
+  const authority = resolveAdminAuthority({
+    presentedAddress: adminHeader,
+    canonicalAdmin: rawAdmin,
+    chainId: release.manifest.chainId,
+    expectedChainId: release.manifest.chainId,
+  });
 
-  if (!adminHeader || !canonicalAdmin || adminHeader.toLowerCase() !== canonicalAdmin) {
+  if (!authority.granted) {
     return NextResponse.json(
       {
         error: 'unauthorized',
-        reason: 'Admin role verification failed against canonical contract registry',
-        requiredRole: 'admin',
-        canonicalAdminConfigured: Boolean(canonicalAdmin),
+        reason: authority.reason,
+        requiredRole: authority.requiredRole,
+        canonicalAdminConfigured: authority.canonicalAdminConfigured,
+        capability: authority.capability,
+        expiresAt: authority.expiresAt,
       },
       { status: 403 }
     );
@@ -26,6 +36,10 @@ export async function GET(request: Request) {
 
   const overview: AdminDashboardOverview = {
     isAuthorized: true,
+    capability: authority.capability,
+    authoritySource: authority.source,
+    authorityExpiresAt: authority.expiresAt,
+    readOnly: true,
     adminAddress: rawAdmin,
     network: 'Optimism Sepolia',
     chainId: release.manifest.chainId,

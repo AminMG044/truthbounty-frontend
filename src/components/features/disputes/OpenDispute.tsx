@@ -64,6 +64,7 @@ export const OpenDispute = ({ claimId, isOpen, onClose, onSuccess, onError }: Op
     submitDispute,
     isSimulating,
     isSubmitting,
+    isConfirming,
     error: submissionHookError,
     isDisputeSupported,
   } = useDisputeSubmission();
@@ -158,16 +159,22 @@ export const OpenDispute = ({ claimId, isOpen, onClose, onSuccess, onError }: Op
         return;
       }
 
-      // Never invent a dispute ID or success state without a real on-chain write.
-      // submitDispute fails closed until wallet writeContract is integrated.
+      // Only a confirmed receipt opens the dispute. The hook returns whatever
+      // the chain settled on, so a reverting receipt is reported here instead
+      // of being announced as success.
       const tx = await submitDispute(context, payload);
-      if (tx?.transactionHash) {
+      if (tx.status === 'CONFIRMED') {
         handleRealSuccess?.(tx.disputeId ?? tx.transactionHash);
         // Verified on-chain write — release the local draft and its guard.
         draft.markPersisted();
         onClose();
         setReason('');
+        return;
       }
+
+      const notConfirmed = `The dispute transaction was not confirmed on-chain (status: ${tx.status}). No bond was locked. Check the transaction before retrying.`;
+      setSubmissionError(notConfirmed);
+      onError?.(notConfirmed);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to submit dispute';
       setSubmissionError(errorMsg);
@@ -176,7 +183,7 @@ export const OpenDispute = ({ claimId, isOpen, onClose, onSuccess, onError }: Op
   };
 
   // Combined loading state
-  const isLoading = isLoadingContext || isSimulating || isSubmitting;
+  const isLoading = isLoadingContext || isSimulating || isSubmitting || isConfirming;
 
   // UI-FE-084: guard nontrivial dispute input against silent loss.
   const isDirty = reason.trim().length > 0;
@@ -305,7 +312,7 @@ export const OpenDispute = ({ claimId, isOpen, onClose, onSuccess, onError }: Op
             </div>
           )}
 
-          {/* Bond amount display */}
+          {/* Bond amount and bond risk (slash / refund) — canonical context only */}
           {context && (
             <div className="rounded-lg bg-zinc-900/50 border border-zinc-700 p-3">
               <div className="text-sm text-zinc-400 mb-1">Required Challenge Bond</div>
@@ -315,6 +322,53 @@ export const OpenDispute = ({ claimId, isOpen, onClose, onSuccess, onError }: Op
               <div className="text-xs text-zinc-500 mt-1 font-mono tabular-nums">
                 Your balance: {formatBondAmount(context.walletPosition.currentBalance)} ETH
               </div>
+            </div>
+          )}
+
+          {context && (
+            <div
+              data-testid="dispute-bond-risk"
+              className="rounded-lg bg-amber-950/30 border border-amber-900/50 p-3 text-xs text-amber-200"
+              role="note"
+            >
+              <p className="font-medium text-amber-100 mb-1">What happens to your bond</p>
+              <ul className="list-disc pl-4 space-y-1">
+                <li>
+                  <span className="font-mono tabular-nums">
+                    {formatBondAmount(context.bond.bondAmount)} ETH
+                  </span>{' '}
+                  is locked while the dispute is open.
+                </li>
+                <li>
+                  If the challenge fails,{' '}
+                  <span className="font-mono tabular-nums">
+                    {formatBondAmount(context.bond.slashAmount)} ETH
+                  </span>{' '}
+                  ({context.bond.slashPercentage}%) is slashed and only the remainder is
+                  refunded.
+                </li>
+                <li>
+                  If the challenge succeeds, the bond is refunded and you can receive up
+                  to{' '}
+                  <span className="font-mono tabular-nums">
+                    {formatBondAmount(context.bond.potentialReward)} ETH
+                  </span>{' '}
+                  in total.
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {/* Confirmation feedback — the receipt, not a timer, ends this state */}
+          {isConfirming && (
+            <div
+              data-testid="dispute-confirming"
+              className="flex items-center gap-2 text-zinc-400 text-sm"
+              role="status"
+              aria-live="polite"
+            >
+              <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+              <span>Waiting for on-chain confirmation...</span>
             </div>
           )}
 
@@ -386,13 +440,15 @@ export const OpenDispute = ({ claimId, isOpen, onClose, onSuccess, onError }: Op
               disabled={!canSubmit}
               className="px-4 py-2.5 sm:py-2 rounded-lg bg-red-600 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
               aria-label={
-                isLoading
-                  ? "Submitting dispute..."
-                  : disputeUnavailableReason
-                    ? disputeUnavailableReason
-                    : !readiness.isReady
-                      ? readiness.message || "Wallet not ready to submit dispute"
-                      : "Confirm dispute"
+                isConfirming
+                  ? "Waiting for on-chain confirmation..."
+                  : isLoading
+                    ? "Submitting dispute..."
+                    : disputeUnavailableReason
+                      ? disputeUnavailableReason
+                      : !readiness.isReady
+                        ? readiness.message || "Wallet not ready to submit dispute"
+                        : "Confirm dispute"
               }
               aria-describedby={
                 disputeUnavailableReason
@@ -405,11 +461,13 @@ export const OpenDispute = ({ claimId, isOpen, onClose, onSuccess, onError }: Op
               {isLoading && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
               {disputeUnavailableReason
                 ? 'Dispute Unavailable'
-                : isSimulating
-                  ? 'Simulating...'
-                  : isSubmitting
-                    ? 'Submitting...'
-                    : 'Confirm Dispute'}
+                : isConfirming
+                  ? 'Confirming...'
+                  : isSimulating
+                    ? 'Simulating...'
+                    : isSubmitting
+                      ? 'Submitting...'
+                      : 'Confirm Dispute'}
             </button>
           </div>
         </form>

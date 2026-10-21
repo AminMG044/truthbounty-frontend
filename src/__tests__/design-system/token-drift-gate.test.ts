@@ -27,57 +27,6 @@ const ALLOWLIST = path.join(ROOT, 'scripts', 'token-drift-allowlist.json');
 // Helper: run the checker against an isolated temp directory
 // ---------------------------------------------------------------------------
 
-interface RunResult {
-  exitCode: number;
-  stdout: string;
-  stderr: string;
-  report: Record<string, unknown> | null;
-}
-
-function runChecker(
-  fixtureDir: string,
-  opts: { allowlistOverride?: object } = {},
-): RunResult {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tb-token-drift-'));
-  const reportPath = path.join(tmpDir, 'report.json');
-
-  // Write a temp allowlist if overriding
-  let allowlistPath = ALLOWLIST;
-  if (opts.allowlistOverride) {
-    allowlistPath = path.join(tmpDir, 'allowlist.json');
-    fs.writeFileSync(
-      allowlistPath,
-      JSON.stringify(opts.allowlistOverride),
-      'utf8',
-    );
-  }
-
-  // We need to run the checker against a specific component dir.
-  // The checker hard-codes src/components — so we write a minimal wrapper.
-  const wrapperSrc = `
-import { execFileSync } from 'node:child_process';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-process.exit(0); // Wrapper loaded successfully
-`;
-  // Instead, we test the checker's core logic by calling it with env vars.
-  // The checker reads COMPONENT_GLOB_ROOT from env (we add env support below).
-  // Since the checker currently uses a hardcoded path, we invoke it via
-  // a thin adapter that re-exports the detection logic.
-  // For now, run the real checker against the real codebase for integration
-  // tests, and test the regex logic directly for unit tests.
-
-  // Cleanup
-  try {
-    fs.rmSync(tmpDir, { recursive: true });
-  } catch {
-    /* ignore */
-  }
-
-  return { exitCode: 0, stdout: '', stderr: '', report: null };
-}
-
 // ---------------------------------------------------------------------------
 // Direct regex logic tests (unit — no child process needed)
 // ---------------------------------------------------------------------------
