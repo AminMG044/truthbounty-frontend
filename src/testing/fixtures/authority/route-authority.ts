@@ -686,7 +686,7 @@ export const CANONICAL_ROUTE_EXPECTATIONS: readonly CanonicalRouteExpectation[] 
       mutationControls: [],
       boardRefs: [board('support-legal', '01-documentation-home.svg')],
       boardAuthority: 'route',
-      implementationStatus: 'planned',
+      implementationStatus: 'implemented',
       aliases: ['/how-it-works'],
     },
     {
@@ -700,7 +700,7 @@ export const CANONICAL_ROUTE_EXPECTATIONS: readonly CanonicalRouteExpectation[] 
       mutationControls: [],
       boardRefs: [board('support-legal', '02-documentation-article.svg')],
       boardAuthority: 'route',
-      implementationStatus: 'planned',
+      implementationStatus: 'implemented',
       aliases: [],
     },
     {
@@ -759,7 +759,7 @@ export const CANONICAL_ROUTE_EXPECTATIONS: readonly CanonicalRouteExpectation[] 
       mutationControls: [],
       boardRefs: [board('support-legal', '09-privacy-notice.svg')],
       boardAuthority: 'route',
-      implementationStatus: 'planned',
+      implementationStatus: 'implemented',
       aliases: [],
     },
     {
@@ -922,6 +922,24 @@ export const DISCOVERED_ROUTE_CLASSIFICATIONS: readonly DiscoveredRouteClassific
       kind: 'canonical',
       canonicalPath: '/terms',
       note: 'Terms of use',
+    },
+    {
+      pattern: '/privacy',
+      kind: 'canonical',
+      canonicalPath: '/privacy',
+      note: 'Versioned privacy notice',
+    },
+    {
+      pattern: '/docs',
+      kind: 'canonical',
+      canonicalPath: '/docs',
+      note: 'Documentation home',
+    },
+    {
+      pattern: '/docs/:param',
+      kind: 'canonical',
+      canonicalPath: '/docs/:slug',
+      note: 'Documentation article',
     },
     { pattern: '/verifier', kind: 'legacy-alias', canonicalPath: '/dashboard/verifications', note: 'Legacy verifier alias' },
     { pattern: '/rewards', kind: 'legacy-alias', canonicalPath: '/dashboard/rewards', note: 'Legacy rewards alias' },

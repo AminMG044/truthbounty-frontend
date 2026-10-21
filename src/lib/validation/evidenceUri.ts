@@ -1,6 +1,7 @@
 /**
  * Canonical evidence URI validation and safe resolution.
  * Protocol requirement: Fail closed on unsupported schemes, unsafe inputs, or secrets.
+ * Approved IPFS gateways: https://dweb.link and https://ipfs.io.
  */
 
 import {

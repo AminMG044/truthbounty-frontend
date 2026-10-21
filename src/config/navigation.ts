@@ -34,6 +34,9 @@ export const APP_ROUTES = {
   TERMS: '/terms',
   TERMS_TESTNET: '/terms?network=testnet',
   TERMS_MAINNET: '/terms?network=mainnet',
+  PRIVACY: '/privacy',
+  PRIVACY_TESTNET: '/privacy?network=testnet',
+  PRIVACY_MAINNET: '/privacy?network=mainnet',
 } as const;
 
 export type NavigationGroupType = 'public' | 'personal' | 'verifier' | 'admin';

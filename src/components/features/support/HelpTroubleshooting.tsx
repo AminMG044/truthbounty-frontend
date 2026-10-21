@@ -7,7 +7,7 @@ import {
   type TroubleshootingCategoryId,
   type TroubleshootingState,
   type TroubleshootingStateTone,
-} from './troubleshootingTopics';
+} from './troubleshooting-topics';
 
 const toneClasses: Record<TroubleshootingStateTone, string> = {
   neutral:

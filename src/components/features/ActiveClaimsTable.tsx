@@ -312,74 +312,20 @@ const ActiveClaimsTable = (props: ActiveClaimsTableProps) => {
                           : "bg-[#232329] text-white hover:bg-[#5b5bf6]"
                       }`}
                     >
-                      <td className="py-3">
-                        <div className="flex flex-col">
-                          <span className="text-xs text-[#5b5bf6] font-semibold flex items-center gap-1.5">
-                            <CategoryIcon size={14} />
-                            {claim.category}
-                            <span className="ml-2 bg-[#232329] text-[#5b5bf6] px-2 py-0.5 rounded-full text-[10px]">
-                              {claim.impact}
-                            </span>
-                          </span>
-                          <span className="text-white font-medium leading-tight">
-                            {claim.title}
-                          </span>
-                          <span className="text-xs text-[#a1a1aa]">
-                            {claim.source}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3">
-                        <span
-                          className={
-                            claim.status === "Verified"
-                              ? "text-green-400"
-                              : claim.status === "Under Review"
-                              ? "text-yellow-400"
-                              : "text-red-400"
-                          }
-                        >
-                          {claim.status}
-                        </span>
-                      </td>
-                      <td className="py-3">
-                        <ConfidenceMeter
-                          value={claim.confidence}
-                          label={`Confidence for ${claim.title}`}
-                          showValue={true}
-                          showBandLabel={false}
-                        />
-                      </td>
-                      <td className="py-3">
-                        {claim.votes}{" "}
-                        <span className="text-[#a1a1aa]">/ {claim.stake}</span>
-                      </td>
-                      <td className="py-3">{claim.time}</td>
-                      <td className="py-3">
-                        <button
-                          className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-[#5b5bf6]"
-                          aria-label={`${claim.actions} claim: ${claim.title}`}
-                        >
-                          {claim.actions}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="py-8 text-center text-sm text-[#a1a1aa]"
-                  >
-                    {claims.length === 0
-                      ? "No active claims at the moment."
-                      : "No claims match the current search or filter. Try clearing your search or choosing a different filter."}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                      {p}
+                    </button>
+                  </React.Fragment>
+                );
+              })}
+            <button
+              onClick={() => onPageChange(page + 1)}
+              disabled={!canGoNext}
+              aria-label="Go to next page"
+              className="px-3 py-1 rounded bg-[#232329] text-xs text-white hover:bg-[#5b5bf6] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </nav>
         </div>
       )}
     </div>

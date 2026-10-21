@@ -50,7 +50,7 @@ function StatusBanner({
   );
 }
 
-export default function SafeTreasuryWithdrawalPanel() {
+export function SafeTreasuryWithdrawalPanel() {
   const formId = useId();
   const {
     status,
@@ -347,3 +347,5 @@ export default function SafeTreasuryWithdrawalPanel() {
     </section>
   );
 }
+
+export default SafeTreasuryWithdrawalPanel;

@@ -30,3 +30,11 @@ export type GovernanceSurfaceState =
 
 /** Mutation-capable composition states per FRONTEND_IMPLEMENTATION_MATRIX.md. */
 export type GovernanceMutationState =
+  | 'idle'
+  | 'submitting'
+  | 'success'
+  | 'error';
+
+export function RoleAdministration() {
+  return null;
+}

@@ -2,12 +2,12 @@
   "schemaVersion": "1.0.0",
   "generator": "verify-board-conformity.mjs (UI-FE-093)",
   "timestamp": "2026-10-19T12:00:00.000Z",
-  "frontendRevision": "9efbc5ec545b1dc3dd065e92fb750805b41350ee",
+  "frontendRevision": "27c704254321f6c57e607d4613331d688f0dfd60",
   "protocolAuthorityRevision": "60c66b78cf797d8f821089c99ae1bc461009fecc",
   "protocolRepository": "DigiNodes/truthbounty-protocol",
   "totalApprovedBoards": 58,
-  "implementedScreensCount": 31,
-  "plannedScreensCount": 27,
+  "implementedScreensCount": 34,
+  "plannedScreensCount": 24,
   "batches": [
     {
       "batchId": "foundation",
@@ -54,8 +54,8 @@
       "batchNumber": 6,
       "title": "Support, Incident Status, Security & Legal Compliance",
       "totalBoards": 13,
-      "implementedCount": 2,
-      "plannedCount": 11
+      "implementedCount": 5,
+      "plannedCount": 8
     }
   ],
   "entries": [
@@ -3300,9 +3300,9 @@
       "batchNumber": 6,
       "name": "Documentation Home & Knowledgebase",
       "canonicalRoute": "/docs",
-      "implementationStatus": "planned",
-      "approvalStatus": "blocked",
-      "blockedReason": "Documentation home route scheduled under UI-FE-096",
+      "implementationStatus": "implemented",
+      "approvalStatus": "approved",
+      "blockedReason": null,
       "requiredViewports": [
         "desktop",
         "tablet",
@@ -3330,8 +3330,53 @@
         ],
         "zeroHorizontalScroll": true
       },
-      "captures": null,
-      "digest": "dbf294039cc43db22ab77f683966e3a0d0e4c2ab48da8851c13d7d2a1a8a47ac"
+      "captures": {
+        "desktop": {
+          "artifactPath": "reports/visual-evidence/01-documentation-home-desktop.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900,
+            "label": "Desktop (1440px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "fbf71eac03be5cbeed25a3fa1015777d02075f1dccee1db531cf7098805bfc30",
+          "status": "captured"
+        },
+        "tablet": {
+          "artifactPath": "reports/visual-evidence/01-documentation-home-tablet.png",
+          "viewport": {
+            "width": 768,
+            "height": 1024,
+            "label": "Tablet (768px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "366f050469cd5b11d3af1b31ff46392f42284eae70188ee0b619a0703685a6f1",
+          "status": "captured"
+        },
+        "mobile": {
+          "artifactPath": "reports/visual-evidence/01-documentation-home-mobile.png",
+          "viewport": {
+            "width": 375,
+            "height": 812,
+            "label": "Mobile (375px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "4cfac8911d4a48c1f50a910408961dabf90bb54c892581231375db3bc7b31108",
+          "status": "captured"
+        },
+        "zoom200": {
+          "artifactPath": "reports/visual-evidence/01-documentation-home-zoom200.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900,
+            "label": "200% Zoom / Reflow",
+            "deviceScaleFactor": 2
+          },
+          "hash": "97039389f3caac7ebee5da00db53028b5c460d60b5f62e114fd58fae4b8f499f",
+          "status": "captured"
+        }
+      },
+      "digest": "13284364de2559299c723a12b6ea2e0647886468d05e84b4adafd8ba85b48490"
     },
     {
       "boardId": "designs/frontend-v2/support-legal/boards/02-documentation-article.svg",
@@ -3339,9 +3384,9 @@
       "batchNumber": 6,
       "name": "Versioned Documentation Article",
       "canonicalRoute": "/docs/:slug",
-      "implementationStatus": "planned",
-      "approvalStatus": "blocked",
-      "blockedReason": "Documentation article viewer scheduled under UI-FE-096",
+      "implementationStatus": "implemented",
+      "approvalStatus": "approved",
+      "blockedReason": null,
       "requiredViewports": [
         "desktop",
         "tablet",
@@ -3370,8 +3415,53 @@
         ],
         "zeroHorizontalScroll": true
       },
-      "captures": null,
-      "digest": "1ed98b1a945d1301e8859f3acabedd3266940811845c800a770b72c30a5a45f0"
+      "captures": {
+        "desktop": {
+          "artifactPath": "reports/visual-evidence/02-documentation-article-desktop.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900,
+            "label": "Desktop (1440px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "91f3452fe64e0360ad0443be74b2b8107ced3b5421b550f30a5a920ea090d318",
+          "status": "captured"
+        },
+        "tablet": {
+          "artifactPath": "reports/visual-evidence/02-documentation-article-tablet.png",
+          "viewport": {
+            "width": 768,
+            "height": 1024,
+            "label": "Tablet (768px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "9ce32abd5f157855cbd659e083b0630c17fcd361710580eac42e96a4dbf51ee6",
+          "status": "captured"
+        },
+        "mobile": {
+          "artifactPath": "reports/visual-evidence/02-documentation-article-mobile.png",
+          "viewport": {
+            "width": 375,
+            "height": 812,
+            "label": "Mobile (375px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "b9b989ebbe465f058f9e0a1fbeb29b97b79bba2945cb2c59ce5bdb953e62e796",
+          "status": "captured"
+        },
+        "zoom200": {
+          "artifactPath": "reports/visual-evidence/02-documentation-article-zoom200.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900,
+            "label": "200% Zoom / Reflow",
+            "deviceScaleFactor": 2
+          },
+          "hash": "06e1daf9a920953d3771d71832ca0481f3c915683e157bbb03bfa287cc2708e4",
+          "status": "captured"
+        }
+      },
+      "digest": "487116a7a045085243ee797a985daf5edc7548b7636ee2ceafece958d5d6dcd7"
     },
     {
       "boardId": "designs/frontend-v2/support-legal/boards/03-help-troubleshooting.svg",
@@ -3612,9 +3702,9 @@
       "batchNumber": 6,
       "name": "Versioned Privacy Notice",
       "canonicalRoute": "/privacy",
-      "implementationStatus": "planned",
-      "approvalStatus": "blocked",
-      "blockedReason": "Privacy notice route scheduled under UI-FE-099",
+      "implementationStatus": "implemented",
+      "approvalStatus": "approved",
+      "blockedReason": null,
       "requiredViewports": [
         "desktop",
         "tablet",
@@ -3622,13 +3712,19 @@
         "zoom200"
       ],
       "relevantStates": [
-        "ready"
+        "ready",
+        "loading",
+        "error"
       ],
       "stableRegions": [
-        "main#main-content"
+        "main#main-content",
+        "article",
+        "h1"
       ],
       "maskedRegions": [
-        "[data-mask='dynamic-data']"
+        "[data-mask='dynamic-data']",
+        "[data-testid*='timestamp']",
+        "time"
       ],
       "diffThreshold": 0.002,
       "knownVariances": [],
@@ -3637,12 +3733,58 @@
           "1.3.1",
           "1.4.3",
           "2.1.1",
+          "2.4.1",
           "2.4.2"
         ],
         "zeroHorizontalScroll": true
       },
-      "captures": null,
-      "digest": "284a19d0f8c8902f0301f1b247d842d4499c75ae0c1d2137888a1c76261d90ab"
+      "captures": {
+        "desktop": {
+          "artifactPath": "reports/visual-evidence/09-privacy-notice-desktop.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900,
+            "label": "Desktop (1440px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "56ff8fbbbd739380832c9f74038e12f25421b9328a9dc491d21ca55ae4207022",
+          "status": "captured"
+        },
+        "tablet": {
+          "artifactPath": "reports/visual-evidence/09-privacy-notice-tablet.png",
+          "viewport": {
+            "width": 768,
+            "height": 1024,
+            "label": "Tablet (768px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "b11d2e9cf40277e35e7e2fe82eec3b17570c1e103b75321d6be7993ecd7ca8c1",
+          "status": "captured"
+        },
+        "mobile": {
+          "artifactPath": "reports/visual-evidence/09-privacy-notice-mobile.png",
+          "viewport": {
+            "width": 375,
+            "height": 812,
+            "label": "Mobile (375px)",
+            "deviceScaleFactor": 1
+          },
+          "hash": "d28794859018fa1ec64db6e1d3e44a44ba30df97a006aff9e56b23f687073cab",
+          "status": "captured"
+        },
+        "zoom200": {
+          "artifactPath": "reports/visual-evidence/09-privacy-notice-zoom200.png",
+          "viewport": {
+            "width": 1440,
+            "height": 900,
+            "label": "200% Zoom / Reflow",
+            "deviceScaleFactor": 2
+          },
+          "hash": "0933774e8f27e9460dd0bfa891f5633167441108a8a5d395f61854ead1911d2c",
+          "status": "captured"
+        }
+      },
+      "digest": "2ba694d5be506eb31c8abdf9b23d9320dfa392091332d849679fa5063335ff97"
     },
     {
       "boardId": "designs/frontend-v2/support-legal/boards/10-terms-of-use.svg",
@@ -3904,5 +4046,5 @@
       "digest": "b41b0424244a35db4e2f83032616dcc9a83f8c75c149e1fd301622bbfd997513"
     }
   ],
-  "bundleDigest": "97084169a7d144c56145fcdf709bf4e8b57f0df4f11f33beda0b7e2a751790be"
+  "bundleDigest": "c89bed252b33f4d9220459f28dd4015043b86c898e2f729a71288bcd1e16f6b6"
 }

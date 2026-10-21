@@ -15,12 +15,34 @@ export * from "@/lib/format";
 import {
   formatDate,
   formatDateTime,
-  formatRelativeTime,
-  formatTime,
-  formatTimeZone,
+  formatAddress,
   formatTokenAmount,
-  formatWalletAddress,
+  type DateInput,
 } from "@/lib/format";
+
+export const formatWalletAddress = formatAddress;
+
+export function formatRelativeTime(date?: DateInput): string {
+  return formatDate(date);
+}
+
+export function formatTimeZone(): string {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function formatTime(date?: DateInput): string {
+  return formatDate(date, { format: 'timeOnly' });
+}
+
+
+export function formatLocalDateTime(date?: DateInput): string {
+  return formatDateTime(date);
+}
+
+export function formatUtcDateTime(date?: DateInput): string {
+  return formatDateTime(date, { timeZone: 'UTC' }) + ' UTC';
+}
+
 
 /**
  * Canonical time source kinds. The contract or a reviewed API
@@ -492,17 +514,3 @@ export function deriveActionAvailability(input: {
 
   return { available: true, source };
 }
-
-/**
- * Re-exported canonical formatters for convenience within the app
- * directory. These are the same functions exposed by `/lib/format`.
- */
-export {
-  formatDate,
-  formatDateTime,
-  formatRelativeTime,
-  formatTime,
-  formatTimeZone,
-  formatTokenAmount,
-  formatWalletAddress,
-};

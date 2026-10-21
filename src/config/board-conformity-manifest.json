@@ -1175,17 +1175,16 @@
       "batchNumber": 6,
       "name": "Versioned Privacy Notice",
       "canonicalRoute": "/privacy",
-      "implementationStatus": "planned",
-      "approvalStatus": "blocked",
-      "blockedReason": "Privacy notice route scheduled under UI-FE-099",
+      "implementationStatus": "implemented",
+      "approvalStatus": "approved",
       "requiredViewports": ["desktop", "tablet", "mobile", "zoom200"],
-      "relevantStates": ["ready"],
-      "stableRegions": ["main#main-content"],
-      "maskedRegions": ["[data-mask='dynamic-data']"],
+      "relevantStates": ["ready", "loading", "error"],
+      "stableRegions": ["main#main-content", "article", "h1"],
+      "maskedRegions": ["[data-mask='dynamic-data']", "[data-testid*='timestamp']", "time"],
       "diffThreshold": 0.002,
       "knownVariances": [],
       "a11yContract": {
-        "wcagCriteria": ["1.3.1", "1.4.3", "2.1.1", "2.4.2"],
+        "wcagCriteria": ["1.3.1", "1.4.3", "2.1.1", "2.4.1", "2.4.2"],
         "zeroHorizontalScroll": true
       }
     },
