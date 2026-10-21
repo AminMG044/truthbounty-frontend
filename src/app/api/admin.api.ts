@@ -1,8 +1,62 @@
 import type {
   AdminDashboardOverview,
+  AdminReadiness,
+  CapabilityContext,
   ExecuteOperationRequest,
   ExecuteOperationResponse,
 } from '@/app/types/admin';
+
+/**
+ * Privileged entry is read-only by default. Context selection never grants
+ * authority; contracts remain canonical for mutations and API data is
+ * freshness-labelled projection data only.
+ */
+export const DEFAULT_CAPABILITY_CONTEXT: CapabilityContext = 'read-only';
+
+export interface AdminRequestOptions {
+  /** Selected capability context. Never grants authority on its own. */
+  context?: CapabilityContext;
+  /** Abort signal for cancellation. */
+  signal?: AbortSignal;
+}
+
+function buildAdminHeaders(
+  adminAddress: string,
+  context: CapabilityContext
+): Record<string, string> {
+  return {
+    Accept: 'application/json',
+    'x-admin-address': adminAddress,
+    'x-capability-context': context,
+  };
+}
+
+async function parseAdminError(res: Response): Promise<Error> {
+  const errorBody = await res.json().catch(() => ({}));
+  const reason = errorBody.reason || errorBody.error || `HTTP ${res.status}`;
+  const err = new Error(reason);
+  (err as { status?: number }).status = res.status;
+  return err;
+}
+
+export async function fetchAdminReadiness(
+  adminAddress: string,
+  options: AdminRequestOptions = {}
+): Promise<AdminReadiness> {
+  const context = options.context ?? DEFAULT_CAPABILITY_CONTEXT;
+  const res = await fetch('/api/admin/readiness', {
+    method: 'GET',
+    headers: buildAdminHeaders(adminAddress, context),
+    cache: 'no-store',
+    signal: options.signal,
+  });
+
+  if (!res.ok) {
+    throw await parseAdminError(res);
+  }
+
+  return res.json();
+}
 
 export type HealthObservationState =
   | 'healthy'
@@ -50,15 +104,15 @@ export function composeOverallHealth(
     return 'unavailable';
   }
 
-  let worstIdx = ORDERSATION_PRECEDENCE_ORDER.length - 1;
+  let worstIdx = OBSERVATION_PRECEEDENCE_ORDER.length - 1;
   for (const subject of subjects) {
-    const idx = ORDERSATION_PRECEDENCE_ORDER.indexOf(subject.observation.state);
+    const idx = OBSERVATION_PRECEEDENCE_ORDER.indexOf(subject.observation.state);
     if (idx >= 0 && idx < worstIdx) {
       worstIdx = idx;
     }
   }
 
-  return OBSERVATION_PRECEDENCE_ORDER[worstIdx];
+  return OBSERVATION_PRECEEDENCE_ORDER[worstIdx];
 }
 
 function normalizeObservation(raw: unknown): HealthObservation {
@@ -66,11 +120,11 @@ function normalizeObservation(raw: unknown): HealthObservation {
     return { state: 'unavailable', observedAt: null, freshnessMs: null };
   }
 
-  const candidate = raw as Record<unknown>;
+  const candidate = raw as Record<string, unknown>;
   const state = candidate.state;
   if (
     typeof state !== 'string' ||
-    !ORDERSATION_PRECEDENCE_ORDER.includes(state as HealthObservationState)
+    !OBSERVATION_PRECEEDENCE_ORDER.includes(state as HealthObservationState)
   ) {
     return {
       state: 'unavailable',
@@ -82,7 +136,7 @@ function normalizeObservation(raw: unknown): HealthObservation {
 
   const observedAt = typeof candidate.observedAt === 'string' ? candidate.observedAt : null;
   const freshnessMs =
-    typeof candidate.freshnessMs === 'number' && Number.finite(candidate.freshnessMs)
+    typeof candidate.freshnessMs === 'number' && Number.isFinite(candidate.freshnessMs)
       ? candidate.freshnessMs
       : null;
 
@@ -104,7 +158,7 @@ function normalizeObservation(raw: unknown): HealthObservation {
 }
 
 function normalizeSubject(raw: unknown, idx: number): HealthSubject {
-  const candidate = (raw && typeof raw === 'object' ? raw : {}) as Record<unknown>;
+  const candidate = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const id = candidate.id;
   const label = candidate.label;
   const affectedScope = Array.isArray(candidate.affectedScope)
@@ -124,13 +178,13 @@ export function normalizeOperationalHealth(
   raw: unknown,
   generatedAt: string = new Date().toISOString()
 ): OperationalHealthReport {
-  const candidate = (raw && typeof raw === 'object' ? raw : {}) as Record<unknown>;
+  const candidate = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const subjects = Array.isArray(candidate.subjects)
     ? candidate.subjects.map((s, i) => normalizeSubject(s, i))
     : [];
 
   const finalizedBlock =
-    typeof candidate.finalizedBlock === 'number' && Number.finite(candidate.finalizedBlock)
+    typeof candidate.finalizedBlock === 'number' && Number.isFinite(candidate.finalizedBlock)
       ? candidate.finalizedBlock
       : null;
   const finalizedBlockObservedAt =
@@ -157,22 +211,20 @@ export function normalizeOperationalHealth(
   };
 }
 
-export async function fetchAdminOverview(adminAddress: string): Promise<AdminDashboardOverview> {
+export async function fetchAdminOverview(
+  adminAddress: string,
+  options: AdminRequestOptions = {}
+): Promise<AdminDashboardOverview> {
+  const context = options.context ?? DEFAULT_CAPABILITY_CONTEXT;
   const res = await fetch('/api/admin/overview', {
     method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'x-admin-address': adminAddress,
-    },
+    headers: buildAdminHeaders(adminAddress, context),
     cache: 'no-store',
+    signal: options.signal,
   });
 
   if (!res.ok) {
-    const errorBody = await res.json().catch(() => ({}));
-    const reason = errorBody.reason || errorBody.error || `HTTP ${res.status}`;
-    const err = new Error(reason);
-    (err as { status?: number }).status = res.status;
-    throw err;
+    throw await parseAdminError(res);
   }
 
   return res.json();
@@ -211,16 +263,13 @@ export async function executeAdminOperation(
       'Content-Type': 'application/json',
       Accept: 'application/json',
       'x-admin-address': payload.operatorAddress,
+      'x-capability-context': payload.context ?? DEFAULT_CAPABILITY_CONTEXT,
     },
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const errorBody = await res.json().catch(() => ({}));
-    const reason = errorBody.reason || errorBody.error || `HTTP ${res.status}`;
-    const err = new Error(reason);
-    (err as { status?: number }).status = res.status;
-    throw err;
+    throw await parseAdminError(res);
   }
 
   return res.json();

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getProtocolRelease } from '@/lib/contracts/registry';
 import type { ExecuteOperationRequest, ExecuteOperationResponse, AdminAuditRecord } from '@/app/types/admin';
+import { resolveCapabilityContext, isCapabilityActive } from '@/lib/authority/capability-context';
+import type { CapabilityContext } from '@/lib/authority/capability-context';
 import { composeOperationalHealth } from '@/lib/health/composeOperationalHealth';
 import type { OperationalHealthSnapshot } from '@/app/types/health';
 
@@ -16,6 +18,8 @@ export async function POST(request: Request) {
   const rawAdmin = String(release.roles.admin || process.env.NEXT_PUBLIC_ADMIN_ADDRESS || '');
   const canonicalAdmin = rawAdmin.toLowerCase();
 
+  // Context selection (headers, query, or body) never grants authority; it only
+  // narrows which canonical capability may be exercised. Default is read-only.
   if (!adminHeader || !canonicalAdmin || adminHeader.toLowerCase() !== canonicalAdmin) {
     return NextResponse.json(
       {
@@ -44,6 +48,28 @@ export async function POST(request: Request) {
       );
     }
 
+    // Resolve the requested capability context against canonical registry data.
+    // Denied, revoked, stale, wrong-chain, and unavailable contexts are rejected
+    // before any operation is considered. Context selection grants nothing.
+    const capability = resolveCapabilityContext({
+      operationId,
+      release,
+      requestedContext: (body as ExecuteOperationRequest & { context?: string }).context,
+      chainId: (body as ExecuteOperationRequest & { chainId?: number }).chainId,
+    });
+
+    if (!capability.ok || !isCapabilityActive(capability)) {
+      const unavailable = capability as CapabilityContext & { status?: number };
+      return NextResponse.json(
+        {
+          error: 'capability_unavailable',
+          reason: unavailable.reason,
+          state: unavailable.state,
+        },
+        { status: typeof unavailable.status === 'number' ? unavailable.status : 403 }
+      );
+    }
+
     // Invariant check: verify that this operation is in the allowed bounded set
     // Rejects any attempt to override claim verdicts, transfer funds, or bypass protocol invariants
     const allowedOperations: Record<string, { action: string; authority: AdminAuditRecord['authority']; targetResource: string }> = {
@@ -60,7 +86,7 @@ export async function POST(request: Request) {
       'op-archive-dlq': {
         action: 'Archive Stale DLQ Dead-Letter Records',
         authority: 'AUDIT_ADMIN',
-        targetResource: 'DeadLetterQeuue Storage',
+        targetResource: 'DeadLetterQueue Storage',
       },
     };
 
@@ -79,7 +105,7 @@ export async function POST(request: Request) {
     const randomBytes = new Uint32Array(1);
     crypto.getRandomValues(randomBytes);
     const randomHex = randomBytes[0].toString(16).padStart(8, '0');
-    const consequenceHash = `0x${randomHex}${Date.now().toString(16)}000000000000000000000000000000000000000000000`.slice(0, 66);
+    const consequenceHash = `0x${randomHex}${Date.now().toString(16)}0000000000000000000000000000000000000000`.slice(0, 66);
     const auditId = `AUD-${Date.now().toString().slice(-8)}`;
 
     const auditRecord: AdminAuditRecord = {
