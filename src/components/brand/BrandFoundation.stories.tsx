@@ -37,7 +37,7 @@ function Foundation({ initialTheme = "dark" }: { initialTheme?: "dark" | "light"
       {([
         ["Dark wordmark", "wordmark", "dark"], ["Light wordmark", "wordmark", "light"],
         ["Colour glyph", "glyph", theme], ["Monochrome glyph", "monochrome", theme], ["Application icon", "app-icon", theme],
-      ] as const).map(([label, variant, surface]) => <figure key={label} data-theme={surface} className="space-y-3 rounded-lg border border-divider bg-canvas p-4 text-ink">
+      ] as const).map(([label, variant, surface]) => <figure key={label} data-theme={surface} className="min-w-0 space-y-3 rounded-lg border border-divider bg-canvas p-4 text-ink">
         <BrandMark variant={variant} />
         <figcaption className="text-sm">{label}</figcaption>
       </figure>)}
@@ -45,10 +45,10 @@ function Foundation({ initialTheme = "dark" }: { initialTheme?: "dark" | "light"
     <section aria-label="Colour tokens" className="space-y-3">
       <h2 className="text-xl font-bold">Colour and purpose</h2>
       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {colors.map(([label, token, purpose]) => <div key={token} className="rounded-lg border border-divider bg-surface p-3">
+        {colors.map(([label, token, purpose]) => <div key={token} className="min-w-0 rounded-lg border border-divider bg-surface p-3">
           <div aria-hidden="true" className="mb-2 h-10 rounded-md border border-divider" style={{ backgroundColor: `var(--tb-${token})` }} />
           <dt className="font-semibold">{label}</dt><dd className="text-sm text-ink-secondary">{purpose}</dd>
-          <dd><code className="text-xs">--tb-{token}: {BRAND_COLORS[token]}</code></dd>
+          <dd><code className="break-all text-xs">--tb-{token}: {BRAND_COLORS[token]}</code></dd>
         </div>)}
       </dl>
       <p className="text-sm text-ink-secondary">Light foreground aliases blend approved colours with Ink Navy for AA contrast. Base brand tokens stay unchanged. Labels and shapes carry meaning alongside colour.</p>
