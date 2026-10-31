@@ -1,0 +1,67 @@
+{
+  "name": "Validate TruthBounty security cleanup",
+  "on": {
+    "push": {
+      "branches": [
+        "validate/security-repair-769"
+      ]
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "review": {
+      "runs-on": "ubuntu-24.04",
+      "timeout-minutes": 20,
+      "env": {
+        "NEXT_PUBLIC_CHAIN_ID": "11155420",
+        "NEXT_PUBLIC_RPC_URL": "https://sepolia.optimism.io",
+        "NEXT_PUBLIC_API_BASE_URL": "https://validation.invalid",
+        "NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID": "00000000000000000000000000000000",
+        "NEXT_PUBLIC_EXPLORER_BASE_URL": "https://sepolia-optimism.etherscan.io"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@v4",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Scan tracked tree before dependencies",
+          "run": "python3 - <<'SCAN'\nimport pathlib,re,subprocess\nfiles=subprocess.check_output(['git','ls-files','-z']).decode().split(chr(0))\nbad=[]\nfor name in filter(None,files):\n if name=='.github/workflows/security-repair-validation.yml':continue\n path=pathlib.Path(name)\n if not path.is_file():continue\n if name=='api.js' or name.endswith(('.lkf','.lfk','.llf')):bad.append(name+': forbidden payload path')\n data=path.read_bytes()\n if bytes([0]) in data:continue\n text=data.decode(errors='replace')\n if name.endswith(('.js','.mjs','.cjs','.ts','.tsx','.json','.jsx','.sh')):\n  if re.search(r'[ \\t]{200,}\\S',text):bad.append(name+': hidden code after long whitespace')\n if name.endswith('package.json') and re.search(r'node\\s+api\\.js',text):bad.append(name+': malicious launcher')\n if name.startswith('.vscode/') and ('folderOpen' in text or 'allowAutomaticTasks' in text):bad.append(name+': automatic editor task')\nif bad:raise SystemExit('\\n'.join(bad))\nprint('Tracked source/config scan passed; no known injected launcher or hidden-whitespace payload remains.')\n\nSCAN"
+        },
+        {
+          "uses": "actions/setup-node@v4",
+          "with": {
+            "node-version": "24"
+          }
+        },
+        {
+          "name": "Install without lifecycle scripts",
+          "run": "corepack enable pnpm\npnpm install --frozen-lockfile --ignore-scripts"
+        },
+        {
+          "name": "Full lint",
+          "run": "pnpm lint"
+        },
+        {
+          "name": "Full types",
+          "if": "always()",
+          "run": "pnpm type-check"
+        },
+        {
+          "name": "Full tests",
+          "if": "always()",
+          "run": "pnpm test --runInBand"
+        },
+        {
+          "name": "Production build",
+          "if": "always()",
+          "run": "pnpm build"
+        }
+      ]
+    }
+  }
+}
