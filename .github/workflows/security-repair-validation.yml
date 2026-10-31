@@ -30,7 +30,8 @@
         },
         {
           "name": "Scan tracked tree before dependencies",
-          "run": "python3 - <<'SCAN'\nimport pathlib,re,subprocess\nfiles=subprocess.check_output(['git','ls-files','-z']).decode().split(chr(0))\nbad=[]\nfor name in filter(None,files):\n if name=='.github/workflows/security-repair-validation.yml':continue\n path=pathlib.Path(name)\n if not path.is_file():continue\n if name=='api.js' or name.endswith(('.lkf','.lfk','.llf')):bad.append(name+': forbidden payload path')\n data=path.read_bytes()\n if bytes([0]) in data:continue\n text=data.decode(errors='replace')\n if name.endswith(('.js','.mjs','.cjs','.ts','.tsx','.json','.jsx','.sh')):\n  if re.search(r'[ \\t]{200,}\\S',text):bad.append(name+': hidden code after long whitespace')\n if name.endswith('package.json') and re.search(r'node\\s+api\\.js',text):bad.append(name+': malicious launcher')\n if name.startswith('.vscode/') and ('folderOpen' in text or 'allowAutomaticTasks' in text):bad.append(name+': automatic editor task')\nif bad:raise SystemExit('\\n'.join(bad))\nprint('Tracked source/config scan passed; no known injected launcher or hidden-whitespace payload remains.')\n\nSCAN"
+          "run": "python3 - <<'SCAN'\nimport pathlib,re,subprocess\nfiles=subprocess.check_output(['git','ls-files','-z']).decode().split(chr(0))\nbad=[]\nfor name in filter(None,files):\n if name=='.github/workflows/security-repair-validation.yml':continue\n path=pathlib.Path(name)\n if not path.is_file():continue\n if name=='api.js' or name.endswith(('.lkf','.lfk','.llf')):bad.append(name+': forbidden payload path')\n data=path.read_bytes()\n if bytes([0]) in data:continue\n text=data.decode(errors='replace')\n if name.endswith(('.js','.mjs','.cjs','.ts','.tsx','.json','.jsx','.sh')):\n  if re.search(r'[ \\t]{200,}\\S',text):bad.append(name+': hidden code after long whitespace')\n if name.endswith('package.json') and re.search(r'node\\s+api\\.js',text):bad.append(name+': malicious launcher')\n if name.startswith('.vscode/') and ('folderOpen' in text or 'allowAutomaticTasks' in text):bad.append(name+': automatic editor task')\nif bad:raise SystemExit('\\n'.join(bad))\nprint('Tracked source/config scan passed; no known injected launcher or hidden-whitespace payload remains.')\n\nSCAN",
+          "id": "scan"
         },
         {
           "uses": "actions/setup-node@v4",
@@ -40,7 +41,8 @@
         },
         {
           "name": "Install without lifecycle scripts",
-          "run": "corepack enable pnpm\npnpm install --frozen-lockfile --ignore-scripts"
+          "run": "corepack enable pnpm\npnpm install --frozen-lockfile --ignore-scripts",
+          "id": "deps"
         },
         {
           "name": "Full lint",
@@ -48,17 +50,17 @@
         },
         {
           "name": "Full types",
-          "if": "always()",
+          "if": "always() && steps.scan.outcome == 'success' && steps.deps.outcome == 'success'",
           "run": "pnpm type-check"
         },
         {
           "name": "Full tests",
-          "if": "always()",
+          "if": "always() && steps.scan.outcome == 'success' && steps.deps.outcome == 'success'",
           "run": "pnpm test --runInBand"
         },
         {
           "name": "Production build",
-          "if": "always()",
+          "if": "always() && steps.scan.outcome == 'success' && steps.deps.outcome == 'success'",
           "run": "pnpm build"
         }
       ]
